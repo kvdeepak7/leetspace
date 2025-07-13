@@ -5,12 +5,18 @@ import Auth from './pages/Auth';
 import Problems from './pages/Problems';
 import AddProblem from './pages/AddProblem';
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { AuthProvider } from "@/lib/useAuth";
+import "./index.css" 
 function AppWrapper() {
   return (
     <ThemeProvider>
-      <Router>
-        <App />
-      </Router>
+      <AuthProvider>
+      <div className="min-h-screen bg-white dark:bg-zinc-900 transition-colors">
+          <Router>
+            <App />
+          </Router>
+        </div>
+      </AuthProvider>
     </ThemeProvider>
 
   );
