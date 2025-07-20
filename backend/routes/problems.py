@@ -30,7 +30,7 @@ async def get_problems(
     user_id: str,
     difficulty: Optional[str] = None,
     tags: Optional[List[str]] = Query(None),
-    retry_later: Optional[bool] = None,
+    retry_later: Optional[str] = None,
     search: Optional[str] = None,
     sort_by: Optional[str] = "date_solved",
     order: Optional[str] = "desc",

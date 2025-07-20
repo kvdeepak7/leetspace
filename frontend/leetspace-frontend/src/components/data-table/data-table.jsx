@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useNavigate } from "react-router-dom";
+
 import {
   useReactTable,
   getCoreRowModel,
@@ -27,6 +29,7 @@ import {
 } from "@/components/ui/table";
 
 export function DataTable({ data, columns }) {
+  const navigate = useNavigate();
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
@@ -118,8 +121,8 @@ export function DataTable({ data, columns }) {
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-                className="hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
+                onClick={() => navigate(`/problems/${row.original.id}`)}
+                className="hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id} className="px-4 py-2">
