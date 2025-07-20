@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Auth from './pages/Auth';
 import Problems from './pages/Problems';
 import AddProblem from './pages/AddProblem';
+import ProblemDetail from './pages/problemDetail';
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/lib/useAuth";
 import "./index.css" 
@@ -36,6 +37,7 @@ function App() {
         <Route path="/auth" element={<Auth />} />
         <Route path="/problems" element={<Problems />} />
         <Route path="/add-problem" element={<AddProblem />} />
+        <Route path="/problems/:id" element={<ProblemDetail />} />
       </Routes>
     </>
   );
