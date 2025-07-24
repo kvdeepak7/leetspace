@@ -70,7 +70,8 @@ export default function CodeViewer({ code, language,theme = "light" }) {
           fontFamily: "monospace",
         }}
         wrapLines={true}
-        showLineNumbers={false}
+        // showLineNumbers={false}
+        showLineNumbers
       >
         {code}
       </SyntaxHighlighter>

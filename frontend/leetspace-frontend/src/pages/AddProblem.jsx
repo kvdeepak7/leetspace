@@ -17,12 +17,16 @@ export default function AddProblem() {
   const [difficulty, setDifficulty] = useState("");
   const [tags, setTags] = useState("");
   const [notes, setNotes] = useState("");
-  const [dateSolved, setDateSolved] = useState(new Date().toISOString().split("T")[0]);
+  const corrected = new Date();
+  corrected.setDate(corrected.getDate() + 1); // ✅ add 1 day
+  const formatted = corrected.toLocaleDateString("en-CA"); // "YYYY-MM-DD"
+  const [dateSolved, setDateSolved] = useState(formatted);
   const [retryLater, setRetryLater] = useState("");
   const isDark = document.documentElement.classList.contains("dark");
   const [theme, setTheme] = useState(
     document.documentElement.classList.contains("dark") ? "dark" : "light"
   );
+  const [formError, setFormError] = useState("");
   
   useEffect(() => {
     const observer = new MutationObserver(() => {
@@ -69,6 +73,13 @@ export default function AddProblem() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!title.trim() || !url.trim() || !difficulty || !retryLater) {
+      setFormError("Please fill in all required fields: title, URL, difficulty, and retry later.");
+      return;
+    }
+  
+    setFormError("");
+
     const problemData = {
       user_id: user.uid, // ✅ required by backend
       title,
@@ -106,7 +117,6 @@ export default function AddProblem() {
             className="text-xl font-semibold border-none shadow-none focus-visible:ring-0 bg-background text-foreground placeholder:text-neutral-400"
           />
         </div>
-
         <div>
           <Label htmlFor="url" className="text-lg mb-1 block">Problem URL (optional)</Label>
           <Input
@@ -216,7 +226,11 @@ export default function AddProblem() {
             })}
           </div>
         </div>
-
+        {formError && (
+          <div className="text-red-500 text-sm bg-red-100 dark:bg-red-900/30 p-2 rounded-md text-center">
+            {formError}
+          </div>
+        )}
         <Button type="submit" className="w-full bg-black text-white text-lg dark:bg-white dark:text-black">
           Submit Problem
         </Button>
