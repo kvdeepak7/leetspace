@@ -112,7 +112,18 @@ export default function ProblemDetail() {
           Solution {idx + 1} ({sol.language})
         </div>
         <div className="overflow-x-auto rounded-md bg-background dark:bg-zinc-800">
+          
           <CodeViewer language={sol.language} code={sol.code} theme={theme} />
+          {/* <MDEditor.Markdown
+            source={`\`\`\`\n${sol.code}\n\`\`\``}
+            className="!bg-white dark:!bg-zinc-900 p-4 rounded-md"
+            style={{
+              backgroundColor: theme === 'dark' ? '#18181b' : '#ffffff',
+              padding: '1rem',
+              borderRadius: '0.5rem',
+            }}
+          /> */}
+
         </div>
       </div>
     ))}
