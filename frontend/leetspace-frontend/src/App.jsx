@@ -7,7 +7,9 @@ import AddProblem from './pages/AddProblem';
 import ProblemDetail from './pages/problemDetail';
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/lib/useAuth";
+import { Toaster } from "sonner";
 import "./index.css" 
+
 function AppWrapper() {
   return (
     <ThemeProvider>
@@ -16,6 +18,16 @@ function AppWrapper() {
           <Router>
             <App />
           </Router>
+          <Toaster 
+            position="top-right"
+            toastOptions={{
+              style: {
+                background: 'var(--background)',
+                color: 'var(--foreground)',
+                border: '1px solid var(--border)',
+              },
+            }}
+          />
         </div>
       </AuthProvider>
     </ThemeProvider>
