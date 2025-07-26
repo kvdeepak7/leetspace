@@ -32,6 +32,7 @@ export const columns = (onEdit, onDelete) => [
         )
       },
       enableSorting: true,
+      enableHiding: false,
     },
     {
       accessorKey: "difficulty",
