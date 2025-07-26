@@ -212,19 +212,24 @@ export function DataTable({ data, columns }) {
               Tags ({selectedTags.length} selected)
             </DropdownMenuLabel>
             
-            {/* Tag Search */}
-            <div className="px-3 py-2">
-              <div className="relative">
-                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Search tags..."
-                  value={tagSearch}
-                  onChange={(e) => setTagSearch(e.target.value)}
-                  className="pl-8 h-8 text-sm bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-600"
-                  onClick={(e) => e.stopPropagation()}
-                />
-              </div>
-            </div>
+                         {/* Tag Search */}
+             <div className="px-3 py-2" onClick={(e) => e.stopPropagation()}>
+               <div className="relative">
+                 <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                 <Input
+                   placeholder="Search tags..."
+                   value={tagSearch}
+                   onChange={(e) => setTagSearch(e.target.value)}
+                   className="pl-8 h-8 text-sm bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-600"
+                   onClick={(e) => e.stopPropagation()}
+                   onFocus={(e) => e.stopPropagation()}
+                   onKeyDown={(e) => e.stopPropagation()}
+                   onKeyUp={(e) => e.stopPropagation()}
+                   onMouseDown={(e) => e.stopPropagation()}
+                   autoComplete="off"
+                 />
+               </div>
+             </div>
 
                          {/* Selected Tags Display */}
              {selectedTags.length > 0 && (
@@ -254,16 +259,31 @@ export function DataTable({ data, columns }) {
              <div className="max-h-40 overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                {filteredTags.length > 0 ? (
                  filteredTags.map(tag => (
-                   <DropdownMenuCheckboxItem
+                   <div
                      key={tag}
-                     className="px-3 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 cursor-pointer"
-                     checked={selectedTags.includes(tag)}
-                     onCheckedChange={() => toggleTag(tag)}
-                     onClick={(e) => e.stopPropagation()}
+                     className="flex items-center px-3 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 cursor-pointer"
+                     onClick={(e) => {
+                       e.stopPropagation();
+                       e.preventDefault();
+                       toggleTag(tag);
+                     }}
                    >
-                     <Tag className="w-4 h-4 mr-2" />
-                     {tag}
-                   </DropdownMenuCheckboxItem>
+                     <div className="flex items-center space-x-2 w-full">
+                       <div className={`w-4 h-4 border-2 rounded flex items-center justify-center ${
+                         selectedTags.includes(tag) 
+                           ? 'bg-blue-500 border-blue-500' 
+                           : 'border-gray-300 dark:border-gray-600'
+                       }`}>
+                         {selectedTags.includes(tag) && (
+                           <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                           </svg>
+                         )}
+                       </div>
+                       <Tag className="w-4 h-4" />
+                       <span className="flex-1">{tag}</span>
+                     </div>
+                   </div>
                  ))
                ) : (
                  <div className="px-3 py-2 text-gray-500 dark:text-gray-400 text-sm">
