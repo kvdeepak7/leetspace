@@ -161,28 +161,24 @@ export function DataTable({ data, columns }) {
       />
 
       <div className="flex items-center gap-2">
-        {/* Revisit toggle */}
-        <Button
-          variant={revisitOnly ? "default" : "outline"}
-          onClick={() => setRevisitOnly(!revisitOnly)}
-          className={`text-sm cursor-pointer px-4 py-2 rounded-md transition-colors ${
-            revisitOnly 
-              ? "bg-green-500 hover:bg-green-600 text-white border-green-500" 
-              : "text-gray-800 dark:text-white bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-600 hover:bg-gray-100 dark:hover:bg-zinc-800"
-          }`}
-        >
-          <RotateCcw className="mr-2 h-4 w-4" />
-          Revisit
-          {revisitOnly && (
-            <X 
-              className="ml-2 h-4 w-4 hover:bg-green-600 dark:hover:bg-green-700 rounded-full p-0.5"
-              onClick={(e) => {
-                e.stopPropagation();
-                setRevisitOnly(false);
-              }}
+        {/* Revisit toggle switch */}
+        <div className="flex items-center gap-2">
+          <RotateCcw className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+          <span className="text-sm text-gray-700 dark:text-gray-300">Revisit</span>
+          <button
+            type="button"
+            onClick={() => setRevisitOnly(!revisitOnly)}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${
+              revisitOnly ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-600'
+            }`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                revisitOnly ? 'translate-x-6' : 'translate-x-1'
+              }`}
             />
-          )}
-        </Button>
+          </button>
+        </div>
 
         {/* Filter dropdown */}
         <DropdownMenu>
