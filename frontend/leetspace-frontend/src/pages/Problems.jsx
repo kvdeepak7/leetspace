@@ -16,6 +16,9 @@ export default function Problems() {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedProblem, setSelectedProblem] = useState(null);
+  const [theme, setTheme] = useState(
+    document.documentElement.classList.contains("dark") ? "dark" : "light"
+  );
   const navigate = useNavigate();
   // const user = "abc123";
   const fetchProblems = async () => {
@@ -59,10 +62,22 @@ export default function Problems() {
       
       // Remove the problem from the local state
       setProblems(problems.filter(p => p.id !== problemId));
-      toast.success("Problem deleted successfully!");
+      toast.success("Problem deleted succesfully", {
+        style: {
+          backgroundColor: theme === 'dark' ? '#1e1e1e' : '#ffffff',
+          color: theme === 'dark' ? '#ffffff' : '#000000',
+        }
+      });
     } catch (error) {
       console.error("Error deleting problem:", error);
-      toast.error("Failed to delete problem. Please try again.");
+      toast.error("Failed to delete problem. Please try again.", {
+        style: {
+          backgroundColor: theme === 'dark' ? '#1e1e1e' : '#ffffff',
+          color: theme === 'dark' ? '#ffffff' : '#000000',
+          border: '1px solid #e53e3e',
+          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+        },
+      });
     }
   };
 

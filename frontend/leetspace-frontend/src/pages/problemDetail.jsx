@@ -63,7 +63,7 @@ export default function ProblemDetail() {
       await axios.delete(`/api/problems/${problemId}`, {
         baseURL: "http://localhost:8000",
       });
-      toast.success("Deleted", {
+      toast.success("Problem deleted succesfully", {
         style: {
           backgroundColor: theme === 'dark' ? '#1e1e1e' : '#ffffff',
           color: theme === 'dark' ? '#ffffff' : '#000000',
