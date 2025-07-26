@@ -40,7 +40,7 @@ import {
           <div className="py-4">
             <DialogDescription className="text-gray-600 dark:text-gray-300">
               Are you sure you want to delete <span className="font-semibold">"{problem?.title}"</span>? 
-              This action cannot be undone and will permanently remove the problem from your collection.
+              This action <strong>CANNOT</strong> be undone!
             </DialogDescription>
           </div>
   
