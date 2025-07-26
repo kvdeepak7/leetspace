@@ -24,6 +24,14 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+import {
   Table,
   TableBody,
   TableCell,
@@ -160,51 +168,42 @@ export function DataTable({ data, columns }) {
             <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
               Difficulty
             </DropdownMenuLabel>
-            <DropdownMenuItem
-              className="px-3 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 cursor-pointer"
-              onClick={() => setDifficultyFilter("")}
-            >
-              <div className="flex items-center">
-                <div className={`w-3 h-3 rounded-full border mr-2 ${!difficultyFilter ? 'bg-blue-500 border-blue-500' : 'border-gray-300'}`} />
-                All Difficulties
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="px-3 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 cursor-pointer"
-              onClick={() => setDifficultyFilter("Easy")}
-            >
-              <div className="flex items-center">
-                <div className={`w-3 h-3 rounded-full border mr-2 ${difficultyFilter === "Easy" ? 'bg-blue-500 border-blue-500' : 'border-gray-300'}`} />
-                <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800 mr-2">
-                  Easy
-                </span>
-                Easy
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="px-3 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 cursor-pointer"
-              onClick={() => setDifficultyFilter("Medium")}
-            >
-              <div className="flex items-center">
-                <div className={`w-3 h-3 rounded-full border mr-2 ${difficultyFilter === "Medium" ? 'bg-blue-500 border-blue-500' : 'border-gray-300'}`} />
-                <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 mr-2">
-                  Medium
-                </span>
-                Medium
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="px-3 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 cursor-pointer"
-              onClick={() => setDifficultyFilter("Hard")}
-            >
-              <div className="flex items-center">
-                <div className={`w-3 h-3 rounded-full border mr-2 ${difficultyFilter === "Hard" ? 'bg-blue-500 border-blue-500' : 'border-gray-300'}`} />
-                <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800 mr-2">
-                  Hard
-                </span>
-                Hard
-              </div>
-            </DropdownMenuItem>
+            <div className="px-3 py-2" onClick={(e) => e.stopPropagation()}>
+              <Select value={difficultyFilter} onValueChange={setDifficultyFilter}>
+                <SelectTrigger className="w-full h-8 text-sm bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-600">
+                  <SelectValue placeholder="Select difficulty" />
+                </SelectTrigger>
+                <SelectContent className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
+                  <SelectItem value="" className="text-gray-800 dark:text-white">
+                    All Difficulties
+                  </SelectItem>
+                  <SelectItem value="Easy" className="text-gray-800 dark:text-white">
+                    <div className="flex items-center">
+                      <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800 mr-2">
+                        Easy
+                      </span>
+                      Easy
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="Medium" className="text-gray-800 dark:text-white">
+                    <div className="flex items-center">
+                      <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 mr-2">
+                        Medium
+                      </span>
+                      Medium
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="Hard" className="text-gray-800 dark:text-white">
+                    <div className="flex items-center">
+                      <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800 mr-2">
+                        Hard
+                      </span>
+                      Hard
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
             <DropdownMenuSeparator className="my-2 border-gray-200 dark:border-zinc-700" />
 
@@ -227,50 +226,51 @@ export function DataTable({ data, columns }) {
               </div>
             </div>
 
-            {/* Selected Tags Display */}
-            {selectedTags.length > 0 && (
-              <div className="px-3 py-2 max-h-20 overflow-y-auto">
-                <div className="flex flex-wrap gap-1">
-                  {selectedTags.map(tag => (
-                    <span
-                      key={tag}
-                      className="inline-flex items-center px-2 py-1 text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded-full"
-                    >
-                      <Tag className="w-3 h-3 mr-1" />
-                      {tag}
-                      <X
-                        className="w-3 h-3 ml-1 cursor-pointer hover:text-blue-600"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleTag(tag);
-                        }}
-                      />
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
+                         {/* Selected Tags Display */}
+             {selectedTags.length > 0 && (
+               <div className="px-3 py-2 max-h-20 overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                 <div className="flex flex-wrap gap-1">
+                   {selectedTags.map(tag => (
+                     <span
+                       key={tag}
+                       className="inline-flex items-center px-2 py-1 text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded-full"
+                     >
+                       <Tag className="w-3 h-3 mr-1" />
+                       {tag}
+                       <X
+                         className="w-3 h-3 ml-1 cursor-pointer hover:text-blue-600"
+                         onClick={(e) => {
+                           e.stopPropagation();
+                           toggleTag(tag);
+                         }}
+                       />
+                     </span>
+                   ))}
+                 </div>
+               </div>
+             )}
 
-            {/* Available Tags */}
-            <div className="max-h-40 overflow-y-auto">
-              {filteredTags.length > 0 ? (
-                filteredTags.map(tag => (
-                  <DropdownMenuCheckboxItem
-                    key={tag}
-                    className="px-3 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 cursor-pointer"
-                    checked={selectedTags.includes(tag)}
-                    onCheckedChange={() => toggleTag(tag)}
-                  >
-                    <Tag className="w-4 h-4 mr-2" />
-                    {tag}
-                  </DropdownMenuCheckboxItem>
-                ))
-              ) : (
-                <div className="px-3 py-2 text-gray-500 dark:text-gray-400 text-sm">
-                  {tagSearch ? 'No tags found' : 'No tags available'}
-                </div>
-              )}
-            </div>
+                         {/* Available Tags */}
+             <div className="max-h-40 overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+               {filteredTags.length > 0 ? (
+                 filteredTags.map(tag => (
+                   <DropdownMenuCheckboxItem
+                     key={tag}
+                     className="px-3 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 cursor-pointer"
+                     checked={selectedTags.includes(tag)}
+                     onCheckedChange={() => toggleTag(tag)}
+                     onClick={(e) => e.stopPropagation()}
+                   >
+                     <Tag className="w-4 h-4 mr-2" />
+                     {tag}
+                   </DropdownMenuCheckboxItem>
+                 ))
+               ) : (
+                 <div className="px-3 py-2 text-gray-500 dark:text-gray-400 text-sm">
+                   {tagSearch ? 'No tags found' : 'No tags available'}
+                 </div>
+               )}
+             </div>
 
             {/* Clear All Button */}
             {hasActiveFilters && (
