@@ -70,8 +70,8 @@ export const columns = (onEdit, onDelete) => [
         if (!value || value.length === 0) return true;
         const rowTags = row.getValue(id);
         if (!rowTags || !Array.isArray(rowTags)) return false;
-        // Check if all selected tags are present in the row's tags
-        return value.every(selectedTag => rowTags.includes(selectedTag));
+        // Check if any of the selected tags are present in the row's tags (OR condition)
+        return value.some(selectedTag => rowTags.includes(selectedTag));
       },
       cell: ({ row }) => <div>{row.original.tags.join(", ")}</div>,
     },
