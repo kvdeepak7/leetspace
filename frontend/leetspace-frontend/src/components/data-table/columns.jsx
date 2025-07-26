@@ -1,4 +1,4 @@
-import { MoreHorizontal } from "lucide-react"
+import { MoreHorizontal, Edit, Trash2 } from "lucide-react"
  
 import { Button } from "@/components/ui/button"
 import {
@@ -16,7 +16,7 @@ const colorMap = {
   Hard: 'bg-red-100 text-red-800',
 };
 
-export const columns = [
+export const columns = (onEdit, onDelete) => [
     {
       accessorKey: "title",
       header: "Title",
@@ -38,7 +38,21 @@ export const columns = [
       header: "",
       id: "actions",
       cell: ({ row }) => {
-        const payment = row.original
+        const problem = row.original
+
+        const handleEdit = (e) => {
+          e.stopPropagation(); // Prevent row click navigation
+          if (onEdit) {
+            onEdit(problem);
+          }
+        };
+
+        const handleDelete = (e) => {
+          e.stopPropagation(); // Prevent row click navigation
+          if (onDelete) {
+            onDelete(problem);
+          }
+        };
    
         return (
           <DropdownMenu>
@@ -46,6 +60,7 @@ export const columns = [
             <Button
               variant="ghost"
               className="h-8 w-8 p-0 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-zinc-800"
+              onClick={(e) => e.stopPropagation()} // Prevent row click when opening menu
             >
               <span className="sr-only">Open menu</span>
               <MoreHorizontal className="h-4 w-4" />
@@ -54,15 +69,24 @@ export const columns = [
 
           <DropdownMenuContent
             align="end"
-            className="w-32 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 shadow-md rounded-md text-sm text-gray-800 dark:text-gray-200"
+            className="w-40 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 shadow-md rounded-md text-sm text-gray-800 dark:text-gray-200"
           >
             <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
               Actions
             </DropdownMenuLabel>
-            <DropdownMenuItem className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-800 cursor-pointer">
+            <DropdownMenuItem 
+              className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-800 cursor-pointer flex items-center gap-2"
+              onClick={handleEdit}
+            >
+              <Edit className="h-4 w-4" />
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-800 cursor-pointer text-red-500">
+            <DropdownMenuSeparator className="my-1 border-gray-200 dark:border-zinc-700" />
+            <DropdownMenuItem 
+              className="px-3 py-2 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer text-red-600 dark:text-red-400 flex items-center gap-2"
+              onClick={handleDelete}
+            >
+              <Trash2 className="h-4 w-4" />
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>

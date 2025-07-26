@@ -2,9 +2,14 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Edit3, Trash2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import MDEditor from "@uiw/react-md-editor";
 import CodeViewer from "@/components/CodeViewer";
+import { useNavigate } from "react-router-dom";
+import { DeleteProblemDialog } from "@/components/DeleteProblemDialog";
+import { toast } from "sonner";
 
 export default function ProblemDetail() {
   const { id } = useParams();
@@ -13,6 +18,9 @@ export default function ProblemDetail() {
   const [theme, setTheme] = useState(
     document.documentElement.classList.contains("dark") ? "dark" : "light"
   );
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedProblem, setSelectedProblem] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const observer = new MutationObserver(() => {
@@ -44,6 +52,37 @@ export default function ProblemDetail() {
     fetchProblem();
   }, [id]);
 
+  const handleDelete = (problem) => {
+    console.log("Deleting problem:", problem.title);
+    setSelectedProblem(problem);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async (problemId) => {
+    try {
+      await axios.delete(`/api/problems/${problemId}`, {
+        baseURL: "http://localhost:8000",
+      });
+      toast.success("Deleted", {
+        style: {
+          backgroundColor: theme === 'dark' ? '#1e1e1e' : '#ffffff',
+          color: theme === 'dark' ? '#ffffff' : '#000000',
+        }
+      });
+      navigate("/problems");
+    } catch (error) {
+      console.error("Error deleting problem:", error);
+      toast.error("Failed to delete problem. Please try again.", {
+        style: {
+          backgroundColor: theme === 'dark' ? '#1e1e1e' : '#ffffff',
+          color: theme === 'dark' ? '#ffffff' : '#000000',
+          border: '1px solid #e53e3e',
+          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+        },
+      });
+    }
+  };
+
   if (loading) {
     return <Skeleton className="w-full h-64 rounded-xl" />;
   }
@@ -61,7 +100,43 @@ export default function ProblemDetail() {
   return (
     <div className="max-w-4xl mx-auto px-6 py-10 space-y-8 text-black dark:text-white bg-white dark:bg-zinc-900">
       <div className="space-y-1">
+      <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">{problem.title}</h1>
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate(`/edit-problem/${problem.id}`)}
+            title="Edit"
+            className="hover:bg-muted cursor-pointer"
+          >
+            <Edit3 className="w-5 h-5 text-muted-foreground hover:text-foreground" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleDelete(problem)}
+            // onClick={async () => {
+            //   const confirmDelete = window.confirm("Are you sure you want to delete this problem?");
+            //   if (!confirmDelete) return;
+            //   try {
+            //     await axios.delete(`/api/problems/${problem.id}`, {
+            //       baseURL: "http://localhost:8000",
+            //     });
+            //     navigate("/problems");
+            //   } catch (err) {
+            //     console.error("❌ Failed to delete problem:", err);
+            //   }
+            // }}
+            title="Delete"
+            className="hover:bg-muted cursor-pointer"
+          >
+            <Trash2 className="w-5 h-5 text-destructive hover:text-red-600" />
+          </Button>
+          </div>
+          </div>
+
         {problem.retry_later === "Yes" && (
           <div className="text-sm text-orange-600 dark:text-orange-300 italic">
             You marked this problem to revisit later.
@@ -128,6 +203,12 @@ export default function ProblemDetail() {
       </div>
     ))}
 </div>
+    <DeleteProblemDialog
+      problem={selectedProblem}
+      open={deleteDialogOpen}
+      onOpenChange={setDeleteDialogOpen}
+      onConfirm={confirmDelete}
+    />
     </div>
   );
 }

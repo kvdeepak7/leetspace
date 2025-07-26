@@ -17,7 +17,7 @@ class ProblemBase(BaseModel):
     date_solved: date = Field(..., example="2025-06-24")
     notes: Optional[str] = Field(default=None, example="Used hashmap for lookup.")
     solutions: Optional[List[Solution]] = Field(default=None, example=["class Solution: ..."])
-    mistakes: Optional[str] = Field(default=None, example="Missed duplicate cases.")
+    # mistakes: Optional[str] = Field(default=None, example="Missed duplicate cases.")
     retry_later: str = Field(default=None, example="Yes")
 
 
@@ -34,8 +34,8 @@ class ProblemUpdate(BaseModel):
     date_solved: Optional[date]
     notes: Optional[str]
     solutions: Optional[List[Solution]]
-    mistakes: Optional[str]
-    retry_later: Optional[bool]
+    # mistakes: Optional[str]
+    retry_later: Optional[str]
 
 
 class ProblemInDB(ProblemBase):

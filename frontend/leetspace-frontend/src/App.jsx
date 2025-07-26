@@ -5,8 +5,10 @@ import Auth from './pages/Auth';
 import Problems from './pages/Problems';
 import AddProblem from './pages/AddProblem';
 import ProblemDetail from './pages/problemDetail';
+import EditProblem from "./pages/EditProblem";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/lib/useAuth";
+import { Toaster } from "sonner";
 import "./index.css" 
 function AppWrapper() {
   return (
@@ -16,6 +18,16 @@ function AppWrapper() {
           <Router>
             <App />
           </Router>
+          <Toaster 
+            position="top-right"
+            toastOptions={{
+              style: {
+                background: 'var(--background)',
+                color: 'var(--foreground)',
+                border: '1px solid var(--border)',
+              },
+            }}
+          />
         </div>
       </AuthProvider>
     </ThemeProvider>
@@ -38,6 +50,7 @@ function App() {
         <Route path="/problems" element={<Problems />} />
         <Route path="/add-problem" element={<AddProblem />} />
         <Route path="/problems/:id" element={<ProblemDetail />} />
+        <Route path="/edit-problem/:id" element={<EditProblem />} />
       </Routes>
     </>
   );
