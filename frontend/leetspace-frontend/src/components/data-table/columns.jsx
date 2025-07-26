@@ -74,7 +74,37 @@ export const columns = (onEdit, onDelete) => [
         // Check if any of the selected tags are present in the row's tags (OR condition)
         return value.some(selectedTag => rowTags.includes(selectedTag));
       },
-      cell: ({ row }) => <div>{row.original.tags.join(", ")}</div>,
+      cell: ({ row }) => {
+        const tags = row.original.tags || [];
+        const displayTags = tags.slice(0, 5);
+        const hasMoreTags = tags.length > 5;
+        const allTagsText = tags.join(", ");
+        
+        return (
+          <div 
+            className="relative group cursor-help"
+            title={allTagsText}
+          >
+            <div className="max-w-xs">
+              {displayTags.join(", ")}
+              {hasMoreTags && "..."}
+            </div>
+            
+            {/* Tooltip */}
+            {hasMoreTags && (
+              <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block z-50 max-w-sm">
+                <div className="bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs rounded py-2 px-3 shadow-lg">
+                  <div className="whitespace-pre-wrap break-words">
+                    {allTagsText}
+                  </div>
+                  {/* Arrow */}
+                  <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-100"></div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "retry_later",
