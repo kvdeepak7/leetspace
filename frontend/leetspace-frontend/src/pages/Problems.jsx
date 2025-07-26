@@ -117,7 +117,11 @@ export default function Problems() {
     </h2> */}
     {/* <DataTable data={problems} columns={columns} />
      */}
-    <DataTable data={problems} columns={columns(handleEdit, handleDelete)} />
+    <DataTable 
+      data={problems} 
+      columns={columns(handleEdit, handleDelete)} 
+      onDataChange={setProblems}
+    />
 
     <DeleteProblemDialog
       problem={selectedProblem}
