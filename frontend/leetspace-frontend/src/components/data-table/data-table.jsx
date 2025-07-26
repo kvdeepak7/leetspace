@@ -37,15 +37,6 @@ export function DataTable({ data, columns }) {
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [difficultyFilter, setDifficultyFilter] = useState("");
 
-  // Handle difficulty filter
-  React.useEffect(() => {
-    if (difficultyFilter) {
-      table.getColumn("difficulty")?.setFilterValue(difficultyFilter);
-    } else {
-      table.getColumn("difficulty")?.setFilterValue(undefined);
-    }
-  }, [difficultyFilter, table]);
-
   const table = useReactTable({
     data,
     columns,
@@ -62,6 +53,15 @@ export function DataTable({ data, columns }) {
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
   });
+
+  // Handle difficulty filter
+  React.useEffect(() => {
+    if (difficultyFilter) {
+      table.getColumn("difficulty")?.setFilterValue(difficultyFilter);
+    } else {
+      table.getColumn("difficulty")?.setFilterValue(undefined);
+    }
+  }, [difficultyFilter, table]);
 
   return (
     <div>
