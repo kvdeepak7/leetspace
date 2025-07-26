@@ -1,4 +1,5 @@
-import { MoreHorizontal, Edit, Trash2 } from "lucide-react"
+import { MoreHorizontal, Edit, Trash2,ArrowUpDown,Check } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
  
 import { Button } from "@/components/ui/button"
 import {
@@ -17,13 +18,72 @@ const colorMap = {
 };
 
 export const columns = (onEdit, onDelete) => [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <div onClick={(e) => e.stopPropagation()}>
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+          className="translate-y-[2px]"
+        />
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div onClick={(e) => e.stopPropagation()}>
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+          className="translate-y-[2px]"
+        />
+      </div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
     {
       accessorKey: "title",
-      header: "Title",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-8 px-2 lg:px-3 text-xs font-medium uppercase text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-700"
+          >
+            Title
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      enableSorting: true,
+      enableHiding: false,
     },
     {
       accessorKey: "difficulty",
-      header: "Difficulty",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-8 px-2 lg:px-3 text-xs font-medium uppercase text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-700"
+          >
+            Difficulty
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      enableSorting: true,
+      sortingFn: (rowA, rowB, columnId) => {
+        const difficultyOrder = { Easy: 1, Medium: 2, Hard: 3 };
+        const aValue = difficultyOrder[rowA.getValue(columnId)] || 0;
+        const bValue = difficultyOrder[rowB.getValue(columnId)] || 0;
+        return aValue - bValue;
+      },
       cell: ({ row }) => <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${colorMap[row.original.difficulty]}`}>
       {row.original.difficulty}
     </span>
@@ -31,7 +91,86 @@ export const columns = (onEdit, onDelete) => [
     {
       accessorKey: "tags",
       header: "Tags",
-      cell: ({ row }) => <div>{row.original.tags.join(", ")}</div>,
+      enableColumnFilter: true,
+      filterFn: (row, id, value) => {
+        if (!value || value.length === 0) return true;
+        const rowTags = row.getValue(id);
+        if (!rowTags || !Array.isArray(rowTags)) return false;
+        // Check if any of the selected tags are present in the row's tags (OR condition)
+        return value.some(selectedTag => rowTags.includes(selectedTag));
+      },
+      cell: ({ row }) => {
+        const tags = row.original.tags || [];
+        const displayTags = tags.slice(0, 5);
+        const hasMoreTags = tags.length > 5;
+        const allTagsText = tags.join(", ");
+        
+        return (
+          <div 
+            className="relative group"
+          >
+            <div className="max-w-xs">
+              {displayTags.join(", ")}
+              {hasMoreTags && "..."}
+            </div>
+            
+            {/* Tooltip */}
+            {hasMoreTags && (
+              <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block z-50 max-w-sm">
+                <div className="bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs rounded py-2 px-3 shadow-lg">
+                  <div className="whitespace-pre-wrap break-words">
+                    {allTagsText}
+                  </div>
+                  {/* Arrow */}
+                  <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-100"></div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "retry_later",
+      id: "revisit",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-8 px-2 lg:px-3 text-xs font-medium uppercase text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-700"
+          >
+            Revisit
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      enableSorting: true,
+      enableColumnFilter: true,
+      filterFn: (row, id, value) => {
+        if (value === undefined) return true;
+        console.log("Filtering by retry_later with value:", value,row);
+        const rowValue = row.getValue(id);
+        // Handle different possible values for retry_later (boolean, string, etc.)
+        const normalizedRowValue = rowValue === true || rowValue === "true" || rowValue === "Yes";
+        const normalizedFilterValue = value === true;
+        return normalizedRowValue === normalizedFilterValue;
+      },
+      cell: ({ row }) => {
+        const retryLater = row.original.retry_later;
+        // Handle different possible values for retry_later (boolean, string, etc.)
+        const shouldShowCheck = retryLater === true || retryLater === "true" || retryLater === "Yes";
+        return (
+          <div className="flex items-center justify-center w-full h-full min-h-[2.5rem] leading-none">
+            {shouldShowCheck && (
+              <Check className="h-5 w-5 text-green-500" />
+            )}
+          </div>
+        );
+      },
+      meta: {
+        cellClass: "text-center align-middle", // we'll use this later
+      }
     },
     {
       accessorKey: "Action",
