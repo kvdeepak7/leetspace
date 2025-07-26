@@ -2,13 +2,12 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useNavigate } from "react-router-dom";
-import { Filter, X, Search, Tag } from "lucide-react"
+import { Filter, X, Search, Tag, ChevronUp } from "lucide-react"
 
 import {
   useReactTable,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   flexRender,
 } from "@tanstack/react-table";
@@ -48,6 +47,7 @@ export function DataTable({ data, columns }) {
   const [difficultyFilter, setDifficultyFilter] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
   const [tagSearch, setTagSearch] = useState("");
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   // Get all unique tags from the data
   const allTags = React.useMemo(() => {
@@ -79,7 +79,6 @@ export function DataTable({ data, columns }) {
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
@@ -119,6 +118,23 @@ export function DataTable({ data, columns }) {
   };
 
   const hasActiveFilters = difficultyFilter || selectedTags.length > 0;
+
+  // Scroll to top functionality
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
 
   return (
     <div>
@@ -392,26 +408,17 @@ export function DataTable({ data, columns }) {
         </TableBody>
       </Table>
     </div>
-    <div className="flex items-center justify-end space-x-2 py-4">
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={() => table.previousPage()}
-      disabled={!table.getCanPreviousPage()}
-      className="text-sm px-4 py-2 border border-gray-300 dark:border-zinc-600 text-gray-800 dark:text-white bg-white dark:bg-zinc-900 hover:bg-gray-100 dark:hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      Previous
-    </Button>
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={() => table.nextPage()}
-      disabled={!table.getCanNextPage()}
-      className="text-sm px-4 py-2 border border-gray-300 dark:border-zinc-600 text-gray-800 dark:text-white bg-white dark:bg-zinc-900 hover:bg-gray-100 dark:hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      Next
-    </Button>
-  </div>
+
+    {/* Scroll to top button */}
+    {showScrollTop && (
+      <Button
+        onClick={scrollToTop}
+        className="fixed bottom-8 right-8 z-50 w-12 h-12 rounded-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white shadow-lg transition-all duration-300 ease-in-out"
+        size="icon"
+      >
+        <ChevronUp className="h-6 w-6" />
+      </Button>
+    )}
     </div>
   );
 }
