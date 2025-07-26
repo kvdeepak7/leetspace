@@ -59,7 +59,7 @@ export const columns = (onEdit, onDelete) => [
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className="h-8 w-8 p-0 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-zinc-800"
+              className="cursor-pointer h-8 w-8 p-0 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-zinc-800"
               onClick={(e) => e.stopPropagation()} // Prevent row click when opening menu
             >
               <span className="sr-only">Open menu</span>

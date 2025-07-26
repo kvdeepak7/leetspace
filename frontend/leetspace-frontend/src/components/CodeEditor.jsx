@@ -27,7 +27,7 @@ export default function CodeEditor({
         <select
           value={language}
           onChange={(e) => onLangChange(e.target.value)}
-          className="text-xs bg-background border px-2 py-1 rounded-md shadow-sm"
+          className="cursor-pointer text-xs bg-background border px-2 py-1 rounded-md shadow-sm"
         >
           <option value="javascript">JavaScript</option>
           <option value="python">Python</option>

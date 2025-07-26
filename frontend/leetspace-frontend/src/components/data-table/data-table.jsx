@@ -69,7 +69,7 @@ export function DataTable({ data, columns }) {
         <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="text-sm text-gray-800 dark:text-white bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-600 hover:bg-gray-100 dark:hover:bg-zinc-800 px-4 py-2 rounded-md"
+          className="text-sm cursor-pointer text-gray-800 dark:text-white bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-600 hover:bg-gray-100 dark:hover:bg-zinc-800 px-4 py-2 rounded-md"
         >
           Columns
         </Button>

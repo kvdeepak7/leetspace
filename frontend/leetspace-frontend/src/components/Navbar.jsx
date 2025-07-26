@@ -28,12 +28,12 @@ export default function Navbar() {
         <Link to="/add-problem" className="dark:text-white">Add Problem</Link>
 
         {/* Theme toggle button */}
-        <button onClick={toggleTheme} className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+        <button onClick={toggleTheme} className="p-1 cursor-pointer rounded hover:bg-gray-100 dark:hover:bg-gray-800">
           {theme === "light" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5 text-white" />}
         </button>
 
         {user ? (
-          <button onClick={handleLogout} className="text-red-500 underline">Logout</button>
+          <button onClick={handleLogout} className="text-red-500 cursor-pointer underline">Logout</button>
         ) : (
           <Link to="/auth" className="underline">Login</Link>
         )}
