@@ -78,6 +78,7 @@ export const columns = (onEdit, onDelete) => [
     },
     {
       accessorKey: "retry_later",
+      id: "revisit",
       header: ({ column }) => {
         return (
           <Button
