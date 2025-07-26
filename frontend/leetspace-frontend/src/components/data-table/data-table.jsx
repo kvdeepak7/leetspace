@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useNavigate } from "react-router-dom";
+import { Filter, X } from "lucide-react"
 
 import {
   useReactTable,
@@ -17,6 +18,7 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
+  DropdownMenuItem,
 } from "@/components/ui/dropdown-menu"
 
 import {
@@ -33,6 +35,16 @@ export function DataTable({ data, columns }) {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
+  const [difficultyFilter, setDifficultyFilter] = useState("");
+
+  // Handle difficulty filter
+  React.useEffect(() => {
+    if (difficultyFilter) {
+      table.getColumn("difficulty")?.setFilterValue(difficultyFilter);
+    } else {
+      table.getColumn("difficulty")?.setFilterValue(undefined);
+    }
+  }, [difficultyFilter, table]);
 
   const table = useReactTable({
     data,
@@ -64,8 +76,70 @@ export function DataTable({ data, columns }) {
         className="max-w-sm flex-1 bg-white dark:bg-zinc-900 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 border border-gray-300 dark:border-zinc-700 text-sm rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
 
-      {/* Column toggle dropdown */}
-      <DropdownMenu>
+      <div className="flex items-center gap-2">
+        {/* Difficulty filter dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              className="text-sm cursor-pointer text-gray-800 dark:text-white bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-600 hover:bg-gray-100 dark:hover:bg-zinc-800 px-4 py-2 rounded-md"
+            >
+              <Filter className="mr-2 h-4 w-4" />
+              {difficultyFilter || "Difficulty"}
+              {difficultyFilter && (
+                <X 
+                  className="ml-2 h-4 w-4 hover:bg-gray-200 dark:hover:bg-zinc-700 rounded-full p-0.5"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setDifficultyFilter("");
+                  }}
+                />
+              )}
+            </Button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent
+            align="end"
+            className="bg-white dark:bg-zinc-900 text-sm border border-gray-200 dark:border-zinc-700 shadow-md rounded-md"
+          >
+            <DropdownMenuItem
+              className="px-3 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 cursor-pointer"
+              onClick={() => setDifficultyFilter("")}
+            >
+              All Difficulties
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="px-3 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 cursor-pointer"
+              onClick={() => setDifficultyFilter("Easy")}
+            >
+              <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800 mr-2">
+                Easy
+              </span>
+              Easy
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="px-3 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 cursor-pointer"
+              onClick={() => setDifficultyFilter("Medium")}
+            >
+              <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 mr-2">
+                Medium
+              </span>
+              Medium
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="px-3 py-2 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 cursor-pointer"
+              onClick={() => setDifficultyFilter("Hard")}
+            >
+              <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800 mr-2">
+                Hard
+              </span>
+              Hard
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Column toggle dropdown */}
+        <DropdownMenu>
         <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
@@ -94,6 +168,7 @@ export function DataTable({ data, columns }) {
             ))}
         </DropdownMenuContent>
       </DropdownMenu>
+      </div>
     </div>
     <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-zinc-900 text-black dark:text-white shadow-sm">
       <Table>

@@ -48,6 +48,10 @@ export const columns = (onEdit, onDelete) => [
         )
       },
       enableSorting: true,
+      enableColumnFilter: true,
+      filterFn: (row, id, value) => {
+        return value === "" || row.getValue(id) === value;
+      },
       sortingFn: (rowA, rowB, columnId) => {
         const difficultyOrder = { Easy: 1, Medium: 2, Hard: 3 };
         const aValue = difficultyOrder[rowA.getValue(columnId)] || 0;
