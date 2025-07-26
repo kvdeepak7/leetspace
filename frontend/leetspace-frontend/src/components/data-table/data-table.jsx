@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useNavigate } from "react-router-dom";
-import { Filter, X, Search, Tag, ChevronUp } from "lucide-react"
+import { Filter, X, Search, Tag, ChevronUp, RotateCcw } from "lucide-react"
 
 import {
   useReactTable,
@@ -48,6 +48,7 @@ export function DataTable({ data, columns }) {
   const [selectedTags, setSelectedTags] = useState([]);
   const [tagSearch, setTagSearch] = useState("");
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [revisitOnly, setRevisitOnly] = useState(false);
 
   // Get all unique tags from the data
   const allTags = React.useMemo(() => {
@@ -102,6 +103,15 @@ export function DataTable({ data, columns }) {
     }
   }, [selectedTags, table]);
 
+  // Handle revisit filter
+  React.useEffect(() => {
+    if (revisitOnly) {
+      table.getColumn("retry_later")?.setFilterValue(true);
+    } else {
+      table.getColumn("retry_later")?.setFilterValue(undefined);
+    }
+  }, [revisitOnly, table]);
+
   // Helper functions for tag management
   const toggleTag = (tag) => {
     setSelectedTags(prev => 
@@ -115,9 +125,10 @@ export function DataTable({ data, columns }) {
     setDifficultyFilter("");
     setSelectedTags([]);
     setTagSearch("");
+    setRevisitOnly(false);
   };
 
-  const hasActiveFilters = difficultyFilter || selectedTags.length > 0;
+  const hasActiveFilters = difficultyFilter || selectedTags.length > 0 || revisitOnly;
 
   // Scroll to top functionality
   React.useEffect(() => {
@@ -150,6 +161,29 @@ export function DataTable({ data, columns }) {
       />
 
       <div className="flex items-center gap-2">
+        {/* Revisit toggle */}
+        <Button
+          variant={revisitOnly ? "default" : "outline"}
+          onClick={() => setRevisitOnly(!revisitOnly)}
+          className={`text-sm cursor-pointer px-4 py-2 rounded-md transition-colors ${
+            revisitOnly 
+              ? "bg-green-500 hover:bg-green-600 text-white border-green-500" 
+              : "text-gray-800 dark:text-white bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-600 hover:bg-gray-100 dark:hover:bg-zinc-800"
+          }`}
+        >
+          <RotateCcw className="mr-2 h-4 w-4" />
+          Revisit
+          {revisitOnly && (
+            <X 
+              className="ml-2 h-4 w-4 hover:bg-green-600 dark:hover:bg-green-700 rounded-full p-0.5"
+              onClick={(e) => {
+                e.stopPropagation();
+                setRevisitOnly(false);
+              }}
+            />
+          )}
+        </Button>
+
         {/* Filter dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

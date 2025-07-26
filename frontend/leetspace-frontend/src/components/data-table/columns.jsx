@@ -91,6 +91,12 @@ export const columns = (onEdit, onDelete) => [
         )
       },
       enableSorting: true,
+      enableColumnFilter: true,
+      filterFn: (row, id, value) => {
+        if (value === undefined) return true;
+        const rowValue = row.getValue(id);
+        return rowValue === value;
+      },
       cell: ({ row }) => {
         const retryLater = row.original.retry_later;
         return (
