@@ -30,6 +30,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
+import { Switch } from "@/components/ui/switch"
+
 import {
   Table,
   TableBody,
@@ -165,19 +167,11 @@ export function DataTable({ data, columns }) {
         <div className="flex items-center gap-2">
           <RotateCcw className="h-4 w-4 text-gray-600 dark:text-gray-400" />
           <span className="text-sm text-gray-700 dark:text-gray-300">Revisit</span>
-          <button
-            type="button"
-            onClick={() => setRevisitOnly(!revisitOnly)}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${
-              revisitOnly ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-600'
-            }`}
-          >
-            <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                revisitOnly ? 'translate-x-6' : 'translate-x-1'
-              }`}
-            />
-          </button>
+          <Switch
+            checked={revisitOnly}
+            onCheckedChange={setRevisitOnly}
+            className="data-[state=checked]:bg-green-500"
+          />
         </div>
 
         {/* Filter dropdown */}

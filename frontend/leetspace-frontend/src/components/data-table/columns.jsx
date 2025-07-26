@@ -95,13 +95,18 @@ export const columns = (onEdit, onDelete) => [
       filterFn: (row, id, value) => {
         if (value === undefined) return true;
         const rowValue = row.getValue(id);
-        return rowValue === value;
+        // Handle different possible values for retry_later (boolean, string, etc.)
+        const normalizedRowValue = rowValue === true || rowValue === "true" || rowValue === "yes";
+        const normalizedFilterValue = value === true;
+        return normalizedRowValue === normalizedFilterValue;
       },
       cell: ({ row }) => {
         const retryLater = row.original.retry_later;
+        // Handle different possible values for retry_later (boolean, string, etc.)
+        const shouldShowCheck = retryLater === true || retryLater === "true" || retryLater === "yes";
         return (
           <div className="flex justify-center">
-            {retryLater && (
+            {shouldShowCheck && (
               <Check className="h-5 w-5 text-green-500" />
             )}
           </div>
