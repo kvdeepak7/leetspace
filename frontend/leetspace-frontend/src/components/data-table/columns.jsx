@@ -1,4 +1,4 @@
-import { MoreHorizontal, Edit, Trash2 } from "lucide-react"
+import { MoreHorizontal, Edit, Trash2, ArrowUpDown } from "lucide-react"
  
 import { Button } from "@/components/ui/button"
 import {
@@ -19,11 +19,41 @@ const colorMap = {
 export const columns = (onEdit, onDelete) => [
     {
       accessorKey: "title",
-      header: "Title",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-8 px-2 lg:px-3 text-xs font-medium uppercase text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-700"
+          >
+            Title
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      enableSorting: true,
     },
     {
       accessorKey: "difficulty",
-      header: "Difficulty",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-8 px-2 lg:px-3 text-xs font-medium uppercase text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-700"
+          >
+            Difficulty
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      enableSorting: true,
+      sortingFn: (rowA, rowB, columnId) => {
+        const difficultyOrder = { Easy: 1, Medium: 2, Hard: 3 };
+        const aValue = difficultyOrder[rowA.getValue(columnId)] || 0;
+        const bValue = difficultyOrder[rowB.getValue(columnId)] || 0;
+        return aValue - bValue;
+      },
       cell: ({ row }) => <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${colorMap[row.original.difficulty]}`}>
       {row.original.difficulty}
     </span>
