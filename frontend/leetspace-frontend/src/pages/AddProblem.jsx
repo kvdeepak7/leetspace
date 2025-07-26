@@ -118,7 +118,7 @@ export default function AddProblem() {
           />
         </div>
         <div>
-          <Label htmlFor="url" className="text-lg mb-1 block">Problem URL (optional)</Label>
+          <Label htmlFor="url" className="text-lg mb-1 block">Problem URL </Label>
           <Input
             id="url"
             placeholder="e.g. https://leetcode.com/problems/two-sum"
@@ -138,7 +138,7 @@ export default function AddProblem() {
                   key={level}
                   type="button"
                   onClick={() => setDifficulty(level)}
-                  className={`px-4 py-1 rounded-full text-sm border transition-all
+                  className={`px-4 py-1 cursor-pointer rounded-full text-sm border transition-all
                     ${selected
                       ? "bg-accent text-accent-foreground border-accent font-semibold shadow"
                       : "text-muted-foreground border-border hover:bg-muted/40 opacity-60"}`}
@@ -176,7 +176,7 @@ export default function AddProblem() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute top-2 right-2 z-10 text-muted-foreground hover:text-destructive"
+                  className="cursor-pointer absolute top-2 right-2 z-10 text-muted-foreground hover:text-destructive"
                   onClick={() => deleteSolutionEditor(idx)}
                 >
                   ✕
@@ -195,7 +195,7 @@ export default function AddProblem() {
           <Button
             type="button"
             variant="ghost"
-            className="text-sm text-muted-foreground hover:text-foreground"
+            className="text-sm cursor-pointer text-muted-foreground hover:text-foreground"
             onClick={addSolutionEditor}
           >
             + Add Another Solution
@@ -215,7 +215,7 @@ export default function AddProblem() {
                   key={option}
                   type="button"
                   onClick={() => setRetryLater(option)}
-                  className={`px-4 py-1 rounded-full text-sm border transition-all
+                  className={`cursor-pointer px-4 py-1 rounded-full text-sm border transition-all
                     ${selected
                       ? "bg-accent text-accent-foreground border-accent font-semibold shadow"
                       : "text-muted-foreground border-border hover:bg-muted/40 opacity-60"}`}
@@ -231,7 +231,7 @@ export default function AddProblem() {
             {formError}
           </div>
         )}
-        <Button type="submit" className="w-full bg-black text-white text-lg dark:bg-white dark:text-black">
+        <Button type="submit" className="w-full cursor-pointer bg-black text-white text-lg dark:bg-white dark:text-black">
           Submit Problem
         </Button>
       </form>
