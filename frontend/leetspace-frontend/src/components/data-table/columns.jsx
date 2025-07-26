@@ -1,4 +1,4 @@
-import { MoreHorizontal, Edit, Trash2, ArrowUpDown } from "lucide-react"
+import { MoreHorizontal, Edit, Trash2, ArrowUpDown, Check } from "lucide-react"
  
 import { Button } from "@/components/ui/button"
 import {
@@ -75,6 +75,32 @@ export const columns = (onEdit, onDelete) => [
         return value.some(selectedTag => rowTags.includes(selectedTag));
       },
       cell: ({ row }) => <div>{row.original.tags.join(", ")}</div>,
+    },
+    {
+      accessorKey: "retry_later",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-8 px-2 lg:px-3 text-xs font-medium uppercase text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-700"
+          >
+            Revisit
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      enableSorting: true,
+      cell: ({ row }) => {
+        const retryLater = row.original.retry_later;
+        return (
+          <div className="flex justify-center">
+            {retryLater && (
+              <Check className="h-5 w-5 text-green-500" />
+            )}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "Action",
