@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit3, Trash2 } from "lucide-react";
+import { Edit3, Trash2,ExternalLink } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import MDEditor from "@uiw/react-md-editor";
 import CodeViewer from "@/components/CodeViewer";
@@ -101,12 +101,28 @@ export default function ProblemDetail() {
     <div className="max-w-4xl mx-auto px-6 py-10 space-y-8 text-black dark:text-white bg-white dark:bg-zinc-900">
       <div className="space-y-1">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">{problem.title}</h1>
+      <div className="flex items-center gap-2">
+          <h1 className="text-3xl font-bold">{problem.title}</h1>
+          {problem.url && (
+            <a
+              href={problem.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Open Problem"
+              className="text-muted-foreground hover:text-blue-600"
+            >
+              <ExternalLink className="w-5 h-5" />
+            </a>
+          )}
+        </div>
         <div className="flex gap-2">
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate(`/edit-problem/${problem.id}`)}
+            onClick={() => {
+              sessionStorage.setItem(`editProblemIntent-${problem.id}`, "fresh");
+              navigate(`/edit-problem/${problem.id}`);
+            }}
             title="Edit"
             className="hover:bg-muted cursor-pointer"
           >

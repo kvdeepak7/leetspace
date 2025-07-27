@@ -25,7 +25,10 @@ export default function Navbar() {
       <Link to="/" className="font-bold text-xl dark:text-white">Leetspace</Link>
       <div className="flex items-center gap-4 text-sm">
         <Link to="/problems" className="dark:text-white">Problems</Link>
-        <Link to="/add-problem" className="dark:text-white">Add Problem</Link>
+        <Link to="/add-problem" 
+            onClick={() => sessionStorage.setItem("addProblemIntent", "fresh")}
+            className="dark:text-white"
+        >Add Problem</Link>
 
         {/* Theme toggle button */}
         <button onClick={toggleTheme} className="p-1 cursor-pointer rounded hover:bg-gray-100 dark:hover:bg-gray-800">
