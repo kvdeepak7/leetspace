@@ -370,7 +370,7 @@ export function DataTable({ data, columns,onDataChange }) {
                   {(difficultyFilter ? 1 : 0) + selectedTags.length}
                 </span>
               )}
-              {hasActiveFilters && (
+              {/* {hasActiveFilters && (
                 <X 
                   className="ml-2 h-4 w-4 hover:bg-gray-200 dark:hover:bg-zinc-700 rounded-full p-0.5"
                   onClick={(e) => {
@@ -378,7 +378,7 @@ export function DataTable({ data, columns,onDataChange }) {
                     clearAllFilters();
                   }}
                 />
-              )}
+              )} */}
             </Button>
           </DropdownMenuTrigger>
 

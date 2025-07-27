@@ -9,11 +9,14 @@ import CodeEditor from "@/components/CodeEditor";
 import axios from "axios";
 import { useAuth } from "@/lib/useAuth";
 import { useParams, useNavigate } from "react-router-dom";
+import { AlertCircle,Pencil,ExternalLink } from "lucide-react";
+import { useLocation } from "react-router-dom";
 
 export default function EditProblem() {
   const { id } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
@@ -24,9 +27,20 @@ export default function EditProblem() {
   const [dateSolved, setDateSolved] = useState("");
   const [formError, setFormError] = useState("");
   const [solutions, setSolutions] = useState([{ code: "", language: "javascript" }]);
+  const [missingFields, setMissingFields] = useState({});
+  const [conflicts, setConflicts] = useState([]);
 
   const isDark = document.documentElement.classList.contains("dark");
   const [theme, setTheme] = useState(isDark ? "dark" : "light");
+  const isValidUrl = (value) => {
+    try {
+      new URL(value);
+      return /^(https?):\/\/[\w.-]+\.[a-z]{2,}.*$/i.test(value);
+      return true;
+    } catch {
+      return false;
+    }
+  };
 
   useEffect(() => {
     const observer = new MutationObserver(() => {
@@ -36,28 +50,86 @@ export default function EditProblem() {
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
     return () => observer.disconnect();
   }, []);
-
+  // Load draft from sessionStorage or API
   useEffect(() => {
-    async function fetchProblem() {
-      try {
-        const res = await axios.get(`/api/problems/${id}`, {
-          baseURL: "http://localhost:8000",
-        });
-        const p = res.data;
-        setTitle(p.title);
-        setUrl(p.url);
-        setDifficulty(p.difficulty);
-        setTags(p.tags.join(", "));
-        setNotes(p.notes || "");
-        setRetryLater(p.retry_later || "");
-        setDateSolved(p.date_solved || new Date().toLocaleDateString("en-CA"));
-        setSolutions(p.solutions || [{ code: "", language: "javascript" }]);
-      } catch (err) {
-        console.error("❌ Error fetching problem:", err);
+    const storageKey = `editProblemDraft-${id}`;
+    const intentKey = `editProblemIntent-${id}`;
+    const isFresh = sessionStorage.getItem(intentKey) === "fresh";
+  
+    if (isFresh) {
+      // Clear the flag and reset everything
+      sessionStorage.removeItem(intentKey);
+      sessionStorage.removeItem(storageKey);
+  
+      setTitle("");
+      setUrl("");
+      setDifficulty("");
+      setTags("");
+      setNotes("");
+      setDateSolved(new Date().toLocaleDateString("en-CA"));
+      setRetryLater("");
+      setSolutions([{ code: "// write your solution here", language: "javascript" }]);
+    } else {
+      // Load from sessionStorage
+      const saved = sessionStorage.getItem(storageKey);
+      if (saved) {
+        try {
+          const draft = JSON.parse(saved);
+          setTitle(draft.title || "");
+          setUrl(draft.url || "");
+          setDifficulty(draft.difficulty || "");
+          setTags(draft.tags || "");
+          setNotes(draft.notes || "");
+          setDateSolved(draft.dateSolved || new Date().toLocaleDateString("en-CA"));
+          setRetryLater(draft.retryLater || "");
+          setSolutions(draft.solutions || [{ code: "", language: "javascript" }]);
+          return;
+        } catch (err) {
+          console.error("❌ Failed to parse draft:", err);
+        }
       }
+  
+      // Fallback: fetch from API
+      async function fetchProblem() {
+        try {
+          const res = await axios.get(`/api/problems/${id}`, {
+            baseURL: "http://localhost:8000",
+          });
+          const p = res.data;
+          setTitle(p.title);
+          setUrl(p.url);
+          setDifficulty(p.difficulty);
+          setTags(p.tags.join(", "));
+          setNotes(p.notes || "");
+          setRetryLater(p.retry_later || "");
+          setDateSolved(p.date_solved || new Date().toLocaleDateString("en-CA"));
+          setSolutions(p.solutions || [{ code: "", language: "javascript" }]);
+        } catch (err) {
+          console.error("❌ Error fetching problem:", err);
+        }
+      }
+  
+      fetchProblem();
     }
-    fetchProblem();
   }, [id]);
+  // Save draft to sessionStorage every 500ms
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      const draft = {
+        title,
+        url,
+        difficulty,
+        tags,
+        notes,
+        retryLater,
+        dateSolved,
+        solutions,
+      };
+      sessionStorage.setItem(`editProblemDraft-${id}`, JSON.stringify(draft));
+    }, 500);
+  
+    return () => clearTimeout(timeout);
+  }, [title, url, difficulty, tags, notes, retryLater, dateSolved, solutions, id]);
 
   const handleSolutionChange = (index, value) => {
     const updated = [...solutions];
@@ -84,13 +156,28 @@ export default function EditProblem() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!title.trim() || !url.trim() || !difficulty || !retryLater) {
-      setFormError("Please fill in all required fields: title, URL, difficulty, and retry later.");
+    const newMissingFields = {
+      title: !title.trim(),
+      url: !url.trim() || !isValidUrl(url),
+      difficulty: !difficulty,
+      retryLater: !retryLater,
+    };
+    
+    setMissingFields(newMissingFields);
+    
+    const missing = Object.entries(newMissingFields)
+      .filter(([_, isMissing]) => isMissing)
+      .map(([field]) => field[0].toUpperCase() + field.slice(1));
+    
+    if (missing.length > 0) {
+      setFormError(`Please fill in the following required field${missing.length > 1 ? "s" : ""}: ${missing.join(", ")}.`);
       return;
     }
 
     setFormError("");
-
+    const filteredSolutions = solutions.filter(
+      (sol) => sol.code.trim() !== ""
+    );
     const problemData = {
       user_id: user.uid,
       title,
@@ -98,7 +185,7 @@ export default function EditProblem() {
       difficulty,
       tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
       notes,
-      solutions,
+      solutions:filteredSolutions,
       date_solved: dateSolved,
       retry_later: retryLater,
     };
@@ -108,33 +195,71 @@ export default function EditProblem() {
         baseURL: "http://localhost:8000",
       });
       console.log("✅ Problem updated:", res.data);
+      sessionStorage.removeItem(`editProblemDraft-${id}`); // Clear draft on success
       navigate(`/problems/${id}`);
     } catch (err) {
-      console.error("❌ Error updating problem:", err);
+      if (err.response?.status === 409) {
+        const data = err.response.data;
+        setFormError(data.detail || "A problem already exists.");
+        setConflicts(data.conflicts || []);
+      } else {
+        setFormError("Something went wrong while saving the problem.");
+        setConflicts([]);
+      }
     }
   };
 
   return (
     <div className="max-w-3xl mx-auto py-10 px-4 bg-white dark:bg-zinc-900 text-black dark:text-white">
-      <h1 className="text-3xl font-bold mb-6">✏️ Edit Problem</h1>
+      <div className="flex items-center gap-2 mb-6">
+        <Pencil className="h-6 w-6 text-foreground" strokeWidth={2.5} />
+        <h1 className="text-3xl font-bold">Edit Problem</h1>
+      </div>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Title */}
-        <div>
-          <Label htmlFor="title" className="text-lg mb-1 block">Problem Title</Label>
-          <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} 
+        <div className="relative">
+          <Label htmlFor="title" className="flex items-center gap-2 text-lg mb-1">
+            Problem Title
+            {missingFields.title && <AlertCircle className="h-5 w-5 text-red-500" />}
+          </Label>
+          <Input id="title" value={title} placeholder="e.g. Two Sum" onChange={(e) => setTitle(e.target.value)} 
           className="text-xl font-semibold border-none shadow-none focus-visible:ring-0 bg-background text-foreground placeholder:text-neutral-400"/>
         </div>
 
         {/* URL */}
-        <div>
-          <Label htmlFor="url" className="text-lg mb-1 block">Problem URL</Label>
-          <Input id="url" value={url} onChange={(e) => setUrl(e.target.value)} 
-          className="text-xl font-semibold border-none shadow-none focus-visible:ring-0 bg-background text-foreground placeholder:text-neutral-400"/>
+        <div className="relative">
+          <Label htmlFor="url" className="flex items-center gap-2 text-lg mb-1">
+            Problem URL
+            {missingFields.url && <AlertCircle className="h-5 w-5 text-red-500" />}
+          </Label>
+          <Input id="url" value={url} 
+          placeholder="https://leetcode.com/problems/two-sum"
+          onChange={(e) => {
+            const val = e.target.value;
+            setUrl(val);
+
+            // Validate only if not empty
+            setMissingFields((prev) => ({
+              ...prev,
+              url: val.trim() !== "" && !isValidUrl(val.trim()),
+            }));
+          }}
+          className={`w-full text-xl font-semibold border-none shadow-none focus-visible:ring-0 bg-background text-foreground placeholder:text-neutral-400 ${
+            missingFields.url ? "ring-1 ring-red-500" : ""
+          }`}
+          />
+
+          {missingFields.url && (
+            <p className="text-sm text-red-500 mt-1">Please enter a valid URL.</p>
+          )} 
         </div>
 
         {/* Difficulty */}
-        <div>
-          <Label className="text-lg mb-1 block">Difficulty</Label>
+        <div className="relative">
+          <Label className="flex items-center gap-2 text-lg mb-1">
+            Difficulty
+            {missingFields.difficulty && <AlertCircle className="h-5 w-5 text-red-500" />}
+          </Label>
           <div className="flex gap-2">
             {["Easy", "Medium", "Hard"].map((level) => (
               <button
@@ -156,7 +281,7 @@ export default function EditProblem() {
         {/* Tags */}
         <div>
           <Label htmlFor="tags" className="text-lg mb-1 block">Tags</Label>
-          <Input id="tags" value={tags} onChange={(e) => setTags(e.target.value)} 
+          <Input id="tags" value={tags} placeholder="e.g. array, hash map" onChange={(e) => setTags(e.target.value)} 
           className="text-xl font-semibold border-none shadow-none focus-visible:ring-0 bg-background text-foreground placeholder:text-neutral-400"/>
         </div>
 
@@ -200,8 +325,11 @@ export default function EditProblem() {
         <DateSolvedInput dateSolved={dateSolved} setDateSolved={setDateSolved} className="cursor-pointer" />
 
         {/* Retry Later */}
-        <div>
-          <Label className="text-lg mb-1 block">Retry Later?</Label>
+        <div className="relative">
+          <Label className="flex items-center gap-2 text-lg mb-1">
+            Retry Later?
+            {missingFields.retryLater && <AlertCircle className="h-5 w-5 text-red-500" />}
+          </Label>
           <div className="flex gap-2">
             {["Yes", "No"].map((option) => (
               <button
@@ -226,7 +354,24 @@ export default function EditProblem() {
             {formError}
           </div>
         )}
-
+        {conflicts.length > 0 && (
+          <div className="bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 border border-yellow-300 dark:border-yellow-600 px-4 py-2 rounded-md mt-4 space-y-1">
+            {conflicts.map((conflict) => (
+              <div key={conflict.field} className="flex items-center justify-between">
+                <span>
+                  A problem with this <strong>{conflict.field}</strong> already exists.
+                </span>
+                <a 
+                  href={`/problems/${conflict.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+              </div>
+            ))}
+          </div>
+        )}
         {/* Submit */}
         <Button type="submit" className="w-full bg-black text-white cursor-pointer text-lg dark:bg-white dark:text-black">
           Save Changes

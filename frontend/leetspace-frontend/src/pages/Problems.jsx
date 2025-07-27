@@ -46,6 +46,7 @@ export default function Problems() {
     }
   }, [user]);
   const handleEdit = (problem) => {
+    sessionStorage.setItem(`editProblemIntent-${problem.id}`, "fresh");
     navigate(`/edit-problem/${problem.id}`);
   };
 

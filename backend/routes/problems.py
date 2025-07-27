@@ -8,6 +8,7 @@ from schemas.problem import ProblemCreate, ProblemInDB, ProblemUpdate
 from bson import ObjectId
 from datetime import datetime
 from collections import Counter
+from fastapi.responses import JSONResponse
 
 
 router = APIRouter()
@@ -19,7 +20,26 @@ collection = db["problems"]
 @router.post("/", response_model=ProblemInDB)
 async def add_problem(problem: ProblemCreate):
     problem_dict = jsonable_encoder(problem)
-    # problem_dict["date_solved"] = problem_dict["date_solved"].isoformat()
+
+    conflicts = []
+
+    title_conflict = await collection.find_one({"title": problem_dict["title"]})
+    if title_conflict:
+        conflicts.append({"field": "title", "id": str(title_conflict["_id"])})
+
+    url_conflict = await collection.find_one({"url": problem_dict["url"]})
+    if url_conflict:
+        conflicts.append({"field": "url", "id": str(url_conflict["_id"])})
+
+    if conflicts:
+        return JSONResponse(
+            status_code=409,
+            content={
+                "detail": "Conflict on title or URL",
+                "conflicts": conflicts
+            }
+        )
+
     result = await collection.insert_one(problem_dict)
     return ProblemInDB(id=str(result.inserted_id), **problem_dict)
 
@@ -122,18 +142,49 @@ async def get_problem(id: str):
 @router.put("/{id}", response_model=ProblemInDB)
 async def update_problem(id: str, update: ProblemUpdate):
     update_data = {k: v for k, v in update.dict().items() if v is not None}
+
     if "url" in update_data:
         update_data["url"] = str(update_data["url"])
+
     if "date_solved" in update_data:
         update_data["date_solved"] = update_data["date_solved"].isoformat()
+
+    conflicts = []
+
+    if "title" in update_data:
+        existing_title = await collection.find_one({
+            "title": update_data["title"],
+            "_id": {"$ne": ObjectId(id)}
+        })
+        if existing_title:
+            conflicts.append({"field": "title", "id": str(existing_title["_id"])})
+
+    if "url" in update_data:
+        existing_url = await collection.find_one({
+            "url": update_data["url"],
+            "_id": {"$ne": ObjectId(id)}
+        })
+        if existing_url:
+            conflicts.append({"field": "url", "id": str(existing_url["_id"])})
+
+    if conflicts:
+        return JSONResponse(
+            status_code=409,
+            content={
+                "detail": "Conflict on title or URL",
+                "conflicts": conflicts
+            }
+        )
 
     result = await collection.find_one_and_update(
         {"_id": ObjectId(id)},
         {"$set": update_data},
-        return_document=True  # Return the updated document
+        return_document=True
     )
+
     if not result:
         raise HTTPException(status_code=404, detail="Problem not found")
+
     result["id"] = str(result["_id"])
     del result["_id"]
     return ProblemInDB(**result)

@@ -2,6 +2,7 @@ import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 import { cpp } from "@codemirror/lang-cpp";
+import { java } from "@codemirror/lang-java";
 import { githubDark } from "@uiw/codemirror-theme-github";
 import { githubLight } from "@uiw/codemirror-theme-github";
 
@@ -9,6 +10,7 @@ const languageExtensions = {
   javascript,
   python,
   cpp,
+  java
 };
 
 export default function CodeEditor({
@@ -32,6 +34,7 @@ export default function CodeEditor({
           <option value="javascript">JavaScript</option>
           <option value="python">Python</option>
           <option value="cpp">C++</option>
+          <option value="java">Java</option>
         </select>
       </div>
 
