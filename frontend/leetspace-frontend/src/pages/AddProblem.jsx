@@ -17,10 +17,17 @@ export default function AddProblem() {
   const [difficulty, setDifficulty] = useState("");
   const [tags, setTags] = useState("");
   const [notes, setNotes] = useState("");
-  const corrected = new Date();
-  corrected.setDate(corrected.getDate() + 1); // ✅ add 1 day
-  const formatted = corrected.toLocaleDateString("en-CA"); // "YYYY-MM-DD"
-  const [dateSolved, setDateSolved] = useState(formatted);
+  
+  // Helper function to get today's date as YYYY-MM-DD without timezone issues
+  const getTodayAsYYYYMMDD = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  
+  const [dateSolved, setDateSolved] = useState(getTodayAsYYYYMMDD());
   const [retryLater, setRetryLater] = useState("");
   const isDark = document.documentElement.classList.contains("dark");
   const [theme, setTheme] = useState(
