@@ -6,7 +6,22 @@ import { format,parse } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 
 export default function DateSolvedInput({ dateSolved, setDateSolved }) {
-  const parsedDate = dateSolved ? new Date(dateSolved) : new Date();
+    // Helper function to parse YYYY-MM-DD string safely in local timezone
+    const parseLocalDate = (dateString) => {
+      if (!dateString) return new Date();
+      const [year, month, day] = dateString.split('-').map(Number);
+      return new Date(year, month - 1, day); // month is 0-indexed
+    };
+  
+    // Helper function to format date as YYYY-MM-DD without timezone issues
+    const formatDateToYYYYMMDD = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+  
+    const parsedDate = dateSolved ? parseLocalDate(dateSolved) : new Date();
 
   return (
     <div className="cursor-pointer grid gap-2">
@@ -28,12 +43,10 @@ export default function DateSolvedInput({ dateSolved, setDateSolved }) {
       >
         <Calendar
             mode="single"
-            selected={dateSolved ? parse(dateSolved, "yyyy-MM-dd", new Date()) : undefined}
+            selected={dateSolved ? parseLocalDate(dateSolved) : undefined}
             onSelect={(date) => {
               if (date) {
-                const corrected = new Date(date);
-                corrected.setDate(corrected.getDate() + 1); // ✅ add 1 day
-                const formatted = corrected.toLocaleDateString("en-CA"); // "YYYY-MM-DD"
+                const formatted = formatDateToYYYYMMDD(date);
                 setDateSolved(formatted);
               }
             }}
