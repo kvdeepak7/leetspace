@@ -2,10 +2,18 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { format,parse } from "date-fns";
+import { format, parse } from "date-fns";
 
 export default function DateSolvedInput({ dateSolved, setDateSolved }) {
   const parsedDate = dateSolved ? new Date(dateSolved) : new Date();
+
+  // Helper function to format date as YYYY-MM-DD without timezone issues
+  const formatDateToYYYYMMDD = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   return (
     <div className="cursor-pointer grid gap-2">
@@ -25,9 +33,8 @@ export default function DateSolvedInput({ dateSolved, setDateSolved }) {
             selected={dateSolved ? parse(dateSolved, "yyyy-MM-dd", new Date()) : undefined}
             onSelect={(date) => {
               if (date) {
-                const corrected = new Date(date);
-                corrected.setDate(corrected.getDate() + 1); // ✅ add 1 day
-                const formatted = corrected.toLocaleDateString("en-CA"); // "YYYY-MM-DD"
+                // Format the date directly without timezone manipulation
+                const formatted = formatDateToYYYYMMDD(date);
                 setDateSolved(formatted);
               }
             }}

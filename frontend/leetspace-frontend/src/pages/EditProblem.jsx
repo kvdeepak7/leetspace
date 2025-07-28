@@ -28,6 +28,15 @@ export default function EditProblem() {
   const isDark = document.documentElement.classList.contains("dark");
   const [theme, setTheme] = useState(isDark ? "dark" : "light");
 
+  // Helper function to get today's date as YYYY-MM-DD without timezone issues
+  const getTodayAsYYYYMMDD = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   useEffect(() => {
     const observer = new MutationObserver(() => {
       const dark = document.documentElement.classList.contains("dark");
@@ -50,7 +59,7 @@ export default function EditProblem() {
         setTags(p.tags.join(", "));
         setNotes(p.notes || "");
         setRetryLater(p.retry_later || "");
-        setDateSolved(p.date_solved || new Date().toLocaleDateString("en-CA"));
+        setDateSolved(p.date_solved || getTodayAsYYYYMMDD());
         setSolutions(p.solutions || [{ code: "", language: "javascript" }]);
       } catch (err) {
         console.error("❌ Error fetching problem:", err);

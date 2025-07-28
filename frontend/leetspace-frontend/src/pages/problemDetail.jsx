@@ -22,6 +22,19 @@ export default function ProblemDetail() {
   const [selectedProblem, setSelectedProblem] = useState(null);
   const navigate = useNavigate();
 
+  // Helper function to format date properly without timezone issues
+  const formatDateDisplay = (dateString) => {
+    if (!dateString) return "";
+    // Parse as YYYY-MM-DD and format for display
+    const [year, month, day] = dateString.split('-');
+    const date = new Date(year, month - 1, day); // month is 0-indexed
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    });
+  };
+
   useEffect(() => {
     const observer = new MutationObserver(() => {
       const isDark = document.documentElement.classList.contains("dark");
@@ -145,7 +158,7 @@ export default function ProblemDetail() {
         <div className="flex items-center gap-3 text-sm">
           <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${difficultyColor}`}>{problem.difficulty}</span>
           <span className="text-muted-foreground dark:text-gray-400">•</span>
-          <span className="text-muted-foreground dark:text-gray-400">{new Date(problem.date_solved).toLocaleDateString()}</span>
+          <span className="text-muted-foreground dark:text-gray-400">{formatDateDisplay(problem.date_solved)}</span>
         </div>
       </div>
 
