@@ -14,15 +14,18 @@ const api = axios.create({
 // Function to get Firebase ID token
 export const getIdToken = async () => {
   const user = auth.currentUser;
+  console.log('🔍 Checking current user:', user ? `${user.email} (${user.uid})` : 'null');
+  
   if (!user) {
     throw new Error('User not authenticated');
   }
   
   try {
     const idToken = await user.getIdToken();
+    console.log('✅ Got ID token:', idToken.substring(0, 50) + '...');
     return idToken;
   } catch (error) {
-    console.error('Error getting ID token:', error);
+    console.error('❌ Error getting ID token:', error);
     throw new Error('Failed to get authentication token');
   }
 };
@@ -33,9 +36,11 @@ api.interceptors.request.use(
     try {
       const idToken = await getIdToken();
       config.headers.Authorization = `Bearer ${idToken}`;
+      console.log('✅ Added auth token to request:', config.url);
     } catch (error) {
-      console.error('Failed to add auth token:', error);
-      // Don't throw here, let the request go through and let backend handle auth error
+      console.error('❌ Failed to add auth token:', error);
+      // Throw error to prevent request from proceeding without auth
+      throw new Error('Authentication required but no valid token available');
     }
     return config;
   },

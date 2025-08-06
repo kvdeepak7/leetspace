@@ -1,9 +1,9 @@
 # main.py
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from db.mongo import db
-from routes import problems, analytics
+from routes import problems, analytics, problems_debug
 from auth.dependencies import get_current_active_user
 
 app = FastAPI()
@@ -20,6 +20,7 @@ app.add_middleware(
 # Include routers
 app.include_router(problems.router, prefix="/api/problems", tags=["Problems"])
 app.include_router(analytics.router, prefix="/api/analytics", tags=["Analytics"])
+app.include_router(problems_debug.router, prefix="/api/problems", tags=["Problems Debug"])
 
 @app.get("/")
 def root():
@@ -39,6 +40,17 @@ async def test_auth(current_user: dict = Depends(get_current_active_user)):
             "email_verified": current_user["email_verified"]
         }
     }
+
+@app.get("/debug-auth")
+async def debug_auth(authorization: str = Header(None)):
+    return {
+        "authorization_header": authorization,
+        "message": "Debug endpoint to check headers"
+    }
+
+@app.get("/simple-test")
+async def simple_test():
+    return {"message": "This endpoint has no authentication", "status": "working"}
 
 # @app.get("/")
 # def root():
