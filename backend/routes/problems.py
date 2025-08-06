@@ -5,6 +5,8 @@ from fastapi.encoders import jsonable_encoder
 from typing import List, Optional
 from db.mongo import db
 from schemas.problem import ProblemCreate, ProblemInDB, ProblemUpdate
+from schemas.user import UserInDB
+from auth.dependencies import get_current_active_user
 from bson import ObjectId
 from datetime import datetime
 from collections import Counter
@@ -18,16 +20,28 @@ collection = db["problems"]
 # POST a problem for a user
 
 @router.post("/", response_model=ProblemInDB)
-async def add_problem(problem: ProblemCreate):
+async def add_problem(
+    problem: ProblemCreate, 
+    current_user: UserInDB = Depends(get_current_active_user)
+):
     problem_dict = jsonable_encoder(problem)
+    # Override user_id with current authenticated user
+    problem_dict["user_id"] = current_user.id
 
     conflicts = []
 
-    title_conflict = await collection.find_one({"title": problem_dict["title"]})
+    # Check for conflicts only within the current user's problems
+    title_conflict = await collection.find_one({
+        "title": problem_dict["title"], 
+        "user_id": current_user.id
+    })
     if title_conflict:
         conflicts.append({"field": "title", "id": str(title_conflict["_id"])})
 
-    url_conflict = await collection.find_one({"url": problem_dict["url"]})
+    url_conflict = await collection.find_one({
+        "url": problem_dict["url"], 
+        "user_id": current_user.id
+    })
     if url_conflict:
         conflicts.append({"field": "url", "id": str(url_conflict["_id"])})
 
@@ -35,7 +49,7 @@ async def add_problem(problem: ProblemCreate):
         return JSONResponse(
             status_code=409,
             content={
-                "detail": "Conflict on title or URL",
+                "detail": "Conflict on title or URL in your problems",
                 "conflicts": conflicts
             }
         )
@@ -47,7 +61,7 @@ async def add_problem(problem: ProblemCreate):
 
 @router.get("/", response_model=List[ProblemInDB])
 async def get_problems(
-    user_id: str,
+    current_user: UserInDB = Depends(get_current_active_user),
     difficulty: Optional[str] = None,
     tags: Optional[List[str]] = Query(None),
     retry_later: Optional[str] = None,
@@ -55,7 +69,8 @@ async def get_problems(
     sort_by: Optional[str] = "date_solved",
     order: Optional[str] = "desc",
 ):
-    query = {"user_id": user_id}
+    # Only get problems for the authenticated user
+    query = {"user_id": current_user.id}
 
     if difficulty:
         query["difficulty"] = difficulty
