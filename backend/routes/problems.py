@@ -5,7 +5,6 @@ from fastapi.encoders import jsonable_encoder
 from typing import List, Optional
 from db.mongo import db
 from schemas.problem import ProblemCreate, ProblemInDB, ProblemUpdate
-from schemas.user import UserInDB
 from auth.dependencies import get_current_active_user
 from bson import ObjectId
 from datetime import datetime
@@ -22,25 +21,25 @@ collection = db["problems"]
 @router.post("/", response_model=ProblemInDB)
 async def add_problem(
     problem: ProblemCreate, 
-    current_user: UserInDB = Depends(get_current_active_user)
+    current_user: dict = Depends(get_current_active_user)
 ):
     problem_dict = jsonable_encoder(problem)
-    # Override user_id with current authenticated user
-    problem_dict["user_id"] = current_user.id
+    # Override user_id with current authenticated user's Firebase UID
+    problem_dict["user_id"] = current_user["uid"]
 
     conflicts = []
 
     # Check for conflicts only within the current user's problems
     title_conflict = await collection.find_one({
         "title": problem_dict["title"], 
-        "user_id": current_user.id
+        "user_id": current_user["uid"]
     })
     if title_conflict:
         conflicts.append({"field": "title", "id": str(title_conflict["_id"])})
 
     url_conflict = await collection.find_one({
         "url": problem_dict["url"], 
-        "user_id": current_user.id
+        "user_id": current_user["uid"]
     })
     if url_conflict:
         conflicts.append({"field": "url", "id": str(url_conflict["_id"])})
@@ -61,7 +60,7 @@ async def add_problem(
 
 @router.get("/", response_model=List[ProblemInDB])
 async def get_problems(
-    current_user: UserInDB = Depends(get_current_active_user),
+    current_user: dict = Depends(get_current_active_user),
     difficulty: Optional[str] = None,
     tags: Optional[List[str]] = Query(None),
     retry_later: Optional[str] = None,
@@ -70,7 +69,7 @@ async def get_problems(
     order: Optional[str] = "desc",
 ):
     # Only get problems for the authenticated user
-    query = {"user_id": current_user.id}
+    query = {"user_id": current_user["uid"]}
 
     if difficulty:
         query["difficulty"] = difficulty
@@ -97,10 +96,10 @@ async def get_problems(
 
 # GET stats
 @router.get("/stats")
-async def get_stats(user_id: str):
+async def get_stats(current_user: dict = Depends(get_current_active_user)):
     try:
-        # 1. Get all problems for the user
-        cursor = collection.find({"user_id": user_id})
+        # 1. Get all problems for the authenticated user
+        cursor = collection.find({"user_id": current_user["uid"]})
         problems = []
         async for doc in cursor:
             problems.append(doc)
@@ -144,8 +143,11 @@ async def get_stats(user_id: str):
 # GET a problem
 
 @router.get("/{id}", response_model=ProblemInDB)
-async def get_problem(id: str):
-    doc = await collection.find_one({"_id": ObjectId(id)})
+async def get_problem(id: str, current_user: dict = Depends(get_current_active_user)):
+    doc = await collection.find_one({
+        "_id": ObjectId(id),
+        "user_id": current_user["uid"]  # Ensure user can only access their own problems
+    })
     if not doc:
         raise HTTPException(status_code=404, detail="Problem not found")
     doc["id"] = str(doc["_id"])
@@ -155,7 +157,7 @@ async def get_problem(id: str):
 # PUT update a problem
 
 @router.put("/{id}", response_model=ProblemInDB)
-async def update_problem(id: str, update: ProblemUpdate):
+async def update_problem(id: str, update: ProblemUpdate, current_user: dict = Depends(get_current_active_user)):
     update_data = {k: v for k, v in update.dict().items() if v is not None}
 
     if "url" in update_data:
@@ -169,6 +171,7 @@ async def update_problem(id: str, update: ProblemUpdate):
     if "title" in update_data:
         existing_title = await collection.find_one({
             "title": update_data["title"],
+            "user_id": current_user["uid"],
             "_id": {"$ne": ObjectId(id)}
         })
         if existing_title:
@@ -177,6 +180,7 @@ async def update_problem(id: str, update: ProblemUpdate):
     if "url" in update_data:
         existing_url = await collection.find_one({
             "url": update_data["url"],
+            "user_id": current_user["uid"],
             "_id": {"$ne": ObjectId(id)}
         })
         if existing_url:
@@ -192,7 +196,7 @@ async def update_problem(id: str, update: ProblemUpdate):
         )
 
     result = await collection.find_one_and_update(
-        {"_id": ObjectId(id)},
+        {"_id": ObjectId(id), "user_id": current_user["uid"]},
         {"$set": update_data},
         return_document=True
     )
@@ -206,8 +210,11 @@ async def update_problem(id: str, update: ProblemUpdate):
 
 # Delete a problem
 @router.delete("/{id}")
-async def delete_problem(id: str):
-    result = await collection.delete_one({"_id": ObjectId(id)})
+async def delete_problem(id: str, current_user: dict = Depends(get_current_active_user)):
+    result = await collection.delete_one({
+        "_id": ObjectId(id), 
+        "user_id": current_user["uid"]
+    })
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Problem not found")
     return {"detail": "Problem deleted successfully"}
