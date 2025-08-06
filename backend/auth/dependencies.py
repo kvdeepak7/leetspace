@@ -3,7 +3,7 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from typing import Optional
-from auth.firebase_auth import verify_firebase_token
+from auth.firebase_auth_dev import verify_firebase_token
 
 security = HTTPBearer()
 
@@ -21,12 +21,13 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     # Verify Firebase ID token and get user info
     user_info = await verify_firebase_token(credentials.credentials)
     
-    # Check if email is verified (optional, you can remove this check if not needed)
-    if not user_info.get("email_verified", False):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Email not verified. Please verify your email address.",
-        )
+    # Check if email is verified (disabled for development)
+    # Uncomment the lines below if you want to require email verification
+    # if not user_info.get("email_verified", False):
+    #     raise HTTPException(
+    #         status_code=status.HTTP_401_UNAUTHORIZED,
+    #         detail="Email not verified. Please verify your email address.",
+    #     )
     
     return user_info
 

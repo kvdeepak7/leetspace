@@ -6,8 +6,8 @@ import DateSolvedInput from "@/components/dateSelector.jsx";
 import { useState, useEffect } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import CodeEditor from "@/components/CodeEditor";
-import axios from "axios";
 import { useAuth } from "@/context/AuthContext";
+import { problemsAPI } from "@/lib/api";
 import { useParams, useNavigate } from "react-router-dom";
 import { AlertCircle,Pencil,ExternalLink } from "lucide-react";
 import { useLocation } from "react-router-dom";
@@ -100,9 +100,7 @@ export default function EditProblem() {
       // Fallback: fetch from API
       async function fetchProblem() {
         try {
-          const res = await axios.get(`/api/problems/${id}`, {
-            baseURL: "http://localhost:8000",
-          });
+          const res = await problemsAPI.getProblem(id);
           const p = res.data;
           setTitle(p.title);
           setUrl(p.url);
@@ -187,7 +185,6 @@ export default function EditProblem() {
       (sol) => sol.code.trim() !== ""
     );
     const problemData = {
-      user_id: user.uid,
       title,
       url,
       difficulty,
@@ -199,9 +196,7 @@ export default function EditProblem() {
     };
 
     try {
-      const res = await axios.put(`/api/problems/${id}`, problemData, {
-        baseURL: "http://localhost:8000",
-      });
+      const res = await problemsAPI.updateProblem(id, problemData);
       console.log("✅ Problem updated:", res.data);
       sessionStorage.removeItem(`editProblemDraft-${id}`); // Clear draft on success
       navigate(`/problems/${id}`);

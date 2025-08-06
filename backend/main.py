@@ -1,9 +1,10 @@
 # main.py
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from db.mongo import db
 from routes import problems, analytics
+from auth.dependencies import get_current_active_user
 
 app = FastAPI()
 
@@ -27,6 +28,17 @@ def root():
 @app.get("/health")
 def health_check():
     return {"status": "healthy", "auth": "firebase"}
+
+@app.get("/test-auth")
+async def test_auth(current_user: dict = Depends(get_current_active_user)):
+    return {
+        "message": "Authentication successful!",
+        "user": {
+            "uid": current_user["uid"],
+            "email": current_user["email"],
+            "email_verified": current_user["email_verified"]
+        }
+    }
 
 # @app.get("/")
 # def root():
