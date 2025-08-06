@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from "@/context/AuthContext";
-import axios from 'axios';
+import { analyticsAPI } from '@/lib/api';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { ActivityHeatmap } from '@/components/dashboard/ActivityHeatmap';
 import { WeaknessCard } from '@/components/dashboard/WeaknessCard';
@@ -25,14 +25,11 @@ export default function Dashboard() {
 
   useEffect(() => {
     const fetchDashboardData = async () => {
-      if (!user?.uid) return;
+      if (!user) return;
 
       try {
         setLoading(true);
-        const response = await axios.get('/api/analytics/dashboard', {
-          baseURL: 'http://localhost:8000',
-          params: { user_id: user.uid }
-        });
+        const response = await analyticsAPI.getDashboard();
         setData(response.data);
       } catch (err) {
         console.error('Error fetching dashboard data:', err);

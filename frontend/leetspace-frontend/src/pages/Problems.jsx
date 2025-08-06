@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useAuth } from "@/context/AuthContext";
 import { DataTable } from "@/components/data-table/data-table";
 import { columns } from "@/components/data-table/columns";
 import { DeleteProblemDialog } from "@/components/DeleteProblemDialog";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { problemsAPI } from "@/lib/api";
 
 // import { problems } from "@/components/data-table/types"; // or from Firebase later
 
@@ -23,25 +23,22 @@ export default function Problems() {
   // const user = "abc123";
   const fetchProblems = async () => {
     try {
-      const res = await axios.get(`/api/problems`, {
-        baseURL: "http://localhost:8000",
-        params: {
-          user_id: user.uid,
-          sort_by: "date_solved",
-          order: "desc",
-        },
+      const res = await problemsAPI.getProblems({
+        sort_by: "date_solved",
+        order: "desc",
       });
       setProblems(res.data);
       console.log(res.data);
     } catch (error) {
       console.error("Error fetching problems:", error);
+      toast.error("Failed to load problems. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (user?.uid) {
+    if (user) {
       fetchProblems();
     }
   }, [user]);
@@ -57,13 +54,11 @@ export default function Problems() {
 
   const confirmDelete = async (problemId) => {
     try {
-      await axios.delete(`/api/problems/${problemId}`, {
-        baseURL: "http://localhost:8000",
-      });
+      await problemsAPI.deleteProblem(problemId);
       
       // Remove the problem from the local state
       setProblems(problems.filter(p => p.id !== problemId));
-      toast.success("Problem deleted succesfully", {
+      toast.success("Problem deleted successfully", {
         style: {
           backgroundColor: theme === 'dark' ? '#1e1e1e' : '#ffffff',
           color: theme === 'dark' ? '#ffffff' : '#000000',
@@ -84,16 +79,7 @@ export default function Problems() {
 
   const updateProblem = async (problemId, updateData) => {
     try {
-      await axios.put(
-        `/api/problems/${problemId}`,
-        updateData,
-        {
-          baseURL: "http://localhost:8000",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await problemsAPI.updateProblem(problemId, updateData);
       
       // Refresh the problems list
       await fetchProblems();

@@ -1,13 +1,14 @@
 # main.py
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from db.mongo import db
-from routes import problems, analytics  # Optional for now if not created
+from routes import problems, analytics, problems_debug
+from auth.dependencies import get_current_active_user
 
 app = FastAPI()
 
-# Optional CORS setup for frontend
+# CORS setup for frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Replace with frontend URL in production
@@ -16,9 +17,40 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routers (optional if not made yet)
+# Include routers
 app.include_router(problems.router, prefix="/api/problems", tags=["Problems"])
 app.include_router(analytics.router, prefix="/api/analytics", tags=["Analytics"])
+app.include_router(problems_debug.router, prefix="/api/problems", tags=["Problems Debug"])
+
+@app.get("/")
+def root():
+    return {"message": "Welcome to LeetSpace API with Firebase Auth 🚀🔐"}
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy", "auth": "firebase"}
+
+@app.get("/test-auth")
+async def test_auth(current_user: dict = Depends(get_current_active_user)):
+    return {
+        "message": "Authentication successful!",
+        "user": {
+            "uid": current_user["uid"],
+            "email": current_user["email"],
+            "email_verified": current_user["email_verified"]
+        }
+    }
+
+@app.get("/debug-auth")
+async def debug_auth(authorization: str = Header(None)):
+    return {
+        "authorization_header": authorization,
+        "message": "Debug endpoint to check headers"
+    }
+
+@app.get("/simple-test")
+async def simple_test():
+    return {"message": "This endpoint has no authentication", "status": "working"}
 
 # @app.get("/")
 # def root():
