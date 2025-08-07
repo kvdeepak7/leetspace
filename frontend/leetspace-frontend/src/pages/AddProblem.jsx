@@ -6,8 +6,8 @@ import DateSolvedInput from "@/components/dateSelector.jsx";
 import { useState,useEffect } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import CodeEditor from "@/components/CodeEditor";
-import axios from "axios";
 import { useAuth } from "@/context/AuthContext";
+import { problemsAPI } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
 import { AlertCircle,Plus,ExternalLink } from "lucide-react";
 
@@ -164,7 +164,6 @@ export default function AddProblem() {
       (sol) => sol.code.trim() !== ""
     );
     const problemData = {
-      user_id: user.uid, // ✅ required by backend
       title,
       url,
       difficulty,
@@ -176,9 +175,7 @@ export default function AddProblem() {
     };
 
     try {
-      const res = await axios.post("/api/problems/", problemData, {
-        baseURL: "http://localhost:8000",
-      });
+      const res = await problemsAPI.createProblem(problemData);
       console.log("✅ Problem saved:", res.data);
       sessionStorage.removeItem("addProblemDraft");
       navigate(`/problems/${res.data.id}`);
