@@ -22,7 +22,7 @@ class ProblemBase(BaseModel):
 
 
 class ProblemCreate(ProblemBase):
-    user_id: str = Field(..., example="abc123")
+    pass
 
 
 class ProblemUpdate(BaseModel):
