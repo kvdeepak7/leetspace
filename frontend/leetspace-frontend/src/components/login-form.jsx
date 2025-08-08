@@ -9,7 +9,7 @@ import { validateEmail, validatePassword } from "@/lib/authService";
 import PasswordStrengthIndicator from "./PasswordStrengthIndicator";
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
 import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 
 export function LoginForm({ className, ...props }) {
   const [formData, setFormData] = useState({
@@ -36,7 +36,7 @@ export function LoginForm({ className, ...props }) {
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     if (urlParams.get('verified') === 'true') {
-      toast.success('Email verified successfully! You can now sign in.');
+      // Removed toast; rely on user seeing the sign-in form
     }
   }, [location]);
 
@@ -76,6 +76,32 @@ export function LoginForm({ className, ...props }) {
     }
   };
 
+  const applyResultErrorsToInputs = (code, message) => {
+    const nextErrors = {};
+    switch (code) {
+      case 'auth/user-not-found':
+      case 'auth/invalid-email':
+        nextErrors.email = message;
+        break;
+      case 'auth/wrong-password':
+      case 'auth/weak-password':
+      case 'auth/invalid-credential':
+        nextErrors.password = message;
+        break;
+      case 'auth/email-already-in-use':
+        nextErrors.email = message;
+        break;
+      case 'auth/too-many-requests':
+      case 'auth/network-request-failed':
+        nextErrors.email = message;
+        break;
+      default:
+        // Fallback to email field for unknown errors to keep errors at inputs only
+        nextErrors.email = message || 'Something went wrong. Please try again.';
+    }
+    setValidationErrors(nextErrors);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -90,17 +116,21 @@ export function LoginForm({ className, ...props }) {
           navigate(from, { replace: true });
         } else if (result.needsVerification) {
           setUnverifiedUser(result.user);
+        } else {
+          applyResultErrorsToInputs(result.code, result.error);
         }
       } else {
         const result = await signUp(formData.email, formData.password, formData.displayName);
         if (result.success) {
           setUnverifiedUser(result.user);
           setFormData({ email: "", password: "", displayName: "" });
+        } else {
+          applyResultErrorsToInputs(result.code, result.error);
         }
       }
     } catch (error) {
       console.error('Auth error:', error);
-      toast.error('An unexpected error occurred');
+      applyResultErrorsToInputs(error?.code, 'An unexpected error occurred');
     } finally {
       setLoading(false);
     }
@@ -113,10 +143,12 @@ export function LoginForm({ className, ...props }) {
       if (result.success) {
         const from = location.state?.from || "/";
         navigate(from, { replace: true });
+      } else {
+        applyResultErrorsToInputs(result.code, result.error);
       }
     } catch (error) {
       console.error('Google sign in error:', error);
-      toast.error('An unexpected error occurred with Google sign in');
+      applyResultErrorsToInputs(error?.code, 'Google sign-in failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -235,7 +267,7 @@ export function LoginForm({ className, ...props }) {
               <button
                 type="button"
                 onClick={handleForgotPasswordClick}
-                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"
+                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline cursor-pointer"
               >
                 Forgot password?
               </button>
@@ -255,7 +287,7 @@ export function LoginForm({ className, ...props }) {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors cursor-pointer"
             >
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
@@ -305,7 +337,7 @@ export function LoginForm({ className, ...props }) {
         <button
           type="button"
           onClick={toggleMode}
-          className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline font-medium"
+          className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline font-medium cursor-pointer"
         >
           {isLogin ? "Sign up" : "Sign in"}
         </button>

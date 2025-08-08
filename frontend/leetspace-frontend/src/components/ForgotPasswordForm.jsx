@@ -187,7 +187,7 @@ export function ForgotPasswordForm({ onBack, className, ...props }) {
         <button
           type="button"
           onClick={handleBackToLogin}
-          className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline font-medium"
+          className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline font-medium cursor-pointer"
         >
           <ArrowLeft className="h-3 w-3 inline mr-1" />
           Back to Sign In
