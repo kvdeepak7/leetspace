@@ -149,19 +149,16 @@ export const columns = (onEdit, onDelete) => [
       enableColumnFilter: true,
       filterFn: (row, id, value) => {
         if (value === undefined) return true;
-        console.log("Filtering by retry_later with value:", value,row);
         const rowValue = row.getValue(id);
-        // Handle different possible values for retry_later (boolean, string, etc.)
         const normalizedRowValue = rowValue === true || rowValue === "true" || rowValue === "Yes";
         const normalizedFilterValue = value === true;
         return normalizedRowValue === normalizedFilterValue;
       },
       cell: ({ row }) => {
         const retryLater = row.original.retry_later;
-        // Handle different possible values for retry_later (boolean, string, etc.)
         const shouldShowCheck = retryLater === true || retryLater === "true" || retryLater === "Yes";
         return (
-          <div className="flex items-center justify-center w-full h-full min-h-[2.5rem] leading-none">
+          <div className="flex items-center justify-center w-full h-10">
             {shouldShowCheck && (
               <Check className="h-5 w-5 text-green-500" />
             )}
@@ -169,7 +166,7 @@ export const columns = (onEdit, onDelete) => [
         );
       },
       meta: {
-        cellClass: "text-center align-middle", // we'll use this later
+        cellClass: "text-center align-middle w-24", // fixed width and center alignment
       }
     },
     {
