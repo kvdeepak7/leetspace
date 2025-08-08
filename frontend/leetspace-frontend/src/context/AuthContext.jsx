@@ -145,6 +145,8 @@ export const AuthProvider = ({ children }) => {
       if (result.success) {
         // Reload user to get updated data
         await AuthService.reloadUser();
+        // Ensure React context consumers re-render with updated user
+        setUser(auth.currentUser);
         return { success: true };
       } else {
         return { success: false, error: result.error };
@@ -189,6 +191,8 @@ export const AuthProvider = ({ children }) => {
   const reloadUser = useCallback(async () => {
     try {
       await AuthService.reloadUser();
+      // Refresh state with latest user instance
+      setUser(auth.currentUser);
       return { success: true };
     } catch (error) {
       console.error('Reload user error:', error);

@@ -13,7 +13,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { ThemeProvider } from "@/components/ThemeProvider";
 // import { AuthProvider } from "@/lib/useAuth";
 import { AuthProvider } from "@/context/AuthContext";
-// import { Toaster } from "sonner";
+import { Toaster } from "sonner";
 import "./index.css" 
 function AppWrapper() {
   return (
@@ -23,7 +23,16 @@ function AppWrapper() {
           <Router>
             <App />
           </Router>
-          {/* Removed Toaster as we handle errors inline near inputs */}
+          <Toaster 
+            position="top-right"
+            toastOptions={{
+              style: {
+                background: 'var(--background)',
+                color: 'var(--foreground)',
+                border: '1px solid var(--border)',
+              },
+            }}
+          />
         </div>
       </AuthProvider>
     </ThemeProvider>
