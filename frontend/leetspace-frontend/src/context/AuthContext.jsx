@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, useCallback } from "rea
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase"; // make sure this path is correct
 import AuthService from "@/lib/authService";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 
 const AuthContext = createContext();
 
@@ -29,16 +29,13 @@ export const AuthProvider = ({ children }) => {
     try {
       const result = await AuthService.signUpWithEmail(email, password, displayName);
       if (result.success) {
-        toast.success(result.message);
         return { success: true, user: result.user };
       } else {
-        toast.error(result.error);
-        return { success: false, error: result.error };
+        return { success: false, error: result.error, code: result.code };
       }
     } catch (error) {
       console.error('Sign up error:', error);
-      toast.error('An unexpected error occurred during sign up');
-      return { success: false, error: 'An unexpected error occurred' };
+      return { success: false, error: 'An unexpected error occurred', code: error?.code };
     } finally {
       setLoading(false);
     }
@@ -50,25 +47,22 @@ export const AuthProvider = ({ children }) => {
     try {
       const result = await AuthService.signInWithEmail(email, password);
       if (result.success) {
-        toast.success(result.message);
         return { success: true, user: result.user };
       } else {
         if (result.needsVerification) {
-          toast.error(result.error);
           return { 
             success: false, 
             error: result.error, 
             needsVerification: true,
-            user: result.user 
+            user: result.user,
+            code: result.code,
           };
         }
-        toast.error(result.error);
-        return { success: false, error: result.error };
+        return { success: false, error: result.error, code: result.code };
       }
     } catch (error) {
       console.error('Sign in error:', error);
-      toast.error('An unexpected error occurred during sign in');
-      return { success: false, error: 'An unexpected error occurred' };
+      return { success: false, error: 'An unexpected error occurred', code: error?.code };
     } finally {
       setLoading(false);
     }
@@ -80,20 +74,17 @@ export const AuthProvider = ({ children }) => {
     try {
       const result = await AuthService.signInWithGoogle();
       if (result.success) {
-        toast.success(result.message);
         return { 
           success: true, 
           user: result.user, 
           isNewUser: result.isNewUser 
         };
       } else {
-        toast.error(result.error);
-        return { success: false, error: result.error };
+        return { success: false, error: result.error, code: result.code };
       }
     } catch (error) {
       console.error('Google sign in error:', error);
-      toast.error('An unexpected error occurred during Google sign in');
-      return { success: false, error: 'An unexpected error occurred' };
+      return { success: false, error: 'An unexpected error occurred', code: error?.code };
     } finally {
       setLoading(false);
     }
@@ -104,15 +95,12 @@ export const AuthProvider = ({ children }) => {
     try {
       const result = await AuthService.sendEmailVerification();
       if (result.success) {
-        toast.success(result.message);
         return { success: true };
       } else {
-        toast.error(result.error);
         return { success: false, error: result.error };
       }
     } catch (error) {
       console.error('Email verification error:', error);
-      toast.error('Failed to send verification email');
       return { success: false, error: 'Failed to send verification email' };
     }
   }, []);
@@ -122,15 +110,12 @@ export const AuthProvider = ({ children }) => {
     try {
       const result = await AuthService.sendPasswordReset(email);
       if (result.success) {
-        toast.success(result.message);
         return { success: true };
       } else {
-        toast.error(result.error);
         return { success: false, error: result.error };
       }
     } catch (error) {
       console.error('Password reset error:', error);
-      toast.error('Failed to send password reset email');
       return { success: false, error: 'Failed to send password reset email' };
     }
   }, []);
@@ -141,15 +126,12 @@ export const AuthProvider = ({ children }) => {
     try {
       const result = await AuthService.signOut();
       if (result.success) {
-        toast.success(result.message);
         return { success: true };
       } else {
-        toast.error(result.error);
         return { success: false, error: result.error };
       }
     } catch (error) {
       console.error('Sign out error:', error);
-      toast.error('Failed to sign out');
       return { success: false, error: 'Failed to sign out' };
     } finally {
       setLoading(false);
@@ -161,17 +143,14 @@ export const AuthProvider = ({ children }) => {
     try {
       const result = await AuthService.updateUserProfile(updates);
       if (result.success) {
-        toast.success(result.message);
         // Reload user to get updated data
         await AuthService.reloadUser();
         return { success: true };
       } else {
-        toast.error(result.error);
         return { success: false, error: result.error };
       }
     } catch (error) {
       console.error('Profile update error:', error);
-      toast.error('Failed to update profile');
       return { success: false, error: 'Failed to update profile' };
     }
   }, []);
@@ -181,15 +160,12 @@ export const AuthProvider = ({ children }) => {
     try {
       const result = await AuthService.updatePassword(currentPassword, newPassword);
       if (result.success) {
-        toast.success(result.message);
         return { success: true };
       } else {
-        toast.error(result.error);
         return { success: false, error: result.error };
       }
     } catch (error) {
       console.error('Password update error:', error);
-      toast.error('Failed to update password');
       return { success: false, error: 'Failed to update password' };
     }
   }, []);
@@ -199,15 +175,12 @@ export const AuthProvider = ({ children }) => {
     try {
       const result = await AuthService.deleteAccount(password);
       if (result.success) {
-        toast.success(result.message);
         return { success: true };
       } else {
-        toast.error(result.error);
         return { success: false, error: result.error };
       }
     } catch (error) {
       console.error('Account deletion error:', error);
-      toast.error('Failed to delete account');
       return { success: false, error: 'Failed to delete account' };
     }
   }, []);
