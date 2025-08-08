@@ -50,7 +50,14 @@ function App() {
     <>
       {shouldShowNavbar && <Navbar />}
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route 
+          path="/" 
+          element={
+            <ProtectedRoute requireEmailVerification={false}>
+              <Home />
+            </ProtectedRoute>
+          } 
+        />
         <Route path="/auth" element={<Auth />} />
         {/* Protected Routes - require authentication and email verification */}
         <Route 

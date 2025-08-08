@@ -22,7 +22,7 @@ export default function Auth() {
       {/* Left side - Login Form */}
       <div className="flex flex-col gap-4 p-6 md:p-10 bg-white dark:bg-gray-800 lg:bg-transparent lg:dark:bg-transparent">
         <div className="flex justify-center gap-2 md:justify-start">
-          <a href="#" className="flex items-center gap-2 font-medium text-gray-900 dark:text-white">
+          <a href="#" className="flex items-center gap-2 font-medium text-gray-900 dark:text-white cursor-pointer">
             <div className="bg-blue-600 text-white flex size-6 items-center justify-center rounded-md">
               <GalleryVerticalEnd className="size-4" />
             </div>

@@ -27,17 +27,17 @@ export default function Navbar() {
 
   return (
     <nav className="flex justify-between items-center px-6 py-3 border-b bg-white dark:bg-black">
-      <Link to="/" className="font-bold text-xl dark:text-white">
+      <Link to="/" className="font-bold text-xl dark:text-white cursor-pointer">
         LeetSpace
       </Link>
       <div className="flex items-center gap-4 text-sm">
-      <Link to="/problems" className="dark:text-white hover:text-blue-600 dark:hover:text-blue-400">
+      <Link to="/problems" className="dark:text-white hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">
           Problems
         </Link>
         <Link 
           to="/add-problem" 
           onClick={() => sessionStorage.setItem("addProblemIntent", "fresh")}
-          className="dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
+          className="dark:text-white hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer"
         >
           Add Problem
         </Link>
@@ -59,7 +59,7 @@ export default function Navbar() {
                     <div className="relative">
                     <button
                       onClick={() => setShowUserMenu(!showUserMenu)}
-                      className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                      className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
                     >
                       <div className="flex items-center gap-2">
                         {user.photoURL ? (
@@ -130,7 +130,7 @@ export default function Navbar() {
                         <div className="p-2 space-y-1">
                           <button
                             onClick={handleProfileClick}
-                            className="w-full flex items-center gap-2 px-3 py-2 text-left text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded transition-colors"
+                            className="w-full flex items-center gap-2 px-3 py-2 text-left text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded transition-colors cursor-pointer"
                           >
                             <Settings className="w-4 h-4" />
                             Account Settings
@@ -138,7 +138,7 @@ export default function Navbar() {
                           
                           <button
                             onClick={handleLogout}
-                            className="w-full flex items-center gap-2 px-3 py-2 text-left text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+                            className="w-full flex items-center gap-2 px-3 py-2 text-left text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors cursor-pointer"
                           >
                             <LogOut className="w-4 h-4" />
                             Sign Out
@@ -151,7 +151,7 @@ export default function Navbar() {
         ) : (
           <Link 
             to="/auth" 
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors cursor-pointer"
           >
             Sign In
           </Link>
