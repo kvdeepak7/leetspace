@@ -23,7 +23,6 @@ export const AuthProvider = ({ children }) => {
     return () => unsubscribe();
   }, [initialized]);
 
-  // Enhanced sign up with email verification
   const signUp = useCallback(async (email, password, displayName = '') => {
     setLoading(true);
     try {
@@ -41,7 +40,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // Enhanced sign in with email verification check
   const signIn = useCallback(async (email, password) => {
     setLoading(true);
     try {
@@ -68,7 +66,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // Enhanced Google sign in
   const signInWithGoogle = useCallback(async () => {
     setLoading(true);
     try {
@@ -90,7 +87,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // Send email verification
   const sendEmailVerification = useCallback(async () => {
     try {
       const result = await AuthService.sendEmailVerification();
@@ -105,7 +101,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // Send password reset email
   const sendPasswordReset = useCallback(async (email) => {
     try {
       const result = await AuthService.sendPasswordReset(email);
@@ -120,7 +115,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // Sign out
   const signOut = useCallback(async () => {
     setLoading(true);
     try {
@@ -138,14 +132,14 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // Update user profile
   const updateProfile = useCallback(async (updates) => {
     try {
       const result = await AuthService.updateUserProfile(updates);
       if (result.success) {
-        // Reload user to get updated data
+        // Optimistic local update for immediate UI feedback
+        setUser((prev) => (prev ? { ...prev, ...updates } : prev));
+        // Reload user to get updated data from Firebase
         await AuthService.reloadUser();
-        // Ensure React context consumers re-render with updated user
         setUser(auth.currentUser);
         return { success: true };
       } else {
@@ -157,7 +151,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // Update password
   const updatePassword = useCallback(async (currentPassword, newPassword) => {
     try {
       const result = await AuthService.updatePassword(currentPassword, newPassword);
@@ -172,7 +165,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // Delete account
   const deleteAccount = useCallback(async (password) => {
     try {
       const result = await AuthService.deleteAccount(password);
@@ -187,11 +179,9 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // Reload user data
   const reloadUser = useCallback(async () => {
     try {
       await AuthService.reloadUser();
-      // Refresh state with latest user instance
       setUser(auth.currentUser);
       return { success: true };
     } catch (error) {
@@ -200,37 +190,26 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-    // Helper functions
     const isEmailVerified = AuthService.isEmailVerified(user);
     const hasPasswordProvider = AuthService.hasPasswordProvider(user);
     const hasGoogleProvider = AuthService.hasGoogleProvider(user);
     const userProviders = AuthService.getUserProviders(user);
   
-    // Auth context value
     const value = {
-      // User state
       user,
       loading,
       initialized,
-      
-      // User info helpers
       isEmailVerified,
       hasPasswordProvider,
       hasGoogleProvider,
       userProviders,
-      
-      // Authentication methods
       signUp,
       signIn,
       signInWithGoogle,
       signOut,
-      
-      // Email & password management
       sendEmailVerification,
       sendPasswordReset,
       updatePassword,
-      
-      // Profile management
       updateProfile,
       deleteAccount,
       reloadUser,
@@ -243,7 +222,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Custom hook to use auth context
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {

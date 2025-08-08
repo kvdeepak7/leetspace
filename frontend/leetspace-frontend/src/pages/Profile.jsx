@@ -173,7 +173,6 @@ export default function Profile() {
   const tabs = [
     { id: "profile", label: "Profile", icon: User },
     { id: "security", label: "Security", icon: Shield },
-    { id: "danger", label: "Danger Zone", icon: AlertTriangle }
   ];
 
   if (!user) {
@@ -211,7 +210,7 @@ export default function Profile() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                    className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors cursor-pointer ${
                       activeTab === tab.id
                         ? "border-blue-500 text-blue-600 dark:text-blue-400"
                         : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
@@ -397,7 +396,7 @@ export default function Profile() {
                               ...prev, 
                               current: !prev.current 
                             }))}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 cursor-pointer"
                           >
                             {showPasswords.current ? (
                               <EyeOff className="w-4 h-4" />
@@ -452,7 +451,7 @@ export default function Profile() {
                               ...prev, 
                               confirm: !prev.confirm 
                             }))}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 cursor-pointer"
                           >
                             {showPasswords.confirm ? (
                               <EyeOff className="w-4 h-4" />
@@ -505,7 +504,7 @@ export default function Profile() {
                           <button
                             type="button"
                             onClick={() => setShowDeletePassword(prev => !prev)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 cursor-pointer"
                           >
                             {showDeletePassword ? (
                               <EyeOff className="w-4 h-4" />
