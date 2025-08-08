@@ -243,7 +243,7 @@ export function LoginForm({ className, ...props }) {
         )}
 
         <div className="grid gap-3">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">Email</Label>
           <Input
             id="email"
             type="email"

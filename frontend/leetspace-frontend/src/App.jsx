@@ -25,11 +25,17 @@ function AppWrapper() {
           </Router>
           <Toaster 
             position="top-right"
+            theme="system"
+            richColors
+            closeButton={false}
+            duration={2200}
+            offset={60}
             toastOptions={{
+              className: "pointer-events-none",
               style: {
                 background: 'var(--background)',
                 color: 'var(--foreground)',
-                border: '1px solid var(--border)',
+                border: '1px solid var(--border)'
               },
             }}
           />
