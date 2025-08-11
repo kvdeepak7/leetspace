@@ -25,12 +25,12 @@ function AppWrapper() {
           </Router>
           <Toaster 
             position="top-right"
+            theme="system"
+            closeButton={false}
+            duration={2200}
+            offset={60}
             toastOptions={{
-              style: {
-                background: 'var(--background)',
-                color: 'var(--foreground)',
-                border: '1px solid var(--border)',
-              },
+              className: "pointer-events-none bg-white dark:bg-zinc-900 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-zinc-700 shadow-sm",
             }}
           />
         </div>
@@ -50,7 +50,14 @@ function App() {
     <>
       {shouldShowNavbar && <Navbar />}
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route 
+          path="/" 
+          element={
+            <ProtectedRoute requireEmailVerification={false}>
+              <Home />
+            </ProtectedRoute>
+          } 
+        />
         <Route path="/auth" element={<Auth />} />
         {/* Protected Routes - require authentication and email verification */}
         <Route 

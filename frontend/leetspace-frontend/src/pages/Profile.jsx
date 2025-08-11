@@ -173,7 +173,6 @@ export default function Profile() {
   const tabs = [
     { id: "profile", label: "Profile", icon: User },
     { id: "security", label: "Security", icon: Shield },
-    { id: "danger", label: "Danger Zone", icon: AlertTriangle }
   ];
 
   if (!user) {
@@ -211,7 +210,7 @@ export default function Profile() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                    className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors cursor-pointer ${
                       activeTab === tab.id
                         ? "border-blue-500 text-blue-600 dark:text-blue-400"
                         : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
@@ -272,7 +271,7 @@ export default function Profile() {
                             displayName: e.target.value 
                           }))}
                           placeholder="Enter your display name"
-                          className="mt-1"
+                          className="mt-1 bg-white text-black dark:bg-zinc-900 dark:text-white dark:placeholder:text-zinc-400"
                         />
                       </div>
 
@@ -389,7 +388,7 @@ export default function Profile() {
                               ...prev, 
                               currentPassword: e.target.value 
                             }))}
-                            className="pr-10"
+                            className="pr-10 bg-white text-black dark:bg-zinc-900 dark:text-white dark:placeholder:text-zinc-400"
                           />
                           <button
                             type="button"
@@ -397,7 +396,7 @@ export default function Profile() {
                               ...prev, 
                               current: !prev.current 
                             }))}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 cursor-pointer"
                           >
                             {showPasswords.current ? (
                               <EyeOff className="w-4 h-4" />
@@ -412,7 +411,7 @@ export default function Profile() {
                         <Label htmlFor="newPassword" className="text-gray-700 dark:text-gray-300">
                           New Password
                         </Label>
-                        <div className="relative mt-1">
+                        <div className="mt-1">
                           <Input
                             id="newPassword"
                             type={showPasswords.new ? "text" : "password"}
@@ -421,29 +420,12 @@ export default function Profile() {
                               ...prev, 
                               newPassword: e.target.value 
                             }))}
-                            className="pr-10"
+                            className="pr-10 bg-white text-black dark:bg-zinc-900 dark:text-white dark:placeholder:text-zinc-400"
                           />
-                          <button
-                            type="button"
-                            onClick={() => setShowPasswords(prev => ({ 
-                              ...prev, 
-                              new: !prev.new 
-                            }))}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                          >
-                            {showPasswords.new ? (
-                              <EyeOff className="w-4 h-4" />
-                            ) : (
-                              <Eye className="w-4 h-4" />
-                            )}
-                          </button>
                         </div>
                         {passwordForm.newPassword && (
-                          <div className="mt-3">
-                            <PasswordStrengthIndicator 
-                              password={passwordForm.newPassword} 
-                              showRequirements={true}
-                            />
+                          <div className="mt-2">
+                            <PasswordStrengthIndicator password={passwordForm.newPassword} />
                           </div>
                         )}
                       </div>
@@ -461,7 +443,7 @@ export default function Profile() {
                               ...prev, 
                               confirmPassword: e.target.value 
                             }))}
-                            className="pr-10"
+                            className="pr-10 bg-white text-black dark:bg-zinc-900 dark:text-white dark:placeholder:text-zinc-400"
                           />
                           <button
                             type="button"
@@ -469,7 +451,7 @@ export default function Profile() {
                               ...prev, 
                               confirm: !prev.confirm 
                             }))}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 cursor-pointer"
                           >
                             {showPasswords.confirm ? (
                               <EyeOff className="w-4 h-4" />
@@ -488,32 +470,25 @@ export default function Profile() {
                         {loading.password ? (
                           <RefreshCw className="w-4 h-4 animate-spin mr-2" />
                         ) : (
-                          <Key className="w-4 h-4 mr-2" />
+                          <Save className="w-4 h-4 mr-2" />
                         )}
                         Update Password
                       </Button>
                     </form>
                   </div>
                 )}
-              </div>
-            )}
 
-            {/* Danger Zone Tab */}
-            {activeTab === "danger" && (
-              <div>
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
-                  <h2 className="text-xl font-semibold text-red-900 dark:text-red-400 mb-2">
-                    Delete Account
+                {/* Danger Zone */}
+                <div>
+                  <h2 className="text-xl font-semibold text-red-600 dark:text-red-400 mb-4">
+                    Danger Zone
                   </h2>
-                  <p className="text-red-700 dark:text-red-300 mb-6 text-sm">
-                    This action cannot be undone. This will permanently delete your account and remove all associated data.
-                  </p>
-                  
-                  <form onSubmit={handleDeleteAccount} className="space-y-4">
+
+                  <form onSubmit={handleDeleteAccount} className="space-y-6">
                     {hasPasswordProvider && (
                       <div>
-                        <Label htmlFor="deletePassword" className="text-red-700 dark:text-red-300">
-                          Enter your password to confirm
+                        <Label htmlFor="deletePassword" className="text-gray-700 dark:text-gray-300">
+                          Confirm Password
                         </Label>
                         <div className="relative mt-1">
                           <Input
@@ -524,12 +499,12 @@ export default function Profile() {
                               ...prev, 
                               password: e.target.value 
                             }))}
-                            className="pr-10 border-red-200 dark:border-red-700 focus:border-red-500 dark:focus:border-red-500"
+                            className="pr-10 bg-white text-black dark:bg-zinc-900 dark:text-white dark:placeholder:text-zinc-400"
                           />
                           <button
                             type="button"
-                            onClick={() => setShowDeletePassword(!showDeletePassword)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                            onClick={() => setShowDeletePassword(prev => !prev)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 cursor-pointer"
                           >
                             {showDeletePassword ? (
                               <EyeOff className="w-4 h-4" />
@@ -542,32 +517,30 @@ export default function Profile() {
                     )}
 
                     <div>
-                      <Label htmlFor="confirmDelete" className="text-red-700 dark:text-red-300">
-                        Type "DELETE" to confirm
+                      <Label htmlFor="confirmText" className="text-gray-700 dark:text-gray-300">
+                        Type DELETE to confirm
                       </Label>
                       <Input
-                        id="confirmDelete"
+                        id="confirmText"
                         type="text"
                         value={deleteForm.confirmText}
                         onChange={(e) => setDeleteForm(prev => ({ 
                           ...prev, 
                           confirmText: e.target.value 
                         }))}
-                        placeholder="DELETE"
-                        className="mt-1 border-red-200 dark:border-red-700 focus:border-red-500 dark:focus:border-red-500"
+                        className="bg-white text-black dark:bg-zinc-900 dark:text-white dark:placeholder:text-zinc-400"
                       />
                     </div>
 
                     <Button 
                       type="submit" 
-                      variant="destructive"
                       disabled={loading.delete}
                       className="bg-red-600 hover:bg-red-700 text-white"
                     >
                       {loading.delete ? (
                         <RefreshCw className="w-4 h-4 animate-spin mr-2" />
                       ) : (
-                        <Trash2 className="w-4 w-4 mr-2" />
+                        <Trash2 className="w-4 h-4 mr-2" />
                       )}
                       Delete Account
                     </Button>
