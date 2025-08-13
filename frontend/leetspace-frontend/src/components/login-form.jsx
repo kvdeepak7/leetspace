@@ -16,9 +16,11 @@ export function LoginForm({ className, ...props }) {
     email: "",
     password: "",
     displayName: "",
+    confirmPassword: "",
   });
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
@@ -59,6 +61,13 @@ export function LoginForm({ className, ...props }) {
 
     if (!isLogin && !formData.displayName.trim()) {
       errors.displayName = "Display name is required";
+    }
+    if (!isLogin) {
+      if (!formData.confirmPassword) {
+        errors.confirmPassword = "Please confirm your password";
+      } else if (formData.password !== formData.confirmPassword) {
+        errors.confirmPassword = "Passwords do not match";
+      }
     }
 
     setValidationErrors(errors);
@@ -110,7 +119,7 @@ export function LoginForm({ className, ...props }) {
 
     try {
       if (isLogin) {
-        const result = await signIn(formData.email, formData.password);
+        const result = await signIn(formData.email.trim().toLowerCase(), formData.password);
         if (result.success) {
           const from = location.state?.from || "/";
           navigate(from, { replace: true });
@@ -120,13 +129,13 @@ export function LoginForm({ className, ...props }) {
           applyResultErrorsToInputs(result.code, result.error);
         }
       } else {
-        const result = await signUp(formData.email, formData.password, formData.displayName);
-        if (result.success) {
-          setUnverifiedUser(result.user);
-          setFormData({ email: "", password: "", displayName: "" });
-        } else {
-          applyResultErrorsToInputs(result.code, result.error);
-        }
+        const result = await signUp(formData.email.trim().toLowerCase(), formData.password, formData.displayName);
+         if (result.success) {
+           setUnverifiedUser(result.user);
+           setFormData({ email: "", password: "", displayName: "", confirmPassword: "" });
+         } else {
+           applyResultErrorsToInputs(result.code, result.error);
+         }
       }
     } catch (error) {
       console.error('Auth error:', error);
@@ -224,7 +233,7 @@ export function LoginForm({ className, ...props }) {
       <div className="grid gap-6">
         {!isLogin && (
           <div className="grid gap-3">
-            <Label htmlFor="displayName" className="text-gray-700 dark:text-gray-300">Display Name</Label>
+            <Label htmlFor="displayName" className="text-gray-700 ">Display Name</Label>
             <Input
               id="displayName"
               type="text"
@@ -232,7 +241,7 @@ export function LoginForm({ className, ...props }) {
               value={formData.displayName}
               onChange={(e) => handleInputChange("displayName", e.target.value)}
               className={cn(
-                "bg-white text-black dark:bg-zinc-900 dark:text-white dark:placeholder:text-zinc-400",
+                "bg-white text-black",
                 validationErrors.displayName && "border-red-500"
               )}
             />
@@ -243,7 +252,7 @@ export function LoginForm({ className, ...props }) {
         )}
 
         <div className="grid gap-3">
-          <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">Email</Label>
+          <Label htmlFor="email" className="text-gray-700">Email</Label>
           <Input
             id="email"
             type="email"
@@ -251,7 +260,7 @@ export function LoginForm({ className, ...props }) {
             value={formData.email}
             onChange={(e) => handleInputChange("email", e.target.value)}
             className={cn(
-              "bg-white text-black dark:bg-zinc-900 dark:text-white dark:placeholder:text-zinc-400",
+              "bg-white text-black",
               validationErrors.email && "border-red-500"
             )}
           />
@@ -261,55 +270,85 @@ export function LoginForm({ className, ...props }) {
         </div>
 
         <div className="grid gap-3">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password" className="text-gray-700 dark:text-gray-300">Password</Label>
-            {isLogin && (
-              <button
-                type="button"
-                onClick={handleForgotPasswordClick}
-                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline cursor-pointer"
-              >
-                Forgot password?
-              </button>
-            )}
-          </div>
-          <div className="relative">
-            <Input
-              id="password"
-              type={showPassword ? "text" : "password"}
-              value={formData.password}
-              onChange={(e) => handleInputChange("password", e.target.value)}
-              className={cn(
-                "pr-10 bg-white text-black dark:bg-zinc-900 dark:text-white dark:placeholder:text-zinc-400",
-                validationErrors.password && "border-red-500"
-              )}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors cursor-pointer"
-            >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
-          </div>
-          {validationErrors.password && (
-            <p className="text-sm text-red-600 dark:text-red-400">{validationErrors.password}</p>
-          )}
-          {!isLogin && formData.password && (
-            <PasswordStrengthIndicator password={formData.password} showRequirements />
-          )}
-        </div>
+           <div className="flex items-center justify-between">
+             <Label htmlFor="password" className="text-gray-700 ">Password</Label>
+             {isLogin && (
+               <button
+                 type="button"
+                 onClick={handleForgotPasswordClick}
+                 className="text-sm text-blue-600 hover:text-blue-800 underline cursor-pointer"
+               >
+                 Forgot password?
+               </button>
+             )}
+           </div>
+           <div className="relative">
+             <Input
+               id="password"
+               type={showPassword ? "text" : "password"}
+               value={formData.password}
+               onChange={(e) => handleInputChange("password", e.target.value)}
+               className={cn(
+                 "pr-10 bg-white text-black",
+                 validationErrors.password && "border-red-500"
+               )}
+             />
+             <button
+               type="button"
+               onClick={() => setShowPassword(!showPassword)}
+               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500  hover:text-gray-700  transition-colors cursor-pointer"
+             >
+               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+             </button>
+           </div>
+           {validationErrors.password && (
+             <p className="text-sm text-red-600 ">{validationErrors.password}</p>
+           )}
+           {!isLogin && formData.password && (
+             <PasswordStrengthIndicator password={formData.password} showRequirements />
+           )}
+         </div>
 
-        <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600" disabled={loading}>
-          {loading ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              {isLogin ? "Signing in..." : "Creating account..."}
-            </>
-          ) : (
-            isLogin ? "Sign In" : "Create Account"
-          )}
-        </Button>
+         {!isLogin && (
+           <div className="grid gap-3">
+             <Label htmlFor="confirmPassword" className="text-gray-700">Confirm Password</Label>
+             <div className="relative">
+               <Input
+                 id="confirmPassword"
+                 type={showConfirmPassword ? "text" : "password"}
+                 value={formData.confirmPassword}
+                 onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                 className={cn(
+                   "pr-10 bg-white text-black",
+                   validationErrors.confirmPassword && "border-red-500"
+                 )}
+               />
+               <button
+                 type="button"
+                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500  hover:text-gray-700  transition-colors cursor-pointer"
+               >
+                 {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+               </button>
+             </div>
+             {validationErrors.confirmPassword && (
+               <p className="text-sm text-red-600 dark:text-red-400">{validationErrors.confirmPassword}</p>
+             )}
+           </div>
+         )}
+ 
+         <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 " disabled={loading}>
+           {loading ? (
+             <>
+               <Loader2 className="h-4 w-4 animate-spin mr-2" />
+               {isLogin ? "Signing in..." : "Creating account..."}
+             </>
+           ) : (
+             isLogin ? "Sign In" : "Create Account"
+           )}
+         </Button>
+
+
 
         <div className="relative text-center text-sm">
           <div className="absolute inset-0 top-1/2 border-t border-gray-200 dark:border-gray-700 z-0" />
