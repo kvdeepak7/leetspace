@@ -10,30 +10,37 @@ import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 
-import { ThemeProvider } from "@/components/ThemeProvider";
+import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
 // import { AuthProvider } from "@/lib/useAuth";
 import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "sonner";
 import "./index.css" 
-function AppWrapper() {
+function AppShell() {
+  const { theme } = useTheme();
   return (
-    <ThemeProvider>
-      <AuthProvider>
-      <div className="min-h-screen bg-white dark:bg-zinc-900 transition-colors">
-          <Router>
-            <App />
-          </Router>
-          <Toaster 
-            position="top-right"
-            theme="system"
-            closeButton={false}
-            duration={2200}
-            offset={60}
-            toastOptions={{
-              className: "pointer-events-none bg-white dark:bg-zinc-900 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-zinc-700 shadow-sm",
-            }}
-          />
-        </div>
+    <div className="min-h-screen bg-white dark:bg-zinc-900 transition-colors">
+    <Router>
+      <App />
+    </Router>
+    <Toaster 
+      position="top-right"
+      theme={theme === 'dark' ? 'dark' : 'light'}
+      closeButton={false}
+      duration={2200}
+      offset={60}
+      toastOptions={{
+        className: "pointer-events-none bg-white dark:bg-zinc-900 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-zinc-700 shadow-sm",
+      }}
+    />
+  </div>
+);
+}
+
+function AppWrapper() {
+return (
+  <ThemeProvider>
+    <AuthProvider>
+      <AppShell />
       </AuthProvider>
     </ThemeProvider>
 
