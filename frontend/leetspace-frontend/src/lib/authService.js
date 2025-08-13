@@ -12,7 +12,8 @@ import {
     EmailAuthProvider,
     GoogleAuthProvider,
     deleteUser,
-    reload
+    reload,
+    fetchSignInMethodsForEmail
   } from "firebase/auth";
   import { auth, getAuthErrorMessage } from "./firebase";
   
@@ -59,6 +60,15 @@ import {
     // Sign in with email and password
     static async signInWithEmail(email, password) {
       try {
+         // Pre-check if the email has any sign-in methods (i.e., account exists)
+         const methods = await fetchSignInMethodsForEmail(auth, email);
+         if (!methods || methods.length === 0) {
+           return {
+             success: false,
+             error: 'you dont have an account on this email',
+             code: 'auth/user-not-found'
+           };
+         }
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
   
@@ -149,7 +159,31 @@ import {
           message: 'Password reset email sent successfully!'
         };
       } catch (error) {
-        console.error('Password reset error:', error);
+        console.error('Password reset error (with continue URL):', error);
+
+        // Known continue URL issues: retry without custom ActionCodeSettings
+        const continueUriErrors = new Set([
+          'auth/invalid-continue-uri',
+          'auth/unauthorized-continue-uri',
+          'auth/missing-continue-uri',
+        ]);
+
+        if (continueUriErrors.has(error.code)) {
+          try {
+            await sendPasswordResetEmail(auth, email);
+            return {
+              success: true,
+              message: 'Password reset email sent successfully!'
+            };
+          } catch (fallbackError) {
+            console.error('Password reset fallback error (no continue URL):', fallbackError);
+            return {
+              success: false,
+              error: getAuthErrorMessage(fallbackError.code),
+              code: fallbackError.code
+            };
+          }
+        }
         return {
           success: false,
           error: getAuthErrorMessage(error.code),
