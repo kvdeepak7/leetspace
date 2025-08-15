@@ -65,9 +65,24 @@ export default function Landing() {
       <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
         <h2 className="text-2xl md:text-3xl font-semibold">How it works</h2>
         <ol className="mt-6 grid md:grid-cols-3 gap-6">
-          <Step num="1" title="Log a problem" desc="Add notes, mistakes, and solution versions." />
-          <Step num="2" title="Tag + retry" desc="Tag by topic/difficulty and mark “retry later”." />
-          <Step num="3" title="Review with intent" desc="Target weak spots using Insights and filters." />
+          <StepCard
+            num="1"
+            title="Log a problem"
+            desc="Add notes, mistakes, and solution versions."
+            visual={<StepVisual kind="log" />}
+          />
+          <StepCard
+            num="2"
+            title="Tag + retry"
+            desc="Tag by topic/difficulty and mark “retry later”."
+            visual={<StepVisual kind="tag" />}
+          />
+          <StepCard
+            num="3"
+            title="Review with intent"
+            desc="Target weak spots using Insights and filters."
+            visual={<StepVisual kind="review" />}
+          />
         </ol>
       </section>
 
@@ -75,12 +90,42 @@ export default function Landing() {
       <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
         <h2 className="text-2xl md:text-3xl font-semibold">What you get</h2>
         <div className="mt-6 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <FeatureCard icon={<ListChecks className="size-5" />} title="Problem Log" desc="Title, link, difficulty, tags, time, notes, mistakes, retry flag." />
-          <FeatureCard icon={<Code2 className="size-5" />} title="Multi‑Version" desc="Store alternative solutions; add rationale and complexity notes." />
-          <FeatureCard icon={<Target className="size-5" />} title="Insights Dashboard" desc="Totals, difficulty mix, topic coverage, time invested, mistake patterns." />
-          <FeatureCard icon={<Timer className="size-5" />} title="Review Mode" desc={"Filters for tag/difficulty and a “retry later” queue."} />
-          <FeatureCard icon={<Layers className="size-5" />} title="Topic Tagging" desc="DS/Algo taxonomy (Arrays, Graphs, DP, Sliding Window, BFS/DFS)." />
-          <FeatureCard icon={<Target className="size-5" />} title="Company Focus" desc="Group problems by company tag for targeted review sets." />
+          <FeatureCard
+            icon={<ListChecks className="size-5" />}
+            title="Problem Log"
+            desc="Title, link, difficulty, tags, time, notes, mistakes, retry flag."
+            visual={<MiniFormVisual />}
+          />
+          <FeatureCard
+            icon={<Code2 className="size-5" />}
+            title="Multi‑Version"
+            desc="Store alternative solutions; add rationale and complexity notes."
+            visual={<MiniCodeDiffVisual />}
+          />
+          <FeatureCard
+            icon={<Target className="size-5" />}
+            title="Insights Dashboard"
+            desc="Totals, difficulty mix, topic coverage, time invested, mistake patterns."
+            visual={<MiniInsightsVisual />}
+          />
+          <FeatureCard
+            icon={<Timer className="size-5" />}
+            title="Review Mode"
+            desc={"Filters for tag/difficulty and a “retry later” queue."}
+            visual={<MiniReviewVisual />}
+          />
+          <FeatureCard
+            icon={<Layers className="size-5" />}
+            title="Topic Tagging"
+            desc="DS/Algo taxonomy (Arrays, Graphs, DP, Sliding Window, BFS/DFS)."
+            visual={<MiniTagGridVisual />}
+          />
+          <FeatureCard
+            icon={<Target className="size-5" />}
+            title="Company Focus"
+            desc="Group problems by company tag for targeted review sets."
+            visual={<MiniCompanyTagsVisual />}
+          />
         </div>
       </section>
 
@@ -390,12 +435,157 @@ function Step({ num, title, desc }) {
   );
 }
 
-function FeatureCard({ icon, title, desc }) {
+function StepCard({ num, title, desc, visual }) {
+  return (
+    <li className="rounded-xl border border-gray-200 dark:border-zinc-700 p-6 bg-white/80 dark:bg-zinc-900/60">
+      <div className="text-xs font-medium text-gray-500 dark:text-gray-400">Step {num}</div>
+      <div className="mt-1 text-base font-semibold">{title}</div>
+      <div className="mt-2 text-sm text-gray-600 dark:text-gray-300">{desc}</div>
+      <div className="mt-4">
+        {visual}
+      </div>
+    </li>
+  );
+}
+
+function StepVisual({ kind }) {
+  if (kind === 'log') {
+    return (
+      <div className="rounded-lg border border-gray-200 dark:border-zinc-700 p-3 bg-white/60 dark:bg-zinc-800/50">
+        <SkeletonLine w="w-full" />
+        <SkeletonLine w="w-5/6" />
+        <div className="mt-2 flex gap-2">
+          <Chip label="Array" />
+          <Chip label="Two Pointers" />
+        </div>
+        <div className="mt-2 h-10 rounded border border-gray-200 dark:border-zinc-700 bg-white/40 dark:bg-zinc-800/60" />
+      </div>
+    );
+  }
+  if (kind === 'tag') {
+    return (
+      <div className="rounded-lg border border-gray-200 dark:border-zinc-700 p-3 bg-white/60 dark:bg-zinc-800/50">
+        <div className="flex flex-wrap gap-2">
+          <Chip label="Easy" />
+          <Chip label="Medium" />
+          <Chip label="Arrays" />
+          <Chip label="Graphs" />
+        </div>
+        <div className="mt-3 flex items-center justify-between">
+          <div className="text-xs text-gray-600 dark:text-gray-300 flex items-center gap-2"><Check className="size-3" /> Retry later</div>
+          <div className="h-6 w-16 rounded bg-indigo-500/80" />
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="rounded-lg border border-gray-200 dark:border-zinc-700 p-3 bg-white/60 dark:bg-zinc-800/50">
+      <div className="flex flex-wrap gap-2">
+        <Chip label="Medium" />
+        <Chip label="Sliding Window" />
+      </div>
+      <div className="mt-3 space-y-2">
+        <ListRow subtitle="Sliding Window • Medium" chip="retry" />
+        <ListRow subtitle="Graph BFS • Medium" chip="retry" />
+      </div>
+    </div>
+  );
+}
+
+function FeatureCard({ icon, title, desc, visual }) {
   return (
     <div className="rounded-xl border border-gray-200 dark:border-zinc-700 p-6 bg-white/80 dark:bg-zinc-900/60">
       <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">{icon}<span className="sr-only">icon</span></div>
       <h3 className="mt-2 text-lg font-semibold">{title}</h3>
       <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{desc}</p>
+      <div className="mt-4">
+        {visual}
+      </div>
+    </div>
+  );
+}
+
+
+function MiniFormVisual() {
+  return (
+    <div className="rounded-lg border border-gray-200 dark:border-zinc-700 p-3 bg-white/60 dark:bg-zinc-800/50">
+      <SkeletonLine w="w-5/6" />
+      <SkeletonLine w="w-3/4" />
+      <div className="mt-2 flex gap-2">
+        <Chip label="Array" />
+        <Chip label="Two Pointers" />
+      </div>
+    </div>
+  );
+}
+
+function MiniCodeDiffVisual() {
+  return (
+    <div className="rounded-lg border border-gray-200 dark:border-zinc-700 p-3 bg-white/60 dark:bg-zinc-800/50 grid grid-cols-2 gap-3">
+      <div className="rounded-md bg-gray-100 dark:bg-zinc-800 p-2 space-y-1">
+        <div className="h-2 w-10/12 bg-gray-300 dark:bg-zinc-700 rounded" />
+        <div className="h-2 w-8/12 bg-gray-300 dark:bg-zinc-700 rounded" />
+        <div className="h-2 w-9/12 bg-gray-300 dark:bg-zinc-700 rounded" />
+      </div>
+      <div className="rounded-md bg-gray-100 dark:bg-zinc-800 p-2 space-y-1">
+        <div className="h-2 w-11/12 bg-gray-300 dark:bg-zinc-700 rounded" />
+        <div className="h-2 w-7/12 bg-gray-300 dark:bg-zinc-700 rounded" />
+        <div className="h-2 w-9/12 bg-gray-300 dark:bg-zinc-700 rounded" />
+      </div>
+    </div>
+  );
+}
+
+function MiniInsightsVisual() {
+  return (
+    <div className="rounded-lg border border-gray-200 dark:border-zinc-700 p-3 bg-white/60 dark:bg-zinc-800/50">
+      <div className="grid grid-cols-5 items-end gap-2 h-16">
+        <Bar h="h-6" />
+        <Bar h="h-10" />
+        <Bar h="h-8" />
+        <Bar h="h-12" />
+        <Bar h="h-9" />
+      </div>
+    </div>
+  );
+}
+
+function MiniReviewVisual() {
+  return (
+    <div className="rounded-lg border border-gray-200 dark:border-zinc-700 p-3 bg-white/60 dark:bg-zinc-800/50">
+      <div className="flex flex-wrap gap-2">
+        <Chip label="Hard" />
+        <Chip label="Graphs" />
+      </div>
+      <div className="mt-2 space-y-2">
+        <ListRow subtitle="Topological Sort • Medium" chip="retry" />
+        <ListRow subtitle="Shortest Path • Medium" chip="retry" />
+      </div>
+    </div>
+  );
+}
+
+function MiniTagGridVisual() {
+  return (
+    <div className="rounded-lg border border-gray-200 dark:border-zinc-700 p-3 bg-white/60 dark:bg-zinc-800/50 flex flex-wrap gap-2">
+      <Chip label="DP" />
+      <Chip label="Greedy" />
+      <Chip label="Stack" />
+      <Chip label="Queue" />
+      <Chip label="Tree" />
+      <Chip label="Binary Search" />
+    </div>
+  );
+}
+
+function MiniCompanyTagsVisual() {
+  return (
+    <div className="rounded-lg border border-gray-200 dark:border-zinc-700 p-3 bg-white/60 dark:bg-zinc-800/50 flex flex-wrap gap-2">
+      <Chip label="Google" />
+      <Chip label="Meta" />
+      <Chip label="Amazon" />
+      <Chip label="Netflix" />
+      <Chip label="Apple" />
     </div>
   );
 }
