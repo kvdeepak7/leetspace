@@ -1,8 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Check, ArrowRight } from "lucide-react";
+import { Check, ArrowRight, Layers, BookOpen, Target, ListChecks, Timer, Code2, Sparkles } from "lucide-react";
 
 export default function Landing() {
   const { user, initialized } = useAuth();
@@ -19,36 +19,45 @@ export default function Landing() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-indigo-50/60 to-white dark:from-indigo-900/30 dark:to-zinc-900" />
-        <div className="relative max-w-7xl mx-auto px-6 py-20 md:py-28">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-              A private coding journal for real interview progress.
-            </h1>
-            <p className="mt-4 md:mt-6 text-lg md:text-xl text-gray-600 dark:text-gray-300">
-              Log what mattered. Track versions and mistakes. Review fast.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Button asChild size="lg">
-                <Link to="/auth" className="cursor-pointer">
-                  Start your journal
-                  <ArrowRight className="ml-1" />
-                </Link>
-              </Button>
-              <Button asChild variant="ghost" size="lg">
-                <Link to="/auth" className="cursor-pointer">View sample log</Link>
-              </Button>
-              <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">Built for serious interview prep</span>
+        <div className="relative max-w-7xl mx-auto px-6 py-16 md:py-24">
+          <div className="grid lg:grid-cols-2 gap-10 items-center">
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-2 text-sm text-indigo-600 dark:text-indigo-400">
+                <Sparkles className="size-4" />
+                <span>Journal, not a feed</span>
+              </div>
+              <h1 className="mt-3 text-4xl md:text-6xl font-bold tracking-tight">
+                A private coding journal for real interview progress.
+              </h1>
+              <p className="mt-4 md:mt-6 text-lg md:text-xl text-gray-600 dark:text-gray-300">
+                Log what mattered. Track versions and mistakes. Review fast.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <Button asChild size="lg">
+                  <Link to="/auth" className="cursor-pointer">
+                    Start your journal
+                    <ArrowRight className="ml-1" />
+                  </Link>
+                </Button>
+                <Button asChild variant="ghost" size="lg">
+                  <Link to="/auth" className="cursor-pointer">View sample log</Link>
+                </Button>
+                <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">Built for serious interview prep</span>
+              </div>
+            </div>
+            <div className="relative">
+              <HeroComposite />
             </div>
           </div>
         </div>
       </section>
 
       {/* Benefits */}
-      <section className="max-w-7xl mx-auto px-6 py-14 md:py-16">
+      <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
         <div className="grid md:grid-cols-3 gap-6">
-          <BenefitCard title="Selective logging" desc="Capture only high‑signal problems with tags, notes, time, and difficulty." />
-          <BenefitCard title="Multiple solutions" desc="Save Python/JS/Java approaches and record trade‑offs." />
-          <BenefitCard title="Intentional review" desc={"Use “retry later” and filters for fast, focused review."} />
+          <BenefitCard icon={<BookOpen className="size-5" />} title="Selective logging" desc="Capture only high‑signal problems with tags, notes, time, and difficulty." />
+          <BenefitCard icon={<Layers className="size-5" />} title="Multiple solutions" desc="Save Python/JS/Java approaches and record trade‑offs." />
+          <BenefitCard icon={<Target className="size-5" />} title="Intentional review" desc={"Use “retry later” and filters for fast, focused review."} />
         </div>
       </section>
 
@@ -62,53 +71,94 @@ export default function Landing() {
         </ol>
       </section>
 
-      {/* Features */}
+      {/* Feature deep‑dive */}
       <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
         <h2 className="text-2xl md:text-3xl font-semibold">What you get</h2>
+        <div className="mt-6 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <FeatureCard icon={<ListChecks className="size-5" />} title="Problem Log" desc="Title, link, difficulty, tags, time, notes, mistakes, retry flag." />
+          <FeatureCard icon={<Code2 className="size-5" />} title="Multi‑Version" desc="Store alternative solutions; add rationale and complexity notes." />
+          <FeatureCard icon={<Target className="size-5" />} title="Insights Dashboard" desc="Totals, difficulty mix, topic coverage, time invested, mistake patterns." />
+          <FeatureCard icon={<Timer className="size-5" />} title="Review Mode" desc={"Filters for tag/difficulty and a “retry later” queue."} />
+          <FeatureCard icon={<Layers className="size-5" />} title="Topic Tagging" desc="DS/Algo taxonomy (Arrays, Graphs, DP, Sliding Window, BFS/DFS)." />
+          <FeatureCard icon={<Target className="size-5" />} title="Company Focus" desc="Group problems by company tag for targeted review sets." />
+        </div>
+      </section>
+
+      {/* Visual previews */}
+      <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
+        <div className="grid lg:grid-cols-2 gap-8 items-center">
+          <div>
+            <h3 className="text-xl font-semibold">Algorithm patterns at a glance</h3>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">A visual map of core patterns helps connect concepts across problems.</p>
+          </div>
+          <PreviewImage src="/pattern-tiles.png" alt="Algorithm pattern tiles" />
+        </div>
+        <div className="mt-10 grid lg:grid-cols-2 gap-8 items-center">
+          <div>
+            <h3 className="text-xl font-semibold">Review Mode, built for speed</h3>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">Filter by difficulty and topic. Focus on your “retry later” queue.</p>
+          </div>
+          <PreviewImage src="/review-mode.png" alt="Review mode with filters and retry queue" />
+        </div>
+      </section>
+
+      {/* Sample log snapshot */}
+      <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
+        <h2 className="text-2xl md:text-3xl font-semibold">Sample log snapshot</h2>
+        <div className="mt-6 grid md:grid-cols-3 gap-6">
+          <LogCard
+            title="Two Sum"
+            meta="Easy • Array, Hashmap • 15m"
+            notes="Consider space‑time tradeoff"
+            mistakes="Forgot duplicate handling initially"
+            versions="Python O(n) hash map; JS two‑pass"
+            retry="No"
+          />
+          <LogCard
+            title="Longest Substring Without Repeating"
+            meta="Medium • String, Sliding Window • 28m"
+            notes="Track window boundaries carefully"
+            mistakes="Off‑by‑one on shrink step"
+            versions="JS sliding window; Python dict window"
+            retry="Yes"
+          />
+          <LogCard
+            title="Course Schedule"
+            meta="Medium • Graph, BFS • 34m"
+            notes="Kahn’s algorithm for cycle detection"
+            mistakes="Missed indegree init edge case"
+            versions="Python queue BFS; JS adjacency list"
+            retry="Yes"
+          />
+        </div>
+      </section>
+
+      {/* Use cases */}
+      <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
+        <h2 className="text-2xl md:text-3xl font-semibold">Built for your journey</h2>
         <div className="mt-6 grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <FeatureCard title="Problem Log" desc="Title, link, difficulty, tags, time, notes, mistakes, retry flag." />
-          <FeatureCard title="Versions" desc="Store multiple approaches per problem with rationale." />
-          <FeatureCard title="Insights" desc="Totals, difficulty mix, topic coverage, time invested, mistake patterns." />
-          <FeatureCard title="Review Mode" desc={"Filters for tag/difficulty and a “retry later” queue."} />
+          <UseCase title="FAANG prep" desc="Focused log + mistake patterns → confident onsite review." />
+          <UseCase title="CS student" desc="Tags align with course topics → weekly weak‑area review." />
+          <UseCase title="Bootcamp" desc="Daily 2–3 problem cadence → company‑specific sets." />
+          <UseCase title="Senior dev" desc="Hard problems, multiple approaches → mentoring notes." />
         </div>
       </section>
 
-      {/* Pricing */}
+      {/* Why it works */}
       <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
-        <h2 className="text-2xl md:text-3xl font-semibold">Pricing</h2>
-        <div className="mt-6 grid md:grid-cols-2 gap-6">
-          <div className="border border-gray-200 dark:border-zinc-700 rounded-xl p-6 bg-white/80 dark:bg-zinc-900/60">
-            <h3 className="text-xl font-semibold">Free</h3>
-            <ul className="mt-4 space-y-2 text-sm text-gray-600 dark:text-gray-300">
-              <li className="flex items-start gap-2"><Check className="mt-0.5" />Unlimited logs and tags</li>
-              <li className="flex items-start gap-2"><Check className="mt-0.5" />Basic insights</li>
-              <li className="flex items-start gap-2"><Check className="mt-0.5" />Up to 10 “retry later” items</li>
-            </ul>
-            <Button asChild className="mt-6 w-full">
-              <Link to="/auth" className="cursor-pointer">Start free</Link>
-            </Button>
-          </div>
-          <div className="border border-indigo-300/60 dark:border-indigo-500/40 rounded-xl p-6 bg-indigo-50/60 dark:bg-indigo-950/30">
-            <h3 className="text-xl font-semibold">Pro</h3>
-            <ul className="mt-4 space-y-2 text-sm text-gray-600 dark:text-gray-300">
-              <li className="flex items-start gap-2"><Check className="mt-0.5" />Unlimited retry items</li>
-              <li className="flex items-start gap-2"><Check className="mt-0.5" />Advanced insights</li>
-              <li className="flex items-start gap-2"><Check className="mt-0.5" />Multi‑version comparison tools</li>
-            </ul>
-            <Button asChild className="mt-6 w-full">
-              <Link to="/auth" className="cursor-pointer">Go Pro</Link>
-            </Button>
-          </div>
+        <h2 className="text-2xl md:text-3xl font-semibold">Why it works</h2>
+        <div className="mt-6 grid md:grid-cols-3 gap-6">
+          <BenefitCard icon={<BookOpen className="size-5" />} title="Journal, not a feed" desc="Depth over volume. Reflect, don’t grind." />
+          <BenefitCard icon={<Code2 className="size-5" />} title="Your editorial" desc="Explanations in your words—what you’ll recall under pressure." />
+          <BenefitCard icon={<Target className="size-5" />} title="Review triggers" desc={'“Retry later” makes learning sticky and targeted.'} />
         </div>
       </section>
 
-      {/* FAQ */}
+      {/* Testimonials */}
       <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
-        <h2 className="text-2xl md:text-3xl font-semibold">FAQ</h2>
-        <div className="mt-6 grid md:grid-cols-3 gap-6 text-sm text-gray-700 dark:text-gray-300">
-          <Faq q="How is this different from problem banks?" a="LeetSpace is a personal journal for depth and review, not a problem feed." />
-          <Faq q="Do you support multiple languages?" a="Yes — save multiple solution versions per problem." />
-          <Faq q="Is my data private?" a="Yes — private by default; you control everything." />
+        <div className="grid md:grid-cols-2 gap-6">
+          <Testimonial quote="Half the time, twice the impact." author="Sarah" role="Backend Engineer" />
+          <Testimonial quote="My weak areas were obvious—and fixable." author="Alex" role="CS Student" />
         </div>
       </section>
 
@@ -128,10 +178,95 @@ export default function Landing() {
   );
 }
 
-function BenefitCard({ title, desc }) {
+function HeroComposite() {
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const [transform, setTransform] = useState("perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)");
+  const containerRef = useRef(null);
+
+  const handleMove = (e) => {
+    if (prefersReducedMotion) return;
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const midX = rect.width / 2;
+    const midY = rect.height / 2;
+    const maxTilt = 6; // deg
+    const rotateY = ((x - midX) / midX) * maxTilt;
+    const rotateX = -((y - midY) / midY) * maxTilt;
+    setTransform(`perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale(1.01)`);
+  };
+
+  const handleLeave = () => {
+    setTransform("perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)");
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      onMouseMove={handleMove}
+      onMouseLeave={handleLeave}
+      className="group relative h-[300px] sm:h-[360px] md:h-[420px] lg:h-[460px] rounded-2xl border border-gray-200 dark:border-zinc-700 bg-white/80 dark:bg-zinc-900/60 overflow-hidden"
+      style={{ transform, transition: "transform 150ms ease" }}
+    >
+      {/* CSS fallback visuals */}
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-100/60 via-transparent to-cyan-100/40 dark:from-indigo-900/30 dark:via-transparent dark:to-cyan-900/20" />
+      <div className="absolute -inset-24 opacity-40 blur-2xl bg-[radial-gradient(60%_50%_at_50%_50%,theme(colors.indigo.400/.4),transparent)] dark:bg-[radial-gradient(60%_50%_at_50%_50%,theme(colors.indigo.500/.35),transparent)]" />
+      <img
+        src="/hero-composite.png"
+        alt="LeetSpace problem log and insights UI"
+        className="relative z-10 w-full h-full object-cover"
+        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+      />
+    </div>
+  );
+}
+
+function PreviewImage({ src, alt }) {
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const [transform, setTransform] = useState("perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)");
+  const ref = useRef(null);
+
+  const move = (e) => {
+    if (prefersReducedMotion) return;
+    const rect = ref.current?.getBoundingClientRect();
+    if (!rect) return;
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const midX = rect.width / 2;
+    const midY = rect.height / 2;
+    const maxTilt = 5;
+    const rotateY = ((x - midX) / midX) * maxTilt;
+    const rotateX = -((y - midY) / midY) * maxTilt;
+    setTransform(`perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale(1.01)`);
+  };
+
+  const leave = () => setTransform("perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)");
+
+  return (
+    <div
+      ref={ref}
+      onMouseMove={move}
+      onMouseLeave={leave}
+      className="relative rounded-2xl border border-gray-200 dark:border-zinc-700 bg-white/80 dark:bg-zinc-900/60 overflow-hidden"
+      style={{ transform, transition: "transform 150ms ease" }}
+    >
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-100/60 via-transparent to-cyan-100/40 dark:from-indigo-900/30 dark:via-transparent dark:to-cyan-900/20" />
+      <img
+        src={src}
+        alt={alt}
+        className="relative z-10 w-full h-full object-cover"
+        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+      />
+    </div>
+  );
+}
+
+function BenefitCard({ icon, title, desc }) {
   return (
     <div className="rounded-xl border border-gray-200 dark:border-zinc-700 p-6 bg-white/80 dark:bg-zinc-900/60">
-      <h3 className="text-lg font-semibold">{title}</h3>
+      <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">{icon}<span className="sr-only">icon</span></div>
+      <h3 className="mt-2 text-lg font-semibold">{title}</h3>
       <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{desc}</p>
     </div>
   );
@@ -147,7 +282,34 @@ function Step({ num, title, desc }) {
   );
 }
 
-function FeatureCard({ title, desc }) {
+function FeatureCard({ icon, title, desc }) {
+  return (
+    <div className="rounded-xl border border-gray-200 dark:border-zinc-700 p-6 bg-white/80 dark:bg-zinc-900/60">
+      <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">{icon}<span className="sr-only">icon</span></div>
+      <h3 className="mt-2 text-lg font-semibold">{title}</h3>
+      <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{desc}</p>
+    </div>
+  );
+}
+
+function LogCard({ title, meta, notes, mistakes, versions, retry }) {
+  return (
+    <div className="rounded-xl border border-gray-200 dark:border-zinc-700 p-6 bg-white/80 dark:bg-zinc-900/60">
+      <div className="flex items-center justify-between">
+        <h3 className="text-base font-semibold">{title}</h3>
+        <span className={`text-xs px-2 py-1 rounded-full ${retry === 'Yes' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'}`}>{retry === 'Yes' ? 'Retry' : 'Good'}</span>
+      </div>
+      <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">{meta}</div>
+      <ul className="mt-3 space-y-1 text-sm text-gray-700 dark:text-gray-300">
+        <li className="flex gap-2"><span className="min-w-16 text-gray-500 dark:text-gray-400">Notes</span><span className="flex-1">{notes}</span></li>
+        <li className="flex gap-2"><span className="min-w-16 text-gray-500 dark:text-gray-400">Mistakes</span><span className="flex-1">{mistakes}</span></li>
+        <li className="flex gap-2"><span className="min-w-16 text-gray-500 dark:text-gray-400">Versions</span><span className="flex-1">{versions}</span></li>
+      </ul>
+    </div>
+  );
+}
+
+function UseCase({ title, desc }) {
   return (
     <div className="rounded-xl border border-gray-200 dark:border-zinc-700 p-6 bg-white/80 dark:bg-zinc-900/60">
       <h3 className="text-lg font-semibold">{title}</h3>
@@ -156,11 +318,23 @@ function FeatureCard({ title, desc }) {
   );
 }
 
-function Faq({ q, a }) {
+function Testimonial({ quote, author, role }) {
   return (
-    <div>
-      <h4 className="font-medium">{q}</h4>
-      <p className="mt-1 text-gray-600 dark:text-gray-300">{a}</p>
+    <div className="rounded-xl border border-gray-200 dark:border-zinc-700 p-6 bg-white/80 dark:bg-zinc-900/60">
+      <p className="text-base">“{quote}”</p>
+      <div className="mt-3 text-sm text-gray-600 dark:text-gray-300">— {author}, {role}</div>
     </div>
   );
+}
+
+function usePrefersReducedMotion() {
+  const mql = useMemo(() => (typeof window !== 'undefined' ? window.matchMedia('(prefers-reduced-motion: reduce)') : undefined), []);
+  const [reduced, setReduced] = useState(mql?.matches || false);
+  useEffect(() => {
+    if (!mql) return;
+    const handler = (e) => setReduced(e.matches);
+    mql.addEventListener?.('change', handler);
+    return () => mql.removeEventListener?.('change', handler);
+  }, [mql]);
+  return reduced;
 }
