@@ -91,14 +91,14 @@ export default function Landing() {
             <h3 className="text-xl font-semibold">Algorithm patterns at a glance</h3>
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">A visual map of core patterns helps connect concepts across problems.</p>
           </div>
-          <PreviewImage src="/pattern-tiles.png" alt="Algorithm pattern tiles" />
+          <PreviewImage src="/pattern-tiles.png" alt="Algorithm pattern tiles" fallback={<PatternTilesGraphic />} />
         </div>
         <div className="mt-10 grid lg:grid-cols-2 gap-8 items-center">
           <div>
             <h3 className="text-xl font-semibold">Review Mode, built for speed</h3>
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">Filter by difficulty and topic. Focus on your “retry later” queue.</p>
           </div>
-          <PreviewImage src="/review-mode.png" alt="Review mode with filters and retry queue" />
+          <PreviewImage src="/review-mode.png" alt="Review mode with filters and retry queue" fallback={<ReviewModeGraphic />} />
         </div>
       </section>
 
@@ -209,22 +209,64 @@ function HeroComposite() {
       className="group relative h-[300px] sm:h-[360px] md:h-[420px] lg:h-[460px] rounded-2xl border border-gray-200 dark:border-zinc-700 bg-white/80 dark:bg-zinc-900/60 overflow-hidden"
       style={{ transform, transition: "transform 150ms ease" }}
     >
-      {/* CSS fallback visuals */}
+      {/* Ambient visuals */}
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-100/60 via-transparent to-cyan-100/40 dark:from-indigo-900/30 dark:via-transparent dark:to-cyan-900/20" />
       <div className="absolute -inset-24 opacity-40 blur-2xl bg-[radial-gradient(60%_50%_at_50%_50%,theme(colors.indigo.400/.4),transparent)] dark:bg-[radial-gradient(60%_50%_at_50%_50%,theme(colors.indigo.500/.35),transparent)]" />
-      <img
-        src="/hero-composite.png"
-        alt="LeetSpace problem log and insights UI"
-        className="relative z-10 w-full h-full object-cover"
-        onError={(e) => { e.currentTarget.style.display = 'none'; }}
-      />
+
+      {/* In-code UI mock */}
+      <div className="relative z-10 h-full w-full p-5 md:p-8">
+        <div className="grid grid-cols-2 gap-5 h-full">
+          {/* Left: Add Problem panel */}
+          <div className="col-span-2 md:col-span-1 rounded-xl border border-gray-200 dark:border-zinc-700 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-sm p-4">
+            <div className="h-4 w-24 bg-gray-200 dark:bg-zinc-700 rounded"></div>
+            <div className="mt-3 space-y-3">
+              <SkeletonLine w="w-full" />
+              <SkeletonLine w="w-2/3" />
+              <SkeletonLine w="w-5/6" />
+              <div className="flex gap-2">
+                <Chip />
+                <Chip />
+                <Chip />
+              </div>
+              <div className="h-16 rounded border border-gray-200 dark:border-zinc-700 bg-white/40 dark:bg-zinc-800/60"></div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300"><Check className="size-3" /> Retry later</div>
+                <div className="h-8 w-24 rounded-md bg-indigo-600/90"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Insights + Retry list */}
+          <div className="hidden md:flex col-span-1 flex-col gap-5">
+            <div className="rounded-xl border border-gray-200 dark:border-zinc-700 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-sm p-4">
+              <div className="h-4 w-28 bg-gray-200 dark:bg-zinc-700 rounded"></div>
+              <div className="mt-4 grid grid-cols-5 items-end gap-2 h-24">
+                <Bar h="h-10" />
+                <Bar h="h-16" />
+                <Bar h="h-7" />
+                <Bar h="h-20" />
+                <Bar h="h-12" />
+              </div>
+            </div>
+            <div className="rounded-xl border border-gray-200 dark:border-zinc-700 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-sm p-4">
+              <div className="h-4 w-24 bg-gray-200 dark:bg-zinc-700 rounded"></div>
+              <div className="mt-3 space-y-2">
+                <ListRow />
+                <ListRow />
+                <ListRow />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
-function PreviewImage({ src, alt }) {
+function PreviewImage({ src, alt, fallback }) {
   const prefersReducedMotion = usePrefersReducedMotion();
   const [transform, setTransform] = useState("perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)");
+  const [failed, setFailed] = useState(false);
   const ref = useRef(null);
 
   const move = (e) => {
@@ -252,12 +294,78 @@ function PreviewImage({ src, alt }) {
       style={{ transform, transition: "transform 150ms ease" }}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-100/60 via-transparent to-cyan-100/40 dark:from-indigo-900/30 dark:via-transparent dark:to-cyan-900/20" />
-      <img
-        src={src}
-        alt={alt}
-        className="relative z-10 w-full h-full object-cover"
-        onError={(e) => { e.currentTarget.style.display = 'none'; }}
-      />
+      <div className="relative z-10 w-full h-full">
+        {fallback}
+      </div>
+      {!failed && (
+        <img
+          src={src}
+          alt={alt}
+          className="absolute inset-0 z-20 w-full h-full object-cover"
+          onError={() => setFailed(true)}
+        />
+      )}
+    </div>
+  );
+}
+
+function PatternTilesGraphic() {
+  const cols = 8;
+  const rows = 4;
+  const tileW = 72;
+  const tileH = 36;
+  const gap = 16;
+  const width = cols * tileW + (cols - 1) * gap;
+  const height = rows * tileH + (rows - 1) * gap;
+  const tiles = Array.from({ length: rows }).flatMap((_, r) =>
+    Array.from({ length: cols }).map((__, c) => ({ x: c * (tileW + gap), y: r * (tileH + gap), key: `${r}-${c}` }))
+  );
+
+  return (
+    <svg viewBox={`0 0 ${width} ${height}`} xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+      <defs>
+        <linearGradient id="tileGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="rgba(99,102,241,0.45)" />
+          <stop offset="100%" stopColor="rgba(34,211,238,0.45)" />
+        </linearGradient>
+      </defs>
+      {/* connections */}
+      {tiles.map((t) => (
+        <>
+          {t.x + tileW + gap < width && (
+            <line key={`h-${t.key}`} x1={t.x + tileW} y1={t.y + tileH / 2} x2={t.x + tileW + gap} y2={t.y + tileH / 2} stroke="rgba(99,102,241,0.25)" strokeWidth="1" />
+          )}
+          {t.y + tileH + gap < height && (
+            <line key={`v-${t.key}`} x1={t.x + tileW / 2} y1={t.y + tileH} x2={t.x + tileW / 2} y2={t.y + tileH + gap} stroke="rgba(34,211,238,0.25)" strokeWidth="1" />
+          )}
+        </>
+      ))}
+      {/* tiles */}
+      {tiles.map((t) => (
+        <rect key={`r-${t.key}`} x={t.x} y={t.y} rx="8" ry="8" width={tileW} height={tileH} fill="url(#tileGrad)" stroke="rgba(255,255,255,0.25)" strokeWidth="0.5" />
+      ))}
+    </svg>
+  );
+}
+
+function ReviewModeGraphic() {
+  return (
+    <div className="p-5 md:p-6">
+      <div className="rounded-xl border border-gray-200 dark:border-zinc-700 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-sm p-4">
+        <div className="flex flex-wrap gap-2">
+          <Chip label="Easy" />
+          <Chip label="Medium" />
+          <Chip label="Hard" />
+          <Chip label="Arrays" />
+          <Chip label="Graphs" />
+          <Chip label="DP" />
+        </div>
+        <div className="mt-4 space-y-2">
+          <ListRow subtitle="Arrays • Easy" chip="retry" />
+          <ListRow subtitle="Graphs • Medium" chip="retry" />
+          <ListRow subtitle="DP • Medium" chip="retry" />
+        </div>
+      </div>
     </div>
   );
 }
@@ -337,4 +445,34 @@ function usePrefersReducedMotion() {
     return () => mql.removeEventListener?.('change', handler);
   }, [mql]);
   return reduced;
+}
+
+function SkeletonLine({ w = "w-3/4" }) {
+  return <div className={`h-8 ${w} rounded-md bg-gray-100 dark:bg-zinc-800`} />;
+}
+
+function Chip({ label }) {
+  return (
+    <div className="px-2.5 py-1 rounded-full text-xs bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-200 border border-indigo-200/70 dark:border-indigo-700/50">
+      {label || 'Tag'}
+    </div>
+  );
+}
+
+function Bar({ h = "h-12" }) {
+  return <div className={`w-6 ${h} rounded bg-indigo-400/70 dark:bg-indigo-500/70`} />;
+}
+
+function ListRow({ subtitle = "Arrays • Easy", chip }) {
+  return (
+    <div className="flex items-center justify-between rounded-lg border border-gray-200 dark:border-zinc-700 p-2 bg-white/60 dark:bg-zinc-800/50">
+      <div className="h-3 w-40 bg-gray-200 dark:bg-zinc-700 rounded" />
+      <div className="flex items-center gap-2">
+        <div className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 dark:bg-zinc-700 text-gray-600 dark:text-gray-300">{subtitle}</div>
+        {chip === 'retry' && (
+          <div className="text-[10px] px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">retry</div>
+        )}
+      </div>
+    </div>
+  );
 }
