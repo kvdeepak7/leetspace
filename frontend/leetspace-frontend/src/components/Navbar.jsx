@@ -27,11 +27,13 @@ export default function Navbar() {
 
   return (
     <nav className="flex justify-between items-center px-6 py-3 border-b bg-white dark:bg-black">
-      <Link to="/" className="font-bold text-xl dark:text-white cursor-pointer">
+      <Link to={user ? "/dashboard" : "/"} className="font-bold text-xl dark:text-white cursor-pointer">
         LeetSpace
       </Link>
       <div className="flex items-center gap-4 text-sm">
-      <Link to="/problems" className="dark:text-white hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">
+      {user && (
+        <>
+        <Link to="/problems" className="dark:text-white hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">
           Problems
         </Link>
         <Link 
@@ -41,6 +43,8 @@ export default function Navbar() {
         >
           Add Problem
         </Link>
+        </>
+      )}
 
         {/* Theme toggle button */}
         <button 

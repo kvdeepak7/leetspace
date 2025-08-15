@@ -9,6 +9,7 @@ import EditProblem from "./pages/EditProblem";
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
+import Landing from './pages/Landing';
 
 import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
 // import { AuthProvider } from "@/lib/useAuth";
@@ -59,11 +60,7 @@ function App() {
       <Routes>
         <Route 
           path="/" 
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          } 
+          element={<Landing />} 
         />
         <Route path="/auth" element={<Auth />} />
         {/* Protected Routes - require authentication and email verification */}
