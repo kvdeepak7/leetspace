@@ -17,9 +17,13 @@ function LogoMark({ className = "" }) {
 			aria-hidden="true"
 			focusable="false"
 		>
-			<path d="M8 5 L3 12 L8 19" />
-			<path d="M16 5 L21 12 L16 19" />
-			<path d="M14 6 L10 18" />
+			{/* journal outline */}
+			<rect x="4" y="4" width="16" height="16" rx="3" ry="3" />
+			{/* review arc + arrow */}
+			<path d="M8 15 C 9.5 13.5, 11 12.5, 14 12.5" />
+			<path d="M14 12.5 L13 11.7 M14 12.5 L13.1 13.4" />
+			{/* progress dot */}
+			<circle cx="10.4" cy="13.6" r="1.1" fill="currentColor" stroke="none" />
 		</svg>
 	);
 }
