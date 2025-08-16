@@ -8,6 +8,15 @@
       --input: 240 5.9% 90%;
       --ring: 240 10% 3.9%;
       --radius: 0.5rem;
+      /* Brand tokens */
+      --primary: 255 85% 60%; /* indigo */
+      --primary-foreground: 0 0% 100%;
+      --secondary: 210 40% 96%;
+      --secondary-foreground: 222 47% 11%;
+      --accent: 188 94% 42%; /* cyan */
+      --accent-foreground: 0 0% 100%;
+      --destructive: 0 84% 60%;
+      --destructive-foreground: 0 0% 100%;
     }
   
     .dark {
@@ -18,6 +27,15 @@
       --border: 240 3.7% 15.9%;
       --input: 240 3.7% 15.9%;
       --ring: 240 4.9% 83.9%;
+      /* Dark adjustments */
+      --primary: 255 85% 66%;
+      --primary-foreground: 0 0% 100%;
+      --secondary: 240 4% 16%;
+      --secondary-foreground: 0 0% 100%;
+      --accent: 188 94% 48%;
+      --accent-foreground: 0 0% 100%;
+      --destructive: 0 72% 50%;
+      --destructive-foreground: 0 0% 100%;
     }
   }
   
