@@ -21,7 +21,7 @@ export default function SampleProblem() {
 
   const problem = {
     title: "LeetSpace Mission: From Chaos to Clarity",
-    url: "https://leetspace.dev/mission",
+    url: "https://warp.leetspace.dev/missions/chaos-to-clarity",
     difficulty: "Easy",
     date_solved: "2025-02-14",
     retry_later: "Yes",
