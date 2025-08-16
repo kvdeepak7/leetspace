@@ -524,23 +524,17 @@ function MiniCodeDiffVisual() {
     <div className="rounded-lg border border-gray-200 dark:border-zinc-700 p-3 bg-white/60 dark:bg-zinc-800/50 grid grid-cols-2 gap-3">
       <div className="rounded-md bg-gray-50 dark:bg-zinc-800 p-2">
         <div className="text-[10px] uppercase tracking-wide text-gray-500">Python</div>
-        <pre className="mt-1 text-[11px] leading-4 font-mono whitespace-pre-wrap text-gray-800 dark:text-gray-100">{`def two_sum(nums, target):
-  seen = {}
-  for i, x in enumerate(nums):
-    if target - x in seen:
-      return [seen[target - x], i]
-    seen[x] = i`}</pre>
+        <div className="mt-2 space-y-1">
+          <div className="h-2 w-10/12 rounded bg-gray-300 dark:bg-zinc-700" />
+          <div className="h-2 w-7/12 rounded bg-gray-300 dark:bg-zinc-700" />
+        </div>
       </div>
       <div className="rounded-md bg-gray-50 dark:bg-zinc-800 p-2">
         <div className="text-[10px] uppercase tracking-wide text-gray-500">JavaScript</div>
-        <pre className="mt-1 text-[11px] leading-4 font-mono whitespace-pre-wrap text-gray-800 dark:text-gray-100">{`function twoSum(nums, target) {
-  const map = new Map();
-  for (let i = 0; i < nums.length; i++) {
-    const x = nums[i]
-    if (map.has(target - x)) return [map.get(target - x), i]
-    map.set(x, i)
-  }
-}`}</pre>
+        <div className="mt-2 space-y-1">
+          <div className="h-2 w-11/12 rounded bg-gray-300 dark:bg-zinc-700" />
+          <div className="h-2 w-6/12 rounded bg-gray-300 dark:bg-zinc-700" />
+        </div>
       </div>
     </div>
   );
