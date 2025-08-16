@@ -130,7 +130,7 @@ You used to grind problems and scatter notes across tabs and docs. Today’s mis
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
             <h1 className="text-3xl font-bold">{problem.title}</h1>
-            <a href={problem.url} target="_blank" rel="noopener noreferrer" title="Open Reference" className="text-muted-foreground hover:text-blue-600">
+            <a href="/oops" title="Demo link" className="text-muted-foreground hover:text-blue-600">
               <ExternalLink className="w-5 h-5" />
             </a>
           </div>
