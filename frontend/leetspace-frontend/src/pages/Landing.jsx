@@ -40,7 +40,7 @@ export default function Landing() {
                   </Link>
                 </Button>
                 <Button asChild variant="ghost" size="lg">
-                  <Link to="/auth" className="cursor-pointer">View sample log</Link>
+                  <Link to="/sample" className="cursor-pointer">View sample log</Link>
                 </Button>
                 <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">Built for serious interview prep</span>
               </div>
@@ -126,6 +126,37 @@ export default function Landing() {
             desc="Group problems by company tag for targeted review sets."
             visual={<MiniCompanyTagsVisual />}
           />
+        </div>
+        {/* Mid-page CTA */}
+        <div className="mt-10 flex items-center gap-3">
+          <Button asChild size="lg">
+            <Link to="/auth" className="cursor-pointer">Start your journal</Link>
+          </Button>
+          <Button asChild variant="ghost" size="lg">
+            <Link to="/sample" className="cursor-pointer">View sample log</Link>
+          </Button>
+        </div>
+      </section>
+
+      {/* Security & privacy */}
+      <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
+        <h2 className="text-2xl md:text-3xl font-semibold">Security & privacy</h2>
+        <div className="mt-6 grid md:grid-cols-3 gap-6">
+          <BenefitCard icon={<ShieldIcon />} title="Private by default" desc="Your journal is private unless you choose to share (coming soon)." visual={<MiniDocVisual />} />
+          <BenefitCard icon={<LockIcon />} title="Trusted auth" desc="Sign in with Firebase Auth; no passwords stored by us." visual={<MiniLinesVisual />} />
+          <BenefitCard icon={<DownloadIcon />} title="Export anytime" desc="Export entries to CSV when you need a backup." visual={<MiniLinesVisual />} />
+        </div>
+      </section>
+
+      {/* Supported languages */}
+      <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
+        <h2 className="text-2xl md:text-3xl font-semibold">Supported languages</h2>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <Chip label="Python" />
+          <Chip label="JavaScript" />
+          <Chip label="Java" />
+          <Chip label="C++" />
+          <Chip label="More via plain text" />
         </div>
       </section>
 
@@ -219,6 +250,18 @@ export default function Landing() {
           </Button>
         </div>
       </section>
+
+      {/* Sticky mobile CTA */}
+      <div className="fixed bottom-4 inset-x-0 px-4 md:hidden z-40">
+        <div className="mx-auto max-w-md rounded-full bg-white/90 dark:bg-zinc-900/90 border border-gray-200 dark:border-zinc-700 p-2 shadow-lg">
+          <div className="flex items-center justify-between gap-3">
+            <div className="text-sm text-gray-700 dark:text-gray-300">Ready to start?</div>
+            <Button asChild size="sm">
+              <Link to="/auth" className="cursor-pointer">Start free</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -792,4 +835,14 @@ function MiniChecklistVisual() {
       </div>
     </div>
   );
+}
+
+function ShieldIcon() {
+  return <div className="size-5 rounded bg-indigo-200 dark:bg-indigo-800" />;
+}
+function LockIcon() {
+  return <div className="size-5 rounded bg-cyan-200 dark:bg-cyan-800" />;
+}
+function DownloadIcon() {
+  return <div className="size-5 rounded bg-pink-200 dark:bg-pink-800" />;
 }
