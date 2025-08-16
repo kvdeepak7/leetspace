@@ -20,130 +20,99 @@ export default function SampleProblem() {
   }, []);
 
   const problem = {
-    title: "WarpGate Batch Windows",
-    url: "https://leetspace.dev/sample/warpgate",
-    difficulty: "Medium",
+    title: "LeetSpace Mission: From Chaos to Clarity",
+    url: "https://leetspace.dev/mission",
+    difficulty: "Easy",
     date_solved: "2025-02-14",
     retry_later: "Yes",
-    tags: ["Greedy", "Scheduling", "Two Pointers", "Arrays", "Simulation"],
-    notes: `# WarpGate Batch Windows
+    tags: [
+      "Product Tour",
+      "Journal",
+      "Multi‑Version",
+      "Insights",
+      "Review Mode",
+      "SRS"
+    ],
+    notes: `# LeetSpace Mission: From Chaos to Clarity
 
-You operate a WarpGate that lets ships jump in small batches. Each ship arrives at a known timestamp (in seconds). A batch may include any number of ships as long as the **time between the first and last ship in that batch is at most W seconds**.
+You used to grind problems and scatter notes across tabs and docs. Today’s mission: **turn raw practice into a private coding journal** that’s fast to review and hard to forget.
 
-Your goal is to group arrivals into the **minimum number of batches** and optionally return the batch segments.
+## What you’ll do
+1. **Log what mattered**
+   - Title, link, difficulty, tags, time, notes, mistakes, retry‑later
+2. **Track multiple solutions**
+   - Save Python/JS/Java with trade‑offs
+3. **Review with intent**
+   - Use \`retry later\` + filters; get a daily mission
+4. **See your patterns**
+   - Difficulty mix, topic coverage, time invested, mistake themes
 
-## Problem
-- Input:
-  - \`arrivals\` — array of non-decreasing integers (timestamps)
-  - \`W\` — non-negative integer (maximum window per batch)
-- Output:
-  - Minimum number of batches
-  - Optional: list of \`[startTime, endTime]\` segments or per-ship batch assignments
+## Why this works
+- A **journal, not a feed**: depth > volume
+- **Your editorial**: you’ll recall your own words under pressure
+- **Review triggers**: revisit at the right time; build long‑term memory
 
-## Example
-arrivals = [0, 3, 4, 10, 12, 17], W = 5  
-Batches:
-- Batch 1: [0, 3, 4] → segment [0, 4]
-- Batch 2: [10, 12] → segment [10, 12]
-- Batch 3: [17] → segment [17, 17]
+> Pro tip: Keep entries short and honest. Mark “retry later” for anything fuzzy. Small wins compound.
 
-Minimum batches = **3**
+## Example entry (minimal)
+- Title: “Sliding Window Max”
+- Difficulty: Medium; Tags: [Array, Sliding Window]
+- Notes: “Boundaries off by one; track both ends carefully.”
+- Mistakes: “Shrank too early; forgot to pop from left when stale.”
+- Retry later: Yes
 
-## Approach (Greedy + Two Pointers)
-Expand a window from the first ship. Keep adding ships while \`arrivals[j] - arrivals[i] <= W\`. When about to exceed \`W\`, **close the batch** at \`arrivals[j-1]\` and start a new batch at \`j\`.
-
-Why greedy works: closing a batch as late as possible never hurts the optimal solution—splitting earlier only increases the batch count.
-
-## Complexity
-- Time: \(O(n)\) after sort (arrivals are given non-decreasing)
-- Space: \(O(1)\) besides output
-
-## Pitfalls
-- Unsorted input → sort first (not needed here if guaranteed)
-- \`W = 0\` → only identical timestamps can batch
-- Duplicates are fine; window check uses first and current timestamps
-- Empty input → 0 batches
-
-## Variations
-- Return per-ship batch IDs
-- Limit batch capacity (then it becomes capacity + window constrained)
-- Streaming arrivals (maintain rolling window)
-
-> Tip: Mark this for **retry later** if two-pointer window boundaries feel fuzzy.
-
-## Self-check Cases
-1) arrivals=[1,1,1], W=0 → 1 batch  
-2) arrivals=[1,2,3,9], W=2 → batches [[1,3],[9,9]] → 2  
-3) arrivals=[], W=5 → 0
+## Self‑check
+- Did you log **what you learned** (not everything)?
+- Did you add **at least one** alternative solution?
+- Did you tag **why** you’ll revisit (retry‑later)?
 `,
     solutions: [
       {
-        language: "Python",
-        code: `def batch_count(arrivals, W):
-    if not arrivals:
-        return 0, []
-    count = 0
-    segments = []
-    i = 0
-    n = len(arrivals)
-    while i < n:
-        start = arrivals[i]
-        j = i
-        while j < n and arrivals[j] - start <= W:
-            j += 1
-        # close batch at j-1
-        end = arrivals[j-1]
-        segments.append([start, end])
-        count += 1
-        i = j
-    return count, segments
-`
-      },
-      {
-        language: "JavaScript",
-        code: `function batchCount(arrivals, W) {
-  if (!arrivals || arrivals.length === 0) return [0, []]
-  let count = 0
-  const segments = []
-  let i = 0
-  const n = arrivals.length
-  while (i < n) {
-    const start = arrivals[i]
-    let j = i
-    while (j < n && arrivals[j] - start <= W) j++
-    const end = arrivals[j - 1]
-    segments.push([start, end])
-    count++
-    i = j
-  }
-  return [count, segments]
+        language: "json",
+        code: `{
+  "title": "Sliding Window Max",
+  "url": "https://example.dev/sliding-window-max",
+  "difficulty": "Medium",
+  "tags": ["Array", "Sliding Window"],
+  "timeTakenMin": 28,
+  "notes": "Boundaries off by one; track both ends carefully.",
+  "mistakes": "Shrank too early; forgot to pop from left when stale.",
+  "retryLater": true,
+  "versions": [
+    { "language": "Python", "rationale": "Deque O(n)" },
+    { "language": "JavaScript", "rationale": "Deque O(n)" }
+  ]
 }`
       },
       {
-        language: "Java",
-        code: `import java.util.*;
-class WarpGate {
-  static Pair<Integer, List<int[]>> batchCount(int[] arrivals, int W) {
-    if (arrivals == null || arrivals.length == 0) {
-      return new Pair<>(0, new ArrayList<>());
-    }
-    int i = 0, n = arrivals.length, count = 0;
-    List<int[]> segments = new ArrayList<>();
-    while (i < n) {
-      int start = arrivals[i];
-      int j = i;
-      while (j < n && arrivals[j] - start <= W) j++;
-      int end = arrivals[j - 1];
-      segments.add(new int[]{start, end});
-      count++;
-      i = j;
-    }
-    return new Pair<>(count, segments);
+        language: "python",
+        code: `def daily_mission(entries, max_items=3):
+    retry = [e for e in entries if e.get("retryLater")]
+    if retry:
+        return retry[:max_items]
+    # otherwise target weakest tags
+    tag_count = {}
+    for e in entries:
+        for t in e.get("tags", []):
+            tag_count[t] = tag_count.get(t, 0) + 1
+    weakest = sorted(tag_count, key=tag_count.get)[:2]
+    picks = [e for e in entries if any(t in weakest for t in e.get("tags", []))]
+    return picks[:max_items]`
+      },
+      {
+        language: "javascript",
+        code: `function insights(entries){
+  const res = {
+    byDifficulty: {},
+    tagCounts: {},
+    totalTimeMin: 0,
   }
-  static class Pair<A,B> {
-    final A first; final B second;
-    Pair(A a, B b){ first=a; second=b; }
+  for (const e of entries){
+    res.byDifficulty[e.difficulty] = (res.byDifficulty[e.difficulty]||0)+1
+    for (const t of (e.tags||[])) res.tagCounts[t]=(res.tagCounts[t]||0)+1
+    res.totalTimeMin += e.timeTakenMin||0
   }
+  return res
 }`
       }
     ]
