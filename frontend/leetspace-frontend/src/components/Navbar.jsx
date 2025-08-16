@@ -9,11 +9,15 @@ function LogoMark({ className = "" }) {
 		<svg
 			className={className}
 			viewBox="0 0 24 24"
-			fill="currentColor"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
 			aria-hidden="true"
 			focusable="false"
 		>
-			<path d="M12 2.5 L14.6 9.4 L21.5 12 L14.6 14.6 L12 21.5 L9.4 14.6 L2.5 12 L9.4 9.4 Z" />
+			<rect x="4" y="4" width="16" height="16" rx="3" ry="3" />
 		</svg>
 	);
 }
