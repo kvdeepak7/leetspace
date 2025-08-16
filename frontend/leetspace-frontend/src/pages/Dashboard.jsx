@@ -16,12 +16,35 @@ import {
   BarChart3,
   Loader2 
 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Dashboard() {
   const { user } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showWelcome, setShowWelcome] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!localStorage.getItem('ls_has_seen_welcome')) {
+      setShowWelcome(true);
+    }
+  }, []);
+
+  const handleWelcomePrimary = () => {
+    localStorage.setItem('ls_has_seen_welcome', 'true');
+    sessionStorage.setItem("addProblemIntent", "fresh");
+    setShowWelcome(false);
+    navigate('/add-problem');
+  };
+  const handleWelcomeSecondary = () => {
+    localStorage.setItem('ls_has_seen_welcome', 'true');
+    setShowWelcome(false);
+    navigate('/sample/problem');
+  };
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -71,12 +94,42 @@ export default function Dashboard() {
   if (!data) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 text-gray-900 dark:text-white p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center py-16">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">No Data</h2>
-            <p className="text-gray-600 dark:text-gray-400">No dashboard data available</p>
+        <div className="max-w-3xl mx-auto">
+          <div className="rounded-2xl border border-gray-200 dark:border-zinc-700 p-8 bg-white dark:bg-zinc-900">
+            <h2 className="text-2xl font-bold">Your journal is ready</h2>
+            <p className="mt-1 text-gray-600 dark:text-gray-400">Start by logging one problem you learned from recently.</p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Button asChild size="lg" className="shadow-sm">
+                <Link to="/add-problem" onClick={() => sessionStorage.setItem("addProblemIntent","fresh")}>Add your first entry</Link>
+              </Button>
+              <Button asChild variant="ghost" size="lg" className="border border-indigo-300 bg-white/90 text-indigo-700 shadow-sm hover:bg-indigo-50/80 dark:bg-zinc-900/70 dark:text-indigo-200 dark:hover:bg-zinc-800/70">
+                <Link to="/sample/problem">See a sample entry</Link>
+              </Button>
+            </div>
+            <div className="mt-6 text-sm">
+              <p className="font-medium text-gray-900 dark:text-white">What to include</p>
+              <ul className="mt-2 list-disc pl-5 text-gray-700 dark:text-gray-300 space-y-1">
+                <li>Notes: what you learned (1–2 lines)</li>
+                <li>Mistakes: one thing you’d avoid next time</li>
+                <li>Versions: add a second approach (language/rationale)</li>
+                <li>Optional: mark retry later for review</li>
+              </ul>
+            </div>
           </div>
         </div>
+
+        <Dialog open={showWelcome} onOpenChange={setShowWelcome}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Welcome to your coding journal</DialogTitle>
+              <DialogDescription>Log what mattered, compare versions, and review with intent.</DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="sm:justify-between">
+              <Button onClick={handleWelcomePrimary} className="cursor-pointer">Add your first entry</Button>
+              <Button onClick={handleWelcomeSecondary} variant="ghost" className="border border-indigo-300 bg-white/90 text-indigo-700 shadow-sm hover:bg-indigo-50/80 dark:bg-zinc-900/70 dark:text-indigo-200 dark:hover:bg-zinc-800/70 cursor-pointer">See a sample entry</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
@@ -155,6 +208,19 @@ export default function Dashboard() {
         {/* Activity Heatmap - Full Width */}
         <ActivityHeatmap data={activity_heatmap} />
       </div>
+
+      <Dialog open={showWelcome} onOpenChange={setShowWelcome}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Welcome to your coding journal</DialogTitle>
+            <DialogDescription>Log what mattered, compare versions, and review with intent.</DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-between">
+            <Button onClick={handleWelcomePrimary} className="cursor-pointer">Add your first entry</Button>
+            <Button onClick={handleWelcomeSecondary} variant="ghost" className="border border-indigo-300 bg-white/90 text-indigo-700 shadow-sm hover:bg-indigo-50/80 dark:bg-zinc-900/70 dark:text-indigo-200 dark:hover:bg-zinc-800/70 cursor-pointer">See a sample entry</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

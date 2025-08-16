@@ -24,6 +24,11 @@ export function TodaysRevision({ revision, className = "" }) {
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               All caught up with your spaced repetition
             </p>
+            <div className="mt-4">
+              <Button onClick={() => navigate('/problems?revisit=1')} size="sm" variant="ghost" className="border border-indigo-300 bg-white/90 text-indigo-700 shadow-sm hover:bg-indigo-50/80 dark:bg-zinc-900/70 dark:text-indigo-200 dark:hover:bg-zinc-800/70 cursor-pointer">
+                Go to Retry Later
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

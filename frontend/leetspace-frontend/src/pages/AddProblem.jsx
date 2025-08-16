@@ -174,12 +174,13 @@ export default function AddProblem() {
       retry_later: retryLater,
     };
 
-    try {
-      const res = await problemsAPI.createProblem(problemData);
-      console.log("✅ Problem saved:", res.data);
-      sessionStorage.removeItem("addProblemDraft");
-      navigate(`/problems/${res.data.id}`);
-    } catch (err) {
+          try {
+        const res = await problemsAPI.createProblem(problemData);
+        console.log("✅ Problem saved:", res.data);
+        sessionStorage.setItem('just_created_problem', String(res.data.id));
+        sessionStorage.removeItem("addProblemDraft");
+        navigate(`/problems/${res.data.id}`);
+      } catch (err) {
       if (err.response?.status === 409) {
         const data = err.response.data;
         setFormError(data.detail || "A problem already exists.");
@@ -282,6 +283,7 @@ export default function AddProblem() {
 
         <div data-color-mode={theme}>
           <Label htmlFor="notes" className="text-lg mb-1 block">Notes (Markdown supported)</Label>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Write your editorial — your words in 1–2 lines.</p>
           <div className="border rounded-xl bg-background placeholder:text-muted-foreground [&:placeholder-shown]:text-muted-foreground [&:not(:placeholder-shown)]:placeholder-transparent text-foreground">
             <MDEditor value={notes} onChange={setNotes} height={300} />
           </div>
@@ -289,6 +291,7 @@ export default function AddProblem() {
 
         <div>
           <Label className="text-lg mb-2 block">Solution(s)</Label>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Add a second version if it changes complexity or clarity.</p>
           {solutions.map((sol, idx) => (
             <div key={idx} className="relative mb-10">
               {solutions.length > 1 && (
@@ -327,8 +330,8 @@ export default function AddProblem() {
         <div className="relative">
           <Label className="flex items-center gap-2 text-lg mb-1">
             Retry Later?
-            {missingFields.retryLater && <AlertCircle className="h-5 w-5 text-red-500" />}
           </Label>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">We’ll nudge you to revisit it at the right time.</p>
           <div className="flex gap-2">
             {["Yes", "No"].map((option) => {
               const selected = retryLater === option;

@@ -20,6 +20,7 @@ export default function ProblemDetail() {
   );
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedProblem, setSelectedProblem] = useState(null);
+  const [showPostSave, setShowPostSave] = useState(false);
   const navigate = useNavigate();
 
    // Helper function to format date properly without timezone issues
@@ -54,6 +55,11 @@ export default function ProblemDetail() {
       try {
         const res = await problemsAPI.getProblem(id);
         setProblem(res.data);
+        // Show banner if navigated just after create or if not marked retry later
+        if (sessionStorage.getItem('just_created_problem') === id || res.data?.retry_later !== 'Yes') {
+          setShowPostSave(true);
+          sessionStorage.removeItem('just_created_problem');
+        }
       } catch (err) {
         console.error("Failed to fetch problem", err);
         if (err.response?.status === 401) {
@@ -110,6 +116,17 @@ export default function ProblemDetail() {
     }
   };
 
+  const handleMarkRetry = async () => {
+    try {
+      await problemsAPI.updateProblem(problem.id, { retry_later: 'Yes' });
+      setProblem(prev => ({ ...prev, retry_later: 'Yes' }));
+      toast.success('Marked for review');
+      setShowPostSave(false);
+    } catch (e) {
+      toast.error('Failed to update retry later');
+    }
+  };
+
   if (loading) {
     return <Skeleton className="w-full h-64 rounded-xl" />;
   }
@@ -126,6 +143,20 @@ export default function ProblemDetail() {
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-10 space-y-8 text-black dark:text-white bg-white dark:bg-zinc-900">
+      {showPostSave && (
+        <div className="p-4 rounded-lg border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 flex items-center justify-between">
+          <div>
+            <p className="text-sm text-gray-700 dark:text-gray-300">Logged. Want to revisit this soon?</p>
+          </div>
+          <div className="flex gap-2">
+            {problem.retry_later !== 'Yes' && (
+              <Button size="sm" onClick={handleMarkRetry} className="cursor-pointer">Mark retry later</Button>
+            )}
+            <Button size="sm" variant="ghost" className="border border-indigo-300 bg-white/90 text-indigo-700 shadow-sm hover:bg-indigo-50/80 dark:bg-zinc-900/70 dark:text-indigo-200 dark:hover:bg-zinc-800/70 cursor-pointer" onClick={() => navigate('/add-problem')}>Add another entry</Button>
+            <Button size="sm" variant="ghost" className="border border-indigo-300 bg-white/90 text-indigo-700 shadow-sm hover:bg-indigo-50/80 dark:bg-zinc-900/70 dark:text-indigo-200 dark:hover:bg-zinc-800/70 cursor-pointer" onClick={() => navigate('/dashboard')}>Go to dashboard</Button>
+          </div>
+        </div>
+      )}
       <div className="space-y-1">
       <div className="flex justify-between items-center">
       <div className="flex items-center gap-2">

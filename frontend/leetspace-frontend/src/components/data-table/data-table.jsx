@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { problemsAPI } from "@/lib/api";
 import { Filter, X, Search, Tag, ChevronUp,Trash2  } from "lucide-react"
@@ -57,6 +57,7 @@ import {
 
 export function DataTable({ data, columns,onDataChange }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({
@@ -87,6 +88,14 @@ export function DataTable({ data, columns,onDataChange }) {
   
     return () => observer.disconnect();
   }, []);
+
+  // Initialize revisitOnly from query param
+  React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('revisit') === '1') {
+      setRevisitOnly(true);
+    }
+  }, [location.search]);
 
    // Effect to handle selection mode changes
    React.useEffect(() => {
@@ -146,7 +155,7 @@ export function DataTable({ data, columns,onDataChange }) {
   } else {
     table.getColumn("difficulty")?.setFilterValue(undefined);
   }
-}, [difficultyFilter, table]);
+ }, [difficultyFilter, table]);
 
   // Handle tags filter
   React.useEffect(() => {
@@ -368,15 +377,6 @@ export function DataTable({ data, columns,onDataChange }) {
                   {(difficultyFilter ? 1 : 0) + selectedTags.length}
                 </span>
               )}
-              {/* {hasActiveFilters && (
-                <X 
-                  className="ml-2 h-4 w-4 hover:bg-gray-200 dark:hover:bg-zinc-700 rounded-full p-0.5"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    clearAllFilters();
-                  }}
-                />
-              )} */}
             </Button>
           </DropdownMenuTrigger>
 
