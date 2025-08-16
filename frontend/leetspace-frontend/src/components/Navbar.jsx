@@ -4,6 +4,24 @@ import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/components/ThemeProvider";
 import { Moon, Sun, User, LogOut, Mail, Shield, Settings } from "lucide-react";
 
+function LogoMark({ className = "" }) {
+	return (
+		<svg
+			className={className}
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			aria-hidden="true"
+			focusable="false"
+		>
+			<rect x="4" y="4" width="16" height="16" rx="3" ry="3" />
+		</svg>
+	);
+}
+
 export default function Navbar() {
   const { user, signOut, isEmailVerified, hasGoogleProvider } = useAuth();
   const { theme, toggleTheme } = useTheme();
@@ -27,11 +45,19 @@ export default function Navbar() {
 
   return (
     <nav className="flex justify-between items-center px-6 py-3 border-b bg-white dark:bg-black">
-      <Link to="/" className="font-bold text-xl dark:text-white cursor-pointer">
-        LeetSpace
+      <Link to={user ? "/dashboard" : "/"} className="group flex items-center gap-2 font-bold text-xl text-gray-900 dark:text-white cursor-pointer">
+        <LogoMark className="h-5 w-5 text-indigo-600 dark:text-indigo-400 transition-transform duration-200 ease-out group-hover:-translate-y-px group-hover:rotate-1 motion-reduce:transform-none" />
+        <span>LeetSpace</span>
       </Link>
       <div className="flex items-center gap-4 text-sm">
-      <Link to="/problems" className="dark:text-white hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">
+      {/* {!user && (
+        <Link to="/sample/problem" className="dark:text-white hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">
+          Sample log
+        </Link>
+      )} */}
+      {user && (
+        <>
+        <Link to="/problems" className="dark:text-white hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">
           Problems
         </Link>
         <Link 
@@ -41,7 +67,8 @@ export default function Navbar() {
         >
           Add Problem
         </Link>
-
+        </>
+      )}
         {/* Theme toggle button */}
         <button 
           onClick={toggleTheme} 
