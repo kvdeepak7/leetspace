@@ -55,9 +55,9 @@ export default function Landing() {
       {/* Benefits */}
       <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
         <div className="grid md:grid-cols-3 gap-6">
-          <BenefitCard icon={<BookOpen className="size-5" />} title="Selective logging" desc="Capture only high‑signal problems with tags, notes, time, and difficulty." />
-          <BenefitCard icon={<Layers className="size-5" />} title="Multiple solutions" desc="Save Python/JS/Java approaches and record trade‑offs." />
-          <BenefitCard icon={<Target className="size-5" />} title="Intentional review" desc={"Use “retry later” and filters for fast, focused review."} />
+          <BenefitCard icon={<BookOpen className="size-5" />} title="Selective logging" desc="Capture only high‑signal problems with tags, notes, time, and difficulty." visual={<MiniChipRowVisual />} />
+          <BenefitCard icon={<Layers className="size-5" />} title="Multiple solutions" desc="Save Python/JS/Java approaches and record trade‑offs." visual={<MiniDiffBarsVisual />} />
+          <BenefitCard icon={<Target className="size-5" />} title="Intentional review" desc={"Use “retry later” and filters for fast, focused review."} visual={<MiniFilterChipsVisual />} />
         </div>
       </section>
 
@@ -182,10 +182,10 @@ export default function Landing() {
       <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
         <h2 className="text-2xl md:text-3xl font-semibold">Built for your journey</h2>
         <div className="mt-6 grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <UseCase title="FAANG prep" desc="Focused log + mistake patterns → confident onsite review." />
-          <UseCase title="CS student" desc="Tags align with course topics → weekly weak‑area review." />
-          <UseCase title="Bootcamp" desc="Daily 2–3 problem cadence → company‑specific sets." />
-          <UseCase title="Senior dev" desc="Hard problems, multiple approaches → mentoring notes." />
+          <UseCase title="FAANG prep" desc="Focused log + mistake patterns → confident onsite review." visual={<MiniTimelineVisual />} />
+          <UseCase title="CS student" desc="Tags align with course topics → weekly weak‑area review." visual={<MiniTagGridVisual />} />
+          <UseCase title="Bootcamp" desc="Daily 2–3 problem cadence → company‑specific sets." visual={<MiniChecklistVisual />} />
+          <UseCase title="Senior dev" desc="Hard problems, multiple approaches → mentoring notes." visual={<MiniDocVisual />} />
         </div>
       </section>
 
@@ -193,9 +193,9 @@ export default function Landing() {
       <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
         <h2 className="text-2xl md:text-3xl font-semibold">Why it works</h2>
         <div className="mt-6 grid md:grid-cols-3 gap-6">
-          <BenefitCard icon={<BookOpen className="size-5" />} title="Journal, not a feed" desc="Depth over volume. Reflect, don’t grind." />
-          <BenefitCard icon={<Code2 className="size-5" />} title="Your editorial" desc="Explanations in your words—what you’ll recall under pressure." />
-          <BenefitCard icon={<Target className="size-5" />} title="Review triggers" desc={'“Retry later” makes learning sticky and targeted.'} />
+          <BenefitCard icon={<BookOpen className="size-5" />} title="Journal, not a feed" desc="Depth over volume. Reflect, don’t grind." visual={<MiniDocVisual />} />
+          <BenefitCard icon={<Code2 className="size-5" />} title="Your editorial" desc="Explanations in your words—what you’ll recall under pressure." visual={<MiniLinesVisual />} />
+          <BenefitCard icon={<Target className="size-5" />} title="Review triggers" desc={'“Retry later” makes learning sticky and targeted.'} visual={<MiniRetryChipVisual />} />
         </div>
       </section>
 
@@ -415,12 +415,13 @@ function ReviewModeGraphic() {
   );
 }
 
-function BenefitCard({ icon, title, desc }) {
+function BenefitCard({ icon, title, desc, visual }) {
   return (
     <div className="rounded-xl border border-gray-200 dark:border-zinc-700 p-6 bg-white/80 dark:bg-zinc-900/60">
       <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">{icon}<span className="sr-only">icon</span></div>
       <h3 className="mt-2 text-lg font-semibold">{title}</h3>
       <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{desc}</p>
+      {visual && <div className="mt-4">{visual}</div>}
     </div>
   );
 }
@@ -607,15 +608,33 @@ function LogCard({ title, meta, notes, mistakes, versions, retry }) {
         <li className="flex gap-2"><span className="min-w-16 text-gray-500 dark:text-gray-400">Mistakes</span><span className="flex-1">{mistakes}</span></li>
         <li className="flex gap-2"><span className="min-w-16 text-gray-500 dark:text-gray-400">Versions</span><span className="flex-1">{versions}</span></li>
       </ul>
+      {/* Mini two-language graphic */}
+      <div className="mt-3 grid grid-cols-2 gap-3">
+        <div className="rounded-md bg-gray-50 dark:bg-zinc-800 p-2">
+          <div className="text-[10px] uppercase tracking-wide text-gray-500">Py</div>
+          <div className="mt-1 space-y-1">
+            <div className="h-2 w-9/12 rounded bg-gray-300 dark:bg-zinc-700" />
+            <div className="h-2 w-7/12 rounded bg-gray-300 dark:bg-zinc-700" />
+          </div>
+        </div>
+        <div className="rounded-md bg-gray-50 dark:bg-zinc-800 p-2">
+          <div className="text-[10px] uppercase tracking-wide text-gray-500">JS</div>
+          <div className="mt-1 space-y-1">
+            <div className="h-2 w-10/12 rounded bg-gray-300 dark:bg-zinc-700" />
+            <div className="h-2 w-6/12 rounded bg-gray-300 dark:bg-zinc-700" />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
-function UseCase({ title, desc }) {
+function UseCase({ title, desc, visual }) {
   return (
     <div className="rounded-xl border border-gray-200 dark:border-zinc-700 p-6 bg-white/80 dark:bg-zinc-900/60">
       <h3 className="text-lg font-semibold">{title}</h3>
       <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{desc}</p>
+      {visual && <div className="mt-4">{visual}</div>}
     </div>
   );
 }
@@ -623,8 +642,18 @@ function UseCase({ title, desc }) {
 function Testimonial({ quote, author, role }) {
   return (
     <div className="rounded-xl border border-gray-200 dark:border-zinc-700 p-6 bg-white/80 dark:bg-zinc-900/60">
-      <p className="text-base">“{quote}”</p>
-      <div className="mt-3 text-sm text-gray-600 dark:text-gray-300">— {author}, {role}</div>
+      <div className="flex items-center gap-3">
+        <div className="size-8 rounded-full bg-gray-200 dark:bg-zinc-700" />
+        <div className="flex items-center gap-1">
+          <div className="size-3 rounded-full bg-yellow-400" />
+          <div className="size-3 rounded-full bg-yellow-400" />
+          <div className="size-3 rounded-full bg-yellow-400" />
+          <div className="size-3 rounded-full bg-yellow-400" />
+          <div className="size-3 rounded-full bg-yellow-400" />
+        </div>
+      </div>
+      <p className="mt-3 text-base">“{quote}”</p>
+      <div className="mt-2 text-sm text-gray-600 dark:text-gray-300">— {author}, {role}</div>
     </div>
   );
 }
@@ -668,6 +697,98 @@ function ListRow({ title = "Two Sum", subtitle = "Arrays • Easy", chip }) {
         {chip === 'retry' && (
           <div className="text-[10px] px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">retry</div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function MiniChipRowVisual() {
+  return (
+    <div className="flex flex-wrap gap-2">
+      <Chip label="Array" />
+      <Chip label="Hashmap" />
+      <Chip label="DP" />
+    </div>
+  );
+}
+
+function MiniDiffBarsVisual() {
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      <div className="space-y-1">
+        <div className="h-2 w-10/12 rounded bg-gray-300 dark:bg-zinc-700" />
+        <div className="h-2 w-7/12 rounded bg-gray-300 dark:bg-zinc-700" />
+      </div>
+      <div className="space-y-1">
+        <div className="h-2 w-11/12 rounded bg-gray-300 dark:bg-zinc-700" />
+        <div className="h-2 w-6/12 rounded bg-gray-300 dark:bg-zinc-700" />
+      </div>
+    </div>
+  );
+}
+
+function MiniFilterChipsVisual() {
+  return (
+    <div className="flex flex-wrap gap-2">
+      <Chip label="Medium" />
+      <Chip label="Graphs" />
+      <Chip label="Retry" />
+    </div>
+  );
+}
+
+function MiniDocVisual() {
+  return (
+    <div className="rounded-md border border-gray-200 dark:border-zinc-700 p-2 bg-white/50 dark:bg-zinc-800/40 space-y-1">
+      <div className="h-2 w-9/12 rounded bg-gray-300 dark:bg-zinc-700" />
+      <div className="h-2 w-7/12 rounded bg-gray-300 dark:bg-zinc-700" />
+      <div className="h-2 w-8/12 rounded bg-gray-300 dark:bg-zinc-700" />
+    </div>
+  );
+}
+
+function MiniLinesVisual() {
+  return (
+    <div className="space-y-1">
+      <div className="h-2 w-10/12 rounded bg-gray-300 dark:bg-zinc-700" />
+      <div className="h-2 w-7/12 rounded bg-gray-300 dark:bg-zinc-700" />
+    </div>
+  );
+}
+
+function MiniRetryChipVisual() {
+  return (
+    <div className="flex items-center gap-2">
+      <div className="text-[10px] px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">retry</div>
+      <div className="h-2 w-10 rounded bg-gray-300 dark:bg-zinc-700" />
+    </div>
+  );
+}
+
+function MiniTimelineVisual() {
+  return (
+    <div className="space-y-1">
+      <div className="h-2 w-full rounded bg-indigo-300/60 dark:bg-indigo-700/50" />
+      <div className="h-2 w-10/12 rounded bg-indigo-300/60 dark:bg-indigo-700/50" />
+      <div className="h-2 w-8/12 rounded bg-indigo-300/60 dark:bg-indigo-700/50" />
+    </div>
+  );
+}
+
+function MiniChecklistVisual() {
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2">
+        <div className="size-3 rounded bg-green-400" />
+        <div className="h-2 w-28 rounded bg-gray-300 dark:bg-zinc-700" />
+      </div>
+      <div className="flex items-center gap-2">
+        <div className="size-3 rounded bg-green-400" />
+        <div className="h-2 w-24 rounded bg-gray-300 dark:bg-zinc-700" />
+      </div>
+      <div className="flex items-center gap-2">
+        <div className="size-3 rounded bg-green-400" />
+        <div className="h-2 w-32 rounded bg-gray-300 dark:bg-zinc-700" />
       </div>
     </div>
   );
