@@ -11,6 +11,7 @@ import Profile from './pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 import Landing from './pages/Landing';
 import Sample from './pages/Sample';
+import SampleProblem from './pages/SampleProblem';
 
 import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
 // import { AuthProvider } from "@/lib/useAuth";
@@ -65,6 +66,7 @@ function App() {
         />
         <Route path="/auth" element={<Auth />} />
         <Route path="/sample" element={<Sample />} />
+        <Route path="/sample/problem" element={<SampleProblem />} />
         {/* Protected Routes - require authentication and email verification */}
         <Route 
           path="/problems" 
