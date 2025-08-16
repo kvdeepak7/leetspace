@@ -4,6 +4,31 @@ import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/components/ThemeProvider";
 import { Moon, Sun, User, LogOut, Mail, Shield, Settings } from "lucide-react";
 
+function LogoMark({ className = "" }) {
+	return (
+		<svg
+			className={className}
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth="1.8"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			aria-hidden="true"
+			focusable="false"
+		>
+			{/* orbit ring */}
+			<ellipse cx="12" cy="12" rx="8.5" ry="5.5" opacity="0.25" />
+			{/* asterisk rays */}
+			<line x1="12" y1="4.5" x2="12" y2="19.5" />
+			<line x1="5" y1="8" x2="19" y2="16" />
+			<line x1="5" y1="16" x2="19" y2="8" />
+			{/* tiny rocket on top ray */}
+			<path d="M12 2.6 l2 3.2 h-4 z" fill="currentColor" stroke="none" />
+		</svg>
+	);
+}
+
 export default function Navbar() {
   const { user, signOut, isEmailVerified, hasGoogleProvider } = useAuth();
   const { theme, toggleTheme } = useTheme();
@@ -27,8 +52,9 @@ export default function Navbar() {
 
   return (
     <nav className="flex justify-between items-center px-6 py-3 border-b bg-white dark:bg-black">
-      <Link to={user ? "/dashboard" : "/"} className="font-bold text-xl dark:text-white cursor-pointer">
-        LeetSpace
+      <Link to={user ? "/dashboard" : "/"} className="group flex items-center gap-2 font-bold text-xl text-gray-900 dark:text-white cursor-pointer">
+        <LogoMark className="h-5 w-5 text-indigo-600 dark:text-indigo-400 transition-transform duration-200 ease-out group-hover:-translate-y-px group-hover:rotate-1 motion-reduce:transform-none" />
+        <span>LeetSpace</span>
       </Link>
       <div className="flex items-center gap-4 text-sm">
       {!user && (
