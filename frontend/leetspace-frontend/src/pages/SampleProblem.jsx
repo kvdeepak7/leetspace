@@ -136,9 +136,9 @@ You used to grind problems and scatter notes across tabs and docs. Today’s mis
           </div>
           <div className="flex gap-2">
             <Button asChild variant="outline" className="border border-indigo-300 bg-white/90 text-indigo-700 hover:bg-indigo-50/80 dark:bg-zinc-900/70 dark:text-indigo-200 dark:hover:bg-zinc-800/70">
-              <Link to="/sample" className="cursor-pointer">Back</Link>
+              <Link to="/" className="cursor-pointer">Back</Link>
             </Button>
-            <Button asChild className="shadow-sm">
+                          <Button asChild className="shadow-sm border border-indigo-300">
               <Link to="/auth" className="cursor-pointer">Start your journal</Link>
             </Button>
           </div>

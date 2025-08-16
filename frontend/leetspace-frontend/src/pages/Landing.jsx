@@ -214,7 +214,7 @@ export default function Landing() {
         <h2 className="text-2xl md:text-3xl font-semibold">Built for your journey</h2>
         <div className="mt-6 grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           <UseCase title="FAANG prep" desc="Focused log + mistake patterns → confident onsite review." visual={<MiniTimelineVisual />} />
-          <UseCase title="CS student" desc="Tags align with course topics → weekly weak‑area review." visual={<MiniTagGridVisual />} />
+          <UseCase title="CS student" desc="Tags align with course topics → weekly weak‑area review." visual={<MiniTagGridVisual className="max-h-16 overflow-hidden" />} />
           <UseCase title="Bootcamp" desc="Daily 2–3 problem cadence → company‑specific sets." visual={<MiniChecklistVisual />} />
           <UseCase title="Senior dev" desc="Hard problems, multiple approaches → mentoring notes." visual={<MiniDocVisual />} />
         </div>
@@ -613,9 +613,9 @@ function MiniReviewVisual() {
   );
 }
 
-function MiniTagGridVisual() {
+function MiniTagGridVisual({ className = "" }) {
   return (
-    <div className="rounded-lg border border-gray-200 dark:border-zinc-700 p-3 bg-white/60 dark:bg-zinc-800/50 flex flex-wrap gap-2">
+    <div className={`rounded-lg border border-gray-200 dark:border-zinc-700 p-3 bg-white/60 dark:bg-zinc-800/50 flex flex-wrap gap-2 ${className}`}>
       <Chip label="DP" />
       <Chip label="Greedy" />
       <Chip label="Stack" />
