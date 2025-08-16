@@ -16,13 +16,13 @@ export default function Oops() {
         </p>
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Button asChild size="lg">
+          <Button asChild size="lg" className="shadow-sm">
             <Link to="/sample/problem" className="cursor-pointer">Back to sample problem</Link>
           </Button>
-          <Button asChild variant="ghost" size="lg">
+          <Button asChild variant="ghost" size="lg" className="border border-indigo-300 bg-white/90 text-indigo-700 shadow-sm hover:bg-indigo-50/80 dark:bg-zinc-900/70 dark:text-indigo-200 dark:hover:bg-zinc-800/70">
             <Link to="/" className="cursor-pointer">Home</Link>
           </Button>
-          <Button asChild variant="ghost" size="lg">
+          <Button asChild variant="ghost" size="lg" className="border border-indigo-300 bg-white/90 text-indigo-700 shadow-sm hover:bg-indigo-50/80 dark:bg-zinc-900/70 dark:text-indigo-200 dark:hover:bg-zinc-800/70">
             <Link to="/auth" className="cursor-pointer">Start your journal</Link>
           </Button>
         </div>
