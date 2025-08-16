@@ -17,7 +17,9 @@ function LogoMark({ className = "" }) {
 			aria-hidden="true"
 			focusable="false"
 		>
-			<rect x="4" y="4" width="16" height="16" rx="3" ry="3" />
+			<path d="M8 5 L3 12 L8 19" />
+			<path d="M16 5 L21 12 L16 19" />
+			<path d="M14 6 L10 18" />
 		</svg>
 	);
 }
