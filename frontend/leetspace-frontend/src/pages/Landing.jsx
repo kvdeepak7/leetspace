@@ -263,28 +263,28 @@ function HeroComposite() {
         <div className="grid grid-cols-2 gap-5 h-full">
           {/* Left: Add Problem panel */}
           <div className="col-span-2 md:col-span-1 rounded-xl border border-gray-200 dark:border-zinc-700 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-sm p-4">
-            <div className="h-4 w-24 bg-gray-200 dark:bg-zinc-700 rounded"></div>
-            <div className="mt-3 space-y-3">
-              <SkeletonLine w="w-full" />
-              <SkeletonLine w="w-2/3" />
-              <SkeletonLine w="w-5/6" />
-              <div className="flex gap-2">
-                <Chip />
-                <Chip />
-                <Chip />
-              </div>
-              <div className="h-16 rounded border border-gray-200 dark:border-zinc-700 bg-white/40 dark:bg-zinc-800/60"></div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300"><Check className="size-3" /> Retry later</div>
-                <div className="h-8 w-24 rounded-md bg-indigo-600/90"></div>
-              </div>
+            <div className="text-[11px] font-mono text-gray-600 dark:text-gray-300"><span className="text-gray-500">Title:</span> Two Sum</div>
+            <div className="mt-1 text-[11px] font-mono text-gray-600 dark:text-gray-300"><span className="text-gray-500">URL:</span> leetcode.com/problems/two-sum</div>
+            <div className="mt-1 flex gap-2">
+              <Chip label="Array" />
+              <Chip label="Hashmap" />
+              <Chip label="Easy" />
+            </div>
+            <div className="mt-2 text-[11px] font-mono text-gray-600 dark:text-gray-300"><span className="text-gray-500">Time:</span> 15m</div>
+            <div className="mt-2 rounded border border-gray-200 dark:border-zinc-700 bg-white/40 dark:bg-zinc-800/60 p-2">
+              <div className="text-[11px] font-mono text-gray-700 dark:text-gray-200">Notes: Consider space–time tradeoff.</div>
+              <div className="mt-1 text-[11px] font-mono text-gray-700 dark:text-gray-200">Mistakes: Forgot duplicate handling.</div>
+            </div>
+            <div className="mt-3 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300"><Check className="size-3" /> Retry later</div>
+              <div className="h-8 w-24 rounded-md bg-indigo-600/90" />
             </div>
           </div>
 
           {/* Right: Insights + Retry list */}
           <div className="hidden md:flex col-span-1 flex-col gap-5">
             <div className="rounded-xl border border-gray-200 dark:border-zinc-700 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-sm p-4">
-              <div className="h-4 w-28 bg-gray-200 dark:bg-zinc-700 rounded"></div>
+              <div className="h-4 w-28 bg-gray-200 dark:bg-zinc-700 rounded" />
               <div className="mt-4 grid grid-cols-5 items-end gap-2 h-24">
                 <Bar h="h-10" />
                 <Bar h="h-16" />
@@ -294,11 +294,11 @@ function HeroComposite() {
               </div>
             </div>
             <div className="rounded-xl border border-gray-200 dark:border-zinc-700 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-sm p-4">
-              <div className="h-4 w-24 bg-gray-200 dark:bg-zinc-700 rounded"></div>
+              <div className="h-4 w-24 bg-gray-200 dark:bg-zinc-700 rounded" />
               <div className="mt-3 space-y-2">
-                <ListRow />
-                <ListRow />
-                <ListRow />
+                <ListRow title="Two Sum" subtitle="Array • Easy" chip="retry" />
+                <ListRow title="Course Schedule" subtitle="Graph • Medium" chip="retry" />
+                <ListRow title="Longest Substring" subtitle="String • Medium" chip="retry" />
               </div>
             </div>
           </div>
@@ -406,9 +406,9 @@ function ReviewModeGraphic() {
           <Chip label="DP" />
         </div>
         <div className="mt-4 space-y-2">
-          <ListRow subtitle="Arrays • Easy" chip="retry" />
-          <ListRow subtitle="Graphs • Medium" chip="retry" />
-          <ListRow subtitle="DP • Medium" chip="retry" />
+          <ListRow title="Two Sum" subtitle="Arrays • Easy" chip="retry" />
+          <ListRow title="Course Schedule" subtitle="Graphs • Medium" chip="retry" />
+          <ListRow title="Longest Substring" subtitle="Strings • Medium" chip="retry" />
         </div>
       </div>
     </div>
@@ -452,13 +452,13 @@ function StepVisual({ kind }) {
   if (kind === 'log') {
     return (
       <div className="rounded-lg border border-gray-200 dark:border-zinc-700 p-3 bg-white/60 dark:bg-zinc-800/50">
-        <SkeletonLine w="w-full" />
-        <SkeletonLine w="w-5/6" />
+        <div className="text-[11px] font-mono text-gray-700 dark:text-gray-200"><span className="text-gray-500">Title:</span> Two Sum</div>
+        <div className="mt-1 text-[11px] font-mono text-gray-700 dark:text-gray-200"><span className="text-gray-500">URL:</span> leetcode.com/problems/two-sum</div>
         <div className="mt-2 flex gap-2">
           <Chip label="Array" />
-          <Chip label="Two Pointers" />
+          <Chip label="Hashmap" />
         </div>
-        <div className="mt-2 h-10 rounded border border-gray-200 dark:border-zinc-700 bg-white/40 dark:bg-zinc-800/60" />
+        <div className="mt-2 rounded border border-gray-200 dark:border-zinc-700 bg-white/40 dark:bg-zinc-800/60 p-2 text-[11px] font-mono text-gray-700 dark:text-gray-200">Notes: Consider space–time tradeoff.</div>
       </div>
     );
   }
@@ -485,8 +485,8 @@ function StepVisual({ kind }) {
         <Chip label="Sliding Window" />
       </div>
       <div className="mt-3 space-y-2">
-        <ListRow subtitle="Sliding Window • Medium" chip="retry" />
-        <ListRow subtitle="Graph BFS • Medium" chip="retry" />
+        <ListRow title="Longest Substring" subtitle="Sliding Window • Medium" chip="retry" />
+        <ListRow title="Course Schedule" subtitle="Graph BFS • Medium" chip="retry" />
       </div>
     </div>
   );
@@ -509,8 +509,8 @@ function FeatureCard({ icon, title, desc, visual }) {
 function MiniFormVisual() {
   return (
     <div className="rounded-lg border border-gray-200 dark:border-zinc-700 p-3 bg-white/60 dark:bg-zinc-800/50">
-      <SkeletonLine w="w-5/6" />
-      <SkeletonLine w="w-3/4" />
+      <div className="text-[11px] font-mono text-gray-700 dark:text-gray-200"><span className="text-gray-500">Title:</span> Two Sum</div>
+      <div className="mt-1 text-[11px] font-mono text-gray-700 dark:text-gray-200"><span className="text-gray-500">Difficulty:</span> Easy</div>
       <div className="mt-2 flex gap-2">
         <Chip label="Array" />
         <Chip label="Two Pointers" />
@@ -522,15 +522,25 @@ function MiniFormVisual() {
 function MiniCodeDiffVisual() {
   return (
     <div className="rounded-lg border border-gray-200 dark:border-zinc-700 p-3 bg-white/60 dark:bg-zinc-800/50 grid grid-cols-2 gap-3">
-      <div className="rounded-md bg-gray-100 dark:bg-zinc-800 p-2 space-y-1">
-        <div className="h-2 w-10/12 bg-gray-300 dark:bg-zinc-700 rounded" />
-        <div className="h-2 w-8/12 bg-gray-300 dark:bg-zinc-700 rounded" />
-        <div className="h-2 w-9/12 bg-gray-300 dark:bg-zinc-700 rounded" />
+      <div className="rounded-md bg-gray-50 dark:bg-zinc-800 p-2">
+        <div className="text-[10px] uppercase tracking-wide text-gray-500">Python</div>
+        <pre className="mt-1 text-[11px] leading-4 font-mono whitespace-pre-wrap text-gray-800 dark:text-gray-100">{`def two_sum(nums, target):
+  seen = {}
+  for i, x in enumerate(nums):
+    if target - x in seen:
+      return [seen[target - x], i]
+    seen[x] = i`}</pre>
       </div>
-      <div className="rounded-md bg-gray-100 dark:bg-zinc-800 p-2 space-y-1">
-        <div className="h-2 w-11/12 bg-gray-300 dark:bg-zinc-700 rounded" />
-        <div className="h-2 w-7/12 bg-gray-300 dark:bg-zinc-700 rounded" />
-        <div className="h-2 w-9/12 bg-gray-300 dark:bg-zinc-700 rounded" />
+      <div className="rounded-md bg-gray-50 dark:bg-zinc-800 p-2">
+        <div className="text-[10px] uppercase tracking-wide text-gray-500">JavaScript</div>
+        <pre className="mt-1 text-[11px] leading-4 font-mono whitespace-pre-wrap text-gray-800 dark:text-gray-100">{`function twoSum(nums, target) {
+  const map = new Map();
+  for (let i = 0; i < nums.length; i++) {
+    const x = nums[i]
+    if (map.has(target - x)) return [map.get(target - x), i]
+    map.set(x, i)
+  }
+}`}</pre>
       </div>
     </div>
   );
@@ -558,8 +568,8 @@ function MiniReviewVisual() {
         <Chip label="Graphs" />
       </div>
       <div className="mt-2 space-y-2">
-        <ListRow subtitle="Topological Sort • Medium" chip="retry" />
-        <ListRow subtitle="Shortest Path • Medium" chip="retry" />
+        <ListRow title="Course Schedule" subtitle="Topological Sort • Medium" chip="retry" />
+        <ListRow title="Shortest Path" subtitle="Dijkstra • Medium" chip="retry" />
       </div>
     </div>
   );
@@ -653,12 +663,14 @@ function Bar({ h = "h-12" }) {
   return <div className={`w-6 ${h} rounded bg-indigo-400/70 dark:bg-indigo-500/70`} />;
 }
 
-function ListRow({ subtitle = "Arrays • Easy", chip }) {
+function ListRow({ title = "Two Sum", subtitle = "Arrays • Easy", chip }) {
   return (
     <div className="flex items-center justify-between rounded-lg border border-gray-200 dark:border-zinc-700 p-2 bg-white/60 dark:bg-zinc-800/50">
-      <div className="h-3 w-40 bg-gray-200 dark:bg-zinc-700 rounded" />
+      <div>
+        <div className="text-[12px] font-medium text-gray-800 dark:text-gray-100">{title}</div>
+        <div className="text-[10px] text-gray-500 dark:text-gray-400">{subtitle}</div>
+      </div>
       <div className="flex items-center gap-2">
-        <div className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 dark:bg-zinc-700 text-gray-600 dark:text-gray-300">{subtitle}</div>
         {chip === 'retry' && (
           <div className="text-[10px] px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">retry</div>
         )}
