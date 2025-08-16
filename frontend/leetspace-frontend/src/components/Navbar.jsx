@@ -32,8 +32,8 @@ export default function Navbar() {
       </Link>
       <div className="flex items-center gap-4 text-sm">
       {!user && (
-        <Link to="/sample" className="dark:text-white hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">
-          Sample log
+        <Link to="/sample/problem" className="dark:text-white hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">
+          Sample problem
         </Link>
       )}
       {user && (

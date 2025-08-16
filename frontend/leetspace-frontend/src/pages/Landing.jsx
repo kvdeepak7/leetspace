@@ -40,7 +40,7 @@ export default function Landing() {
                   </Link>
                 </Button>
                 <Button asChild variant="ghost" size="lg">
-                  <Link to="/sample" className="cursor-pointer">View sample log</Link>
+                  <Link to="/sample/problem" className="cursor-pointer">View sample problem</Link>
                 </Button>
                 <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">Built for serious interview prep</span>
               </div>
@@ -133,7 +133,7 @@ export default function Landing() {
             <Link to="/auth" className="cursor-pointer">Start your journal</Link>
           </Button>
           <Button asChild variant="ghost" size="lg">
-            <Link to="/sample" className="cursor-pointer">View sample log</Link>
+            <Link to="/sample/problem" className="cursor-pointer">View sample problem</Link>
           </Button>
         </div>
       </section>

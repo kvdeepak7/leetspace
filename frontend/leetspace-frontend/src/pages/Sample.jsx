@@ -48,7 +48,7 @@ export default function Sample() {
             <Link to="/auth" className="cursor-pointer">Start your journal</Link>
           </Button>
           <Button asChild variant="ghost" size="lg">
-            <Link to="/sample/problem" className="cursor-pointer">View full sample problem</Link>
+            <Link to="/sample/problem" className="cursor-pointer">View sample problem</Link>
           </Button>
           <Button asChild variant="ghost" size="lg">
             <Link to="/" className="cursor-pointer">Back to landing</Link>
