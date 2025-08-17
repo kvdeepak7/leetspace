@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { useDemo } from "@/context/DemoContext";
 import { DataTable } from "@/components/data-table/data-table";
 import { columns } from "@/components/data-table/columns";
 import { DeleteProblemDialog } from "@/components/DeleteProblemDialog";
@@ -13,6 +14,7 @@ export default function Problems() {
   const [problems, setProblems] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth(); 
+  const { isDemo } = useDemo();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedProblem, setSelectedProblem] = useState(null);
@@ -27,7 +29,7 @@ export default function Problems() {
         sort_by: "date_solved",
         order: "desc",
       });
-      setProblems(res.data);
+      setProblems(res.data.problems || res.data); // debug endpoint returns {count, problems}
       console.log(res.data);
     } catch (error) {
       console.error("Error fetching problems:", error);
@@ -38,16 +40,24 @@ export default function Problems() {
   };
 
   useEffect(() => {
-    if (user) {
+    if (user || isDemo) {
       fetchProblems();
     }
-  }, [user]);
+  }, [user, isDemo]);
   const handleEdit = (problem) => {
+    if (isDemo) {
+      toast.info("Demo mode: editing disabled.");
+      return;
+    }
     sessionStorage.setItem(`editProblemIntent-${problem.id}`, "fresh");
     navigate(`/edit-problem/${problem.id}`);
   };
 
   const handleDelete = (problem) => {
+    if (isDemo) {
+      toast.info("Demo mode: delete disabled.");
+      return;
+    }
     setSelectedProblem(problem);
     setDeleteDialogOpen(true);
   };

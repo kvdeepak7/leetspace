@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/components/ThemeProvider";
+import { useDemo } from "@/context/DemoContext";
 import { Moon, Sun, User, LogOut, Mail, Shield, Settings } from "lucide-react";
 
 function LogoMark({ className = "" }) {
@@ -25,6 +26,7 @@ function LogoMark({ className = "" }) {
 export default function Navbar() {
   const { user, signOut, isEmailVerified, hasGoogleProvider } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { isDemo, setDemo } = useDemo();
 
   const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -43,20 +45,25 @@ export default function Navbar() {
     setShowUserMenu(false);
   };
 
+  const showNavLinks = isDemo || !!user;
+
   return (
     <nav className="flex justify-between items-center px-6 py-3 border-b bg-white dark:bg-black">
-      <Link to={user ? "/dashboard" : "/"} className="group flex items-center gap-2 font-bold text-xl text-gray-900 dark:text-white cursor-pointer">
+      <Link to={showNavLinks ? "/dashboard" : "/"} className="group flex items-center gap-2 font-bold text-xl text-gray-900 dark:text-white cursor-pointer">
         <LogoMark className="h-5 w-5 text-indigo-600 dark:text-indigo-400 transition-transform duration-200 ease-out group-hover:-translate-y-px group-hover:rotate-1 motion-reduce:transform-none" />
         <span>LeetSpace</span>
+        {isDemo && (
+          <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-200 border border-indigo-200/70 dark:border-indigo-700/50">
+            Demo
+          </span>
+        )}
       </Link>
       <div className="flex items-center gap-4 text-sm">
-      {/* {!user && (
-        <Link to="/sample/problem" className="dark:text-white hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">
-          Sample log
-        </Link>
-      )} */}
-      {user && (
+      {showNavLinks && (
         <>
+        <Link to="/dashboard" className="dark:text-white hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">
+          Dashboard
+        </Link>
         <Link to="/problems" className="dark:text-white hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">
           Problems
         </Link>
@@ -81,6 +88,15 @@ export default function Navbar() {
             <Sun className="w-5 h-5 text-white" />
           )}
         </button>
+
+        {isDemo && !user && (
+          <button
+            onClick={() => { setDemo(false); navigate("/"); }}
+            className="px-3 py-1 text-xs rounded border border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-200 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 cursor-pointer"
+          >
+            Exit demo
+          </button>
+        )}
 
         {user ? (
                     <div className="relative">
@@ -175,14 +191,14 @@ export default function Navbar() {
                     )}
                   </div>
         
-        ) : (
+        ) : (!isDemo && (
           <Link 
             to="/auth" 
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors cursor-pointer"
           >
             Sign In
           </Link>
-        )}
+        ))}
       </div>
       {/* Click outside to close menu */}
       {showUserMenu && (

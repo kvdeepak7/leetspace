@@ -13,10 +13,12 @@ import Landing from './pages/Landing';
 import Sample from './pages/Sample';
 import SampleProblem from './pages/SampleProblem';
 import Oops from './pages/Oops';
+import ResetPassword from './pages/ResetPassword';
 
 import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
 // import { AuthProvider } from "@/lib/useAuth";
 import { AuthProvider } from "@/context/AuthContext";
+import { DemoProvider } from "@/context/DemoContext";
 import { Toaster } from "sonner";
 import "./index.css" 
 function AppShell() {
@@ -43,9 +45,11 @@ function AppShell() {
 function AppWrapper() {
 return (
   <ThemeProvider>
-    <AuthProvider>
-      <AppShell />
+    <DemoProvider>
+      <AuthProvider>
+        <AppShell />
       </AuthProvider>
+    </DemoProvider>
     </ThemeProvider>
 
   );
@@ -66,6 +70,7 @@ function App() {
           element={<Landing />} 
         />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/sample" element={<Sample />} />
         <Route path="/sample/problem" element={<SampleProblem />} />
         <Route path="/oops" element={<Oops />} />

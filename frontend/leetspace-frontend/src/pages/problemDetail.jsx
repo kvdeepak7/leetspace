@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { problemsAPI } from "@/lib/api";
+import { useDemo } from "@/context/DemoContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Edit3, Trash2,ExternalLink } from "lucide-react";
@@ -20,6 +21,7 @@ export default function ProblemDetail() {
   );
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedProblem, setSelectedProblem] = useState(null);
+  const { isDemo } = useDemo();
   const navigate = useNavigate();
 
    // Helper function to format date properly without timezone issues
@@ -71,6 +73,10 @@ export default function ProblemDetail() {
   }, [id]);
 
   const handleDelete = (problem) => {
+    if (isDemo) {
+      toast.info("Demo mode: delete disabled.");
+      return;
+    }
     console.log("Deleting problem:", problem.title);
     setSelectedProblem(problem);
     setDeleteDialogOpen(true);
@@ -160,18 +166,6 @@ export default function ProblemDetail() {
             variant="ghost"
             size="icon"
             onClick={() => handleDelete(problem)}
-            // onClick={async () => {
-            //   const confirmDelete = window.confirm("Are you sure you want to delete this problem?");
-            //   if (!confirmDelete) return;
-            //   try {
-            //     await axios.delete(`/api/problems/${problem.id}`, {
-            //       baseURL: "http://localhost:8000",
-            //     });
-            //     navigate("/problems");
-            //   } catch (err) {
-            //     console.error("❌ Failed to delete problem:", err);
-            //   }
-            // }}
             title="Delete"
             className="hover:bg-muted cursor-pointer"
           >
@@ -232,16 +226,6 @@ export default function ProblemDetail() {
         <div className="overflow-x-auto rounded-md bg-background dark:bg-zinc-800">
           
           <CodeViewer language={sol.language} code={sol.code} theme={theme} />
-          {/* <MDEditor.Markdown
-            source={`\`\`\`\n${sol.code}\n\`\`\``}
-            className="!bg-white dark:!bg-zinc-900 p-4 rounded-md"
-            style={{
-              backgroundColor: theme === 'dark' ? '#18181b' : '#ffffff',
-              padding: '1rem',
-              borderRadius: '0.5rem',
-            }}
-          /> */}
-
         </div>
       </div>
     ))}

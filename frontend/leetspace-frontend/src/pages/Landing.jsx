@@ -1,18 +1,22 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { useDemo } from "@/context/DemoContext";
 import { Button } from "@/components/ui/button";
 import { Check, ArrowRight, Layers, BookOpen, Target, ListChecks, Timer, Code2, Sparkles } from "lucide-react";
 
 export default function Landing() {
   const { user, initialized } = useAuth();
+  const { isDemo, setDemo } = useDemo();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (initialized && user) {
+    if ((initialized && user) || isDemo) {
       navigate("/dashboard", { replace: true });
     }
-  }, [initialized, user, navigate]);
+  }, [initialized, user, navigate, isDemo]);
+
+  if (isDemo) return null;
 
   return (
     <div className="bg-white text-gray-900 dark:bg-zinc-900 dark:text-gray-100">
@@ -41,6 +45,14 @@ export default function Landing() {
                 </Button>
                 <Button asChild variant="ghost" size="lg" className="border border-indigo-300 bg-white/90 text-indigo-700 shadow-sm hover:bg-indigo-50/80 dark:bg-zinc-900/70 dark:text-indigo-200 dark:hover:bg-zinc-800/70">
                   <Link to="/sample/problem" className="cursor-pointer">View sample problem</Link>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => { setDemo(true); navigate("/dashboard"); }}
+                  className="cursor-pointer"
+                >
+                  Explore demo workspace
                 </Button>
                 <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">Built for serious interview prep</span>
               </div>

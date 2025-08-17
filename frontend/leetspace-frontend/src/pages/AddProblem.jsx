@@ -7,9 +7,11 @@ import { useState,useEffect } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import CodeEditor from "@/components/CodeEditor";
 import { useAuth } from "@/context/AuthContext";
+import { useDemo } from "@/context/DemoContext";
 import { problemsAPI } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
 import { AlertCircle,Plus,ExternalLink } from "lucide-react";
+import { toast } from "sonner";
 
 
 export default function AddProblem() {
@@ -41,7 +43,7 @@ export default function AddProblem() {
   const isValidUrl = (value) => {
     try {
       new URL(value);
-      return /^(https?):\/\/[\w.-]+\.[a-z]{2,}.*$/i.test(value);
+      return /^(https?):\/\/[^\s]+$/i.test(value);
     } catch {
       return false;
     }
@@ -136,6 +138,7 @@ export default function AddProblem() {
     setSolutions(updated);
   };
   const { user } = useAuth();
+  const { isDemo } = useDemo();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -175,6 +178,11 @@ export default function AddProblem() {
     };
 
     try {
+      if (isDemo) {
+        toast.info("Demo mode: submit disabled. Try browsing the Problems and Dashboard.");
+        sessionStorage.removeItem("addProblemDraft");
+        return;
+      }
       const res = await problemsAPI.createProblem(problemData);
       console.log("✅ Problem saved:", res.data);
       sessionStorage.removeItem("addProblemDraft");
