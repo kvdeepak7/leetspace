@@ -11,6 +11,18 @@ export default function Auth() {
     }
   }, [isDemo]);
 
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.remove("dark");
+    root.classList.add("light");
+
+    return () => {
+      root.classList.remove("light");
+      const stored = typeof window !== 'undefined' ? (localStorage.getItem('theme') || 'light') : 'light';
+      root.classList.add(stored === 'dark' ? 'dark' : 'light');
+    };
+  }, []);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6">
       <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
