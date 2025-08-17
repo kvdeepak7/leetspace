@@ -2,6 +2,7 @@
 
 import axios from 'axios';
 import { auth } from './firebase';
+import { demoApi } from './demoApi';
 
 // Create axios instance with base configuration
 const api = axios.create({
@@ -43,7 +44,7 @@ export const getIdToken = async () => {
 api.interceptors.request.use(
   async (config) => {
     if (isDemoMode()) {
-      // Do not attach auth headers in demo; endpoints are public
+      // Do not attach auth headers in demo; endpoints are public (or bypassed)
       return config;
     }
     try {
@@ -88,12 +89,11 @@ api.interceptors.response.use(
 export const problemsAPI = {
   // Get all problems for authenticated user or demo
   getProblems: (params = {}) => {
-    // Remove user_id from params since it's handled by auth or demo routing
-    const { user_id, ...cleanParams } = params;
     if (isDemoMode()) {
-      const demoUser = 'abc123';
-      return api.get('/api/problems/debug', { params: { ...cleanParams, user_id: demoUser } });
+      return demoApi.getProblems(params);
     }
+    // Remove user_id from params since it's handled by auth
+    const { user_id, ...cleanParams } = params;
     return api.get('/api/problems', { params: cleanParams });
   },
 
@@ -106,8 +106,11 @@ export const problemsAPI = {
     return api.post('/api/problems', cleanData);
   },
 
-  // Get a specific problem (demo uses list + client filter is fine for now)
-  getProblem: (id) => api.get(`/api/problems/${id}`),
+  // Get a specific problem (demo uses local set)
+  getProblem: (id) => {
+    if (isDemoMode()) return demoApi.getProblem(id);
+    return api.get(`/api/problems/${id}`);
+  },
 
   // Update a problem (blocked in demo)
   updateProblem: (id, updateData) => {
@@ -126,7 +129,7 @@ export const problemsAPI = {
     return api.delete(`/api/problems/${id}`);
   },
 
-  // Get user statistics
+  // Get user statistics (not used in demo)
   getStats: () => api.get('/api/problems/stats'),
 };
 
@@ -135,8 +138,7 @@ export const analyticsAPI = {
   // Get dashboard data for authenticated user or demo
   getDashboard: () => {
     if (isDemoMode()) {
-      const demoUser = 'abc123';
-      return api.get('/api/analytics/dashboard-debug', { params: { user_id: demoUser } });
+      return demoApi.getDashboard();
     }
     return api.get('/api/analytics/dashboard');
   },
