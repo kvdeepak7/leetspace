@@ -3,12 +3,28 @@ import { useDemo } from "@/context/DemoContext";
 import { LoginForm } from "@/components/login-form";
 
 export default function Auth() {
-	const { isDemo } = useDemo();
-	useEffect(() => {
-		if (isDemo) {
-			window.location.replace("/dashboard");
-		}
-	}, [isDemo]);
-	return <LoginForm />;
+  const { isDemo } = useDemo();
+
+  useEffect(() => {
+    if (isDemo) {
+      window.location.replace("/dashboard");
+    }
+  }, [isDemo]);
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6">
+      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="flex justify-center gap-2 mb-6">
+          <a href="/" className="flex items-center gap-2 font-medium text-gray-900 dark:text-white cursor-pointer">
+            <div className="bg-blue-600 text-white flex size-6 items-center justify-center rounded-md">
+              <span className="text-xs font-bold">LS</span>
+            </div>
+            LeetSpace
+          </a>
+        </div>
+        <LoginForm />
+      </div>
+    </div>
+  );
 }
   
