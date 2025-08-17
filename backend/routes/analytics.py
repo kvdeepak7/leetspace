@@ -57,7 +57,7 @@ def calculate_basic_stats(problems: List[Dict]) -> Dict[str, Any]:
     total_problems = len(problems)
     
     # Retry later count
-    retry_count = sum(1 for p in problems if p.get("retry_later") == "Yes")
+    retry_count = sum(1 for p in problems if (p.get("retry_later") == "Yes" or p.get("retry_later") is True))
     
     # Total active days (unique dates)
     unique_dates = set()
@@ -107,7 +107,7 @@ def detect_weaknesses(problems: List[Dict]) -> List[Dict[str, Any]]:
         
         for tag in tags:
             tag_stats[tag]["total"] += 1
-            if is_retry:
+            if problem.get("retry_later") in ("Yes", True):
                 tag_stats[tag]["retry_count"] += 1
     
     # Find weakness areas (retry rate > 30% and at least 3 problems)
@@ -130,7 +130,7 @@ def detect_weaknesses(problems: List[Dict]) -> List[Dict[str, Any]]:
 def suggest_todays_revision(problems: List[Dict]) -> Dict[str, Any]:
     """Suggest a problem to revise today using spaced repetition"""
     
-    retry_problems = [p for p in problems if p.get("retry_later") == "Yes"]
+    retry_problems = [p for p in problems if p.get("retry_later") in ("Yes", True)]
     
     if not retry_problems:
         return None
@@ -141,7 +141,7 @@ def suggest_todays_revision(problems: List[Dict]) -> Dict[str, Any]:
     suggestions = []
     for problem in retry_problems:
         try:
-            solved_date = datetime.strptime(problem["date_solved"], "%Y-%m-%d")
+            solved_date = datetime.strptime(str(problem["date_solved"]), "%Y-%m-%d")
             days_since = (today - solved_date).days
             
             # Spaced repetition intervals: 1, 3, 7, 14, 30 days
@@ -191,7 +191,7 @@ def generate_activity_heatmap(problems: List[Dict]) -> List[Dict[str, Any]]:
     date_counts = defaultdict(int)
     for problem in problems:
         try:
-            solved_date = datetime.strptime(problem["date_solved"], "%Y-%m-%d")
+            solved_date = datetime.strptime(str(problem["date_solved"]), "%Y-%m-%d")
             if solved_date >= start_date:
                 date_str = solved_date.strftime("%Y-%m-%d")
                 date_counts[date_str] += 1
@@ -223,7 +223,7 @@ def get_recent_activity(problems: List[Dict]) -> List[Dict[str, Any]]:
     try:
         sorted_problems = sorted(
             problems,
-            key=lambda x: datetime.strptime(x["date_solved"], "%Y-%m-%d"),
+            key=lambda x: datetime.strptime(str(x["date_solved"]), "%Y-%m-%d"),
             reverse=True
         )
     except (ValueError, TypeError):
@@ -236,7 +236,7 @@ def get_recent_activity(problems: List[Dict]) -> List[Dict[str, Any]]:
     formatted_recent = []
     for problem in recent:
         try:
-            solved_date = datetime.strptime(problem["date_solved"], "%Y-%m-%d")
+            solved_date = datetime.strptime(str(problem["date_solved"]), "%Y-%m-%d")
             days_ago = (datetime.now() - solved_date).days
             
             if days_ago == 0:

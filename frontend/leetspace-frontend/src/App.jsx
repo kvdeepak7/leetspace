@@ -17,6 +17,7 @@ import Oops from './pages/Oops';
 import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
 // import { AuthProvider } from "@/lib/useAuth";
 import { AuthProvider } from "@/context/AuthContext";
+import { DemoProvider } from "@/context/DemoContext";
 import { Toaster } from "sonner";
 import "./index.css" 
 function AppShell() {
@@ -43,9 +44,11 @@ function AppShell() {
 function AppWrapper() {
 return (
   <ThemeProvider>
-    <AuthProvider>
-      <AppShell />
+    <DemoProvider>
+      <AuthProvider>
+        <AppShell />
       </AuthProvider>
+    </DemoProvider>
     </ThemeProvider>
 
   );

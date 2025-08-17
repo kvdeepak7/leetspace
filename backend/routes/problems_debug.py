@@ -17,7 +17,7 @@ collection = db["problems"]
 # Debug endpoint without authentication - completely separate
 @router.get("/debug")
 async def get_problems_debug(
-    user_id: str = "test_user",
+    user_id: str = "abc123",
     difficulty: Optional[str] = None,
     sort_by: Optional[str] = "date_solved",
     order: Optional[str] = "desc",

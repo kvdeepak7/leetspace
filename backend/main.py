@@ -4,6 +4,7 @@ from fastapi import FastAPI, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from db.mongo import db
 from routes import problems, analytics, problems_debug
+from routes import analytics_debug
 from auth.dependencies import get_current_active_user
 
 app = FastAPI()
@@ -20,6 +21,7 @@ app.add_middleware(
 # Include routers
 app.include_router(problems.router, prefix="/api/problems", tags=["Problems"])
 app.include_router(analytics.router, prefix="/api/analytics", tags=["Analytics"])
+app.include_router(analytics_debug.router, prefix="/api/analytics", tags=["Analytics Debug"])
 app.include_router(problems_debug.router, prefix="/api/problems", tags=["Problems Debug"])
 
 @app.get("/")

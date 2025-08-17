@@ -11,6 +11,15 @@ const api = axios.create({
   },
 });
 
+// Lightweight accessor for demo flag without importing React context in this module
+const isDemoMode = () => {
+  try {
+    return sessionStorage.getItem('leetspace_demo_mode') === '1';
+  } catch {
+    return false;
+  }
+};
+
 // Function to get Firebase ID token
 export const getIdToken = async () => {
   const user = auth.currentUser;
@@ -30,9 +39,13 @@ export const getIdToken = async () => {
   }
 };
 
-// Request interceptor to add Firebase ID token to all requests
+// Request interceptor to add Firebase ID token to all requests (skip in demo)
 api.interceptors.request.use(
   async (config) => {
+    if (isDemoMode()) {
+      // Do not attach auth headers in demo; endpoints are public
+      return config;
+    }
     try {
       const idToken = await getIdToken();
       config.headers.Authorization = `Bearer ${idToken}`;
@@ -53,7 +66,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && !isDemoMode()) {
       // Token might be expired, try to refresh
       try {
         const user = auth.currentUser;
@@ -73,31 +86,45 @@ api.interceptors.response.use(
 
 // API functions for problems
 export const problemsAPI = {
-  // Get all problems for authenticated user
+  // Get all problems for authenticated user or demo
   getProblems: (params = {}) => {
-    // Remove user_id from params since it's handled by auth
+    // Remove user_id from params since it's handled by auth or demo routing
     const { user_id, ...cleanParams } = params;
+    if (isDemoMode()) {
+      const demoUser = 'abc123';
+      return api.get('/api/problems/debug', { params: { ...cleanParams, user_id: demoUser } });
+    }
     return api.get('/api/problems', { params: cleanParams });
   },
 
-  // Create a new problem
+  // Create a new problem (blocked in demo)
   createProblem: (problemData) => {
-    // Remove user_id from data since it's handled by auth
+    if (isDemoMode()) {
+      return Promise.reject(new Error('Demo mode: create disabled'));
+    }
     const { user_id, ...cleanData } = problemData;
     return api.post('/api/problems', cleanData);
   },
 
-  // Get a specific problem
+  // Get a specific problem (demo uses list + client filter is fine for now)
   getProblem: (id) => api.get(`/api/problems/${id}`),
 
-  // Update a problem
+  // Update a problem (blocked in demo)
   updateProblem: (id, updateData) => {
+    if (isDemoMode()) {
+      return Promise.reject(new Error('Demo mode: update disabled'));
+    }
     const { user_id, ...cleanData } = updateData;
     return api.put(`/api/problems/${id}`, cleanData);
   },
 
-  // Delete a problem
-  deleteProblem: (id) => api.delete(`/api/problems/${id}`),
+  // Delete a problem (blocked in demo)
+  deleteProblem: (id) => {
+    if (isDemoMode()) {
+      return Promise.reject(new Error('Demo mode: delete disabled'));
+    }
+    return api.delete(`/api/problems/${id}`);
+  },
 
   // Get user statistics
   getStats: () => api.get('/api/problems/stats'),
@@ -105,8 +132,14 @@ export const problemsAPI = {
 
 // API functions for analytics
 export const analyticsAPI = {
-  // Get dashboard data for authenticated user
-  getDashboard: () => api.get('/api/analytics/dashboard'),
+  // Get dashboard data for authenticated user or demo
+  getDashboard: () => {
+    if (isDemoMode()) {
+      const demoUser = 'abc123';
+      return api.get('/api/analytics/dashboard-debug', { params: { user_id: demoUser } });
+    }
+    return api.get('/api/analytics/dashboard');
+  },
 };
 
 // Export the configured axios instance for custom requests

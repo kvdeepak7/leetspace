@@ -1,21 +1,39 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { useDemo } from "@/context/DemoContext";
 import { Button } from "@/components/ui/button";
 import { Check, ArrowRight, Layers, BookOpen, Target, ListChecks, Timer, Code2, Sparkles } from "lucide-react";
 
 export default function Landing() {
   const { user, initialized } = useAuth();
+  const { isDemo, setDemo } = useDemo();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (initialized && user) {
+    if (initialized && user && !isDemo) {
       navigate("/dashboard", { replace: true });
     }
-  }, [initialized, user, navigate]);
+  }, [initialized, user, navigate, isDemo]);
 
   return (
     <div className="bg-white text-gray-900 dark:bg-zinc-900 dark:text-gray-100">
+      {/* Demo mode banner */}
+      {isDemo && (
+        <div className="bg-indigo-50 dark:bg-indigo-900/30 border-b border-indigo-200 dark:border-indigo-800 text-indigo-800 dark:text-indigo-200">
+          <div className="max-w-7xl mx-auto px-6 py-2 flex items-center justify-between">
+            <div className="text-sm">You are exploring the demo workspace.</div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => { setDemo(false); navigate("/", { replace: true }); }}
+              className="cursor-pointer"
+            >
+              Exit demo
+            </Button>
+          </div>
+        </div>
+      )}
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-indigo-50/60 to-white dark:from-indigo-900/30 dark:to-zinc-900" />
@@ -41,6 +59,14 @@ export default function Landing() {
                 </Button>
                 <Button asChild variant="ghost" size="lg" className="border border-indigo-300 bg-white/90 text-indigo-700 shadow-sm hover:bg-indigo-50/80 dark:bg-zinc-900/70 dark:text-indigo-200 dark:hover:bg-zinc-800/70">
                   <Link to="/sample/problem" className="cursor-pointer">View sample problem</Link>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => { setDemo(true); navigate("/dashboard"); }}
+                  className="cursor-pointer"
+                >
+                  Explore demo workspace
                 </Button>
                 <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">Built for serious interview prep</span>
               </div>

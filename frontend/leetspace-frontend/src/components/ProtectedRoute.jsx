@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { useDemo } from "@/context/DemoContext";
 import { Loader2 } from "lucide-react";
 
 const ProtectedRoute = ({ 
@@ -10,8 +11,14 @@ const ProtectedRoute = ({
   fallback = null 
 }) => {
   const { user, loading, initialized, isEmailVerified } = useAuth();
+  const { isDemo } = useDemo();
   const location = useLocation();
   const [showEmailVerificationPrompt, setShowEmailVerificationPrompt] = useState(false);
+
+  // In demo mode, bypass auth entirely
+  if (isDemo) {
+    return fallback || children;
+  }
 
   useEffect(() => {
     // Show email verification prompt if user is signed in but email is not verified

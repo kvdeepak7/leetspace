@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from "@/context/AuthContext";
+import { useDemo } from "@/context/DemoContext";
 import { analyticsAPI } from '@/lib/api';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { ActivityHeatmap } from '@/components/dashboard/ActivityHeatmap';
@@ -19,13 +20,14 @@ import {
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { isDemo } = useDemo();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
-      if (!user) return;
+      if (!user && !isDemo) return;
 
       try {
         setLoading(true);
@@ -40,7 +42,7 @@ export default function Dashboard() {
     };
 
     fetchDashboardData();
-  }, [user]);
+  }, [user, isDemo]);
 
   if (loading) {
     return (
@@ -89,10 +91,10 @@ export default function Dashboard() {
         {/* Header */}
         <div className="space-y-2">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Hi {user?.displayName?.trim() || (user?.email ? user.email.split('@')[0] : 'there')} 👋
+            Hi {user?.displayName?.trim() || (user?.email ? user.email.split('@')[0] : (isDemo ? 'demo explorer' : 'there'))} 👋
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Your LeetSpace learning analytics and insights
+            Your LeetSpace learning analytics and insights {isDemo && '(demo)'}
           </p>
         </div>
 
