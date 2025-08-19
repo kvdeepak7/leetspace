@@ -722,7 +722,7 @@ export function DataTable({ data, columns, onDataChange }) {
               </Button>
             )}
             <DialogClose asChild>
-              <Button onClick={() => setMobileFiltersOpen(false)}>Apply</Button>
+              <Button className="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700" onClick={() => setMobileFiltersOpen(false)}>Apply</Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>

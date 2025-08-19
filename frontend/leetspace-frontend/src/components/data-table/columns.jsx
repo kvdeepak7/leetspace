@@ -46,8 +46,8 @@ export const columns = (onEdit, onDelete) => [
     enableSorting: false,
     enableHiding: false,
     meta: {
-      headerClass: "hidden sm:table-cell",
-      cellClass: "hidden sm:table-cell",
+      headerClass: "table-cell",
+      cellClass: "table-cell",
     },
   },
     {
