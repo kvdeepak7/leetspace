@@ -14,6 +14,7 @@ import Sample from './pages/Sample';
 import SampleProblem from './pages/SampleProblem';
 import Oops from './pages/Oops';
 import ResetPassword from './pages/ResetPassword';
+import BackToTop from '@/components/BackToTop';
 
 import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
 // import { AuthProvider } from "@/lib/useAuth";
@@ -28,6 +29,7 @@ function AppShell() {
     <Router>
       <App />
     </Router>
+    <BackToTop />
     <Toaster 
       position="top-right"
       theme={theme === 'dark' ? 'dark' : 'light'}

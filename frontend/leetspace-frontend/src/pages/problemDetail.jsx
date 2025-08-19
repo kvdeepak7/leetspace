@@ -133,9 +133,9 @@ export default function ProblemDetail() {
   return (
     <div className="max-w-4xl mx-auto px-6 py-10 space-y-8 text-black dark:text-white bg-white dark:bg-zinc-900">
       <div className="space-y-1">
-      <div className="flex justify-between items-center">
-      <div className="flex items-center gap-2">
-          <h1 className="text-3xl font-bold">{problem.title}</h1>
+      <div className="flex justify-between items-center gap-3">
+      <div className="flex items-center gap-2 min-w-0">
+          <h1 className="text-2xl md:text-3xl font-bold truncate" title={problem.title}>{problem.title}</h1>
           {problem.url && (
             <a
               href={problem.url}
@@ -148,7 +148,7 @@ export default function ProblemDetail() {
             </a>
           )}
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 shrink-0">
           <Button
             variant="ghost"
             size="icon"

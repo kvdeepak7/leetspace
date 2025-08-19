@@ -66,6 +66,11 @@ export const columns = (onEdit, onDelete) => [
       },
       enableSorting: true,
       enableHiding: false,
+      cell: ({ row }) => (
+        <div className="max-w-[140px] sm:max-w-none truncate">
+          {row.original.title}
+        </div>
+      ),
     },
     {
       accessorKey: "difficulty",

@@ -44,6 +44,16 @@ export default function Problems() {
       fetchProblems();
     }
   }, [user, isDemo]);
+
+  // Keep theme in sync for toast styling
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      const isDark = document.documentElement.classList.contains("dark");
+      setTheme(isDark ? "dark" : "light");
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
   const handleEdit = (problem) => {
     if (isDemo) {
       toast.info("Demo mode: editing disabled.");

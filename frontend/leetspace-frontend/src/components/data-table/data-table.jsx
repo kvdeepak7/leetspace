@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { problemsAPI } from "@/lib/api";
-import { Filter, X, Search, Tag, ChevronUp,Trash2  } from "lucide-react"
+import { Filter, X, Search, Tag, Trash2  } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog"
 
 import {
@@ -66,7 +66,6 @@ export function DataTable({ data, columns,onDataChange }) {
   const [difficultyFilter, setDifficultyFilter] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
   const [tagSearch, setTagSearch] = useState("");
-  const [showScrollTop, setShowScrollTop] = useState(false);
   const [revisitOnly, setRevisitOnly] = useState(false);
   const [selectionMode, setSelectionMode] = useState(false);
   const [rowSelection, setRowSelection] = useState({});
@@ -237,23 +236,6 @@ export function DataTable({ data, columns,onDataChange }) {
         },
       });
     }
-  };
-
-  // Scroll to top functionality
-  React.useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 300);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
   };
 
   return (
@@ -608,16 +590,7 @@ export function DataTable({ data, columns,onDataChange }) {
         </TableBody>
       </Table>
     </div>
-    {/* Scroll to top button */}
-    {showScrollTop && (
-      <Button
-        onClick={scrollToTop}
-        className="fixed bottom-8 right-8 z-50 w-12 h-12 rounded-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white shadow-lg transition-all duration-300 ease-in-out"
-        size="icon"
-      >
-        <ChevronUp className="h-6 w-6" />
-      </Button>
-    )}
+    {/* Scroll-to-top handled globally */}
     {/* Mobile Filters Dialog */}
     <Dialog open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
       <DialogContent className="sm:max-w-lg">
