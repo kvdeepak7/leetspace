@@ -60,13 +60,13 @@ export function DataTable({ data, columns, onDataChange }) {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({
-    select: false,
+    select: true,
   });
   const [difficultyFilter, setDifficultyFilter] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
   const [tagSearch, setTagSearch] = useState("");
   const [revisitOnly, setRevisitOnly] = useState(false);
-  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectionMode, setSelectionMode] = useState(true);
   const [rowSelection, setRowSelection] = useState({});
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [theme, setTheme] = useState(
@@ -130,7 +130,7 @@ export function DataTable({ data, columns, onDataChange }) {
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
-    enableRowSelection: selectionMode,
+    enableRowSelection: true,
     getRowId: (row) => row.id,
   });
 
@@ -568,7 +568,7 @@ export function DataTable({ data, columns, onDataChange }) {
       </div>
 
       {/* Mass delete button - only show when items are selected */}
-      {selectionMode && selectedCount > 0 && (
+      {selectedCount > 0 && (
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button
