@@ -48,8 +48,13 @@ export default function Navbar() {
 
   const showNavLinks = isDemo || !!user;
 
+  // Show navbar only when it has options (demo or authenticated)
+  if (!showNavLinks) {
+    return null;
+  }
+
   return (
-    <nav className="relative flex justify-between items-center px-6 py-3 border-b bg-white dark:bg-black">
+    <nav className="relative flex justify-between items-center px-6 py-3 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-black">
       <Link to={showNavLinks ? "/dashboard" : "/"} className="group flex items-center gap-2 font-bold text-xl text-gray-900 dark:text-white cursor-pointer">
         <LogoMark className="h-5 w-5 text-indigo-600 dark:text-indigo-400 transition-transform duration-200 ease-out group-hover:-translate-y-px group-hover:rotate-1 motion-reduce:transform-none" />
         <span>LeetSpace</span>
@@ -62,7 +67,7 @@ export default function Navbar() {
       <div className="flex items-center gap-4 text-sm">
       <button 
           onClick={() => setShowMobileMenu(!showMobileMenu)}
-          className="p-2 sm:hidden rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+          className="p-2 sm:hidden rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-900 dark:text-white transition-colors cursor-pointer"
           aria-label="Toggle menu"
         >
           {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -210,7 +215,7 @@ export default function Navbar() {
       </div>
       {/* Mobile menu panel */}
       {showMobileMenu && (
-        <div className="sm:hidden absolute left-0 right-0 top-full border-b bg-white dark:bg-black z-50">
+        <div className="sm:hidden absolute left-0 right-0 top-full border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-black z-50">
           <div className="px-6 py-3 flex flex-col gap-3">
             {showNavLinks && (
               <>
