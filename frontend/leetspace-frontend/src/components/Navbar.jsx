@@ -102,7 +102,7 @@ export default function Navbar() {
         {isDemo && !user && (
           <button
             onClick={() => { setDemo(false); navigate("/"); }}
-            className="px-3 py-1 text-xs rounded border border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-200 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 cursor-pointer"
+            className="hidden sm:inline-flex px-3 py-1 text-xs rounded border border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-200 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 cursor-pointer"
           >
             Exit demo
           </button>
@@ -229,6 +229,14 @@ export default function Navbar() {
                 >
                   Add Problem
                 </Link>
+                {isDemo && !user && (
+                  <button
+                    onClick={() => { setDemo(false); setShowMobileMenu(false); navigate("/"); }}
+                    className="mt-1 w-full text-left px-3 py-2 rounded border border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-200 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 cursor-pointer"
+                  >
+                    Exit demo
+                  </button>
+                )}
               </>
             )}
           </div>

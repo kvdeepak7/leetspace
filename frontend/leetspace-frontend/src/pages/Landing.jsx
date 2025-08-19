@@ -140,11 +140,11 @@ export default function Landing() {
           />
         </div>
         {/* Mid-page CTA */}
-        <div className="mt-10 flex items-center gap-3">
-          <Button asChild size="lg">
+        <div className="mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <Button asChild size="lg" className="w-full sm:w-auto">
             <Link to="/auth" className="cursor-pointer">Start your journal</Link>
           </Button>
-          <Button asChild variant="ghost" size="lg" className="border border-indigo-300 bg-white/90 text-indigo-700 shadow-sm hover:bg-indigo-50/80 dark:bg-zinc-900/70 dark:text-indigo-200 dark:hover:bg-zinc-800/70">
+          <Button asChild variant="ghost" size="lg" className="w-full sm:w-auto border border-indigo-300 bg-white/90 text-indigo-700 shadow-sm hover:bg-indigo-50/80 dark:bg-zinc-900/70 dark:text-indigo-200 dark:hover:bg-zinc-800/70">
             <Link to="/sample/problem" className="cursor-pointer">View sample problem</Link>
           </Button>
         </div>
