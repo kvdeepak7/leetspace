@@ -185,6 +185,7 @@ export function DataTable({ data, columns,onDataChange }) {
 
   const hasActiveFilters = difficultyFilter || selectedTags.length > 0;
   const filteredCount = table.getFilteredRowModel().rows.length;
+  const totalCount = data.length;
 
     // Get selected row count and IDs
     const selectedRows = table.getFilteredSelectedRowModel().rows;
@@ -293,24 +294,15 @@ export function DataTable({ data, columns,onDataChange }) {
                role="switch"
                aria-checked={revisitOnly}
                onClick={() => setRevisitOnly(!revisitOnly)}
-               className={`
-                 relative inline-flex h-6 w-11 items-center rounded-full
-                 ${revisitOnly ? 'bg-green-500' : 'bg-gray-300 dark:bg-zinc-700'}
-                 transition-colors
-               `}
+               className={`${revisitOnly ? 'bg-green-500' : 'bg-gray-300 dark:bg-zinc-700'} relative inline-flex h-6 w-11 items-center rounded-full transition-colors`}
              >
-               <span
-                 className={`
-                   inline-block h-4 w-4 transform rounded-full bg-white shadow transition
-                   ${revisitOnly ? 'translate-x-6' : 'translate-x-1'}
-                 `}
-               />
+               <span className={`${revisitOnly ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white shadow transition`} />
              </button>
            </div>
          </div>
 
          <div className="text-sm text-gray-600 dark:text-gray-300 whitespace-nowrap">
-           {filteredCount} problems
+           {filteredCount} of {totalCount} problems
          </div>
 
          {/* Filters dropdown */}
@@ -524,18 +516,9 @@ export function DataTable({ data, columns,onDataChange }) {
              role="switch"
              aria-checked={revisitOnly}
              onClick={() => setRevisitOnly(!revisitOnly)}
-             className={`
-               relative inline-flex h-6 w-11 items-center rounded-full
-               ${revisitOnly ? 'bg-green-500' : 'bg-gray-300 dark:bg-zinc-700'}
-               transition-colors
-             `}
+             className={`${revisitOnly ? 'bg-green-500' : 'bg-gray-300 dark:bg-zinc-700'} relative inline-flex h-6 w-11 items-center rounded-full transition-colors`}
            >
-             <span
-               className={`
-                 inline-block h-4 w-4 transform rounded-full bg-white shadow transition
-                 ${revisitOnly ? 'translate-x-6' : 'translate-x-1'}
-               `}
-             />
+             <span className={`${revisitOnly ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white shadow transition`} />
            </button>
          </div>
        </div>
