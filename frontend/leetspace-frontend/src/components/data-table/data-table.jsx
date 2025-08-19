@@ -264,7 +264,7 @@ export function DataTable({ data, columns,onDataChange }) {
          </Button>
        </div>
 
-       {/* Desktop toolbar: single line with search, count, filters, columns */}
+       {/* Desktop toolbar: single line with search, select, revisit, count, filters, columns */}
        <div className="hidden sm:flex items-center gap-3">
          <div className="relative flex-1">
            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
@@ -277,6 +277,38 @@ export function DataTable({ data, columns,onDataChange }) {
              className="pl-9 pr-3 py-2 text-sm rounded-md border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
            />
          </div>
+
+         {/* Selection & Revisit */}
+         <div className="flex items-center gap-4 shrink-0">
+           <div className="flex items-center gap-2">
+             <Checkbox
+               checked={selectionMode}
+               onCheckedChange={setSelectionMode}
+             />
+             <span className="text-sm text-gray-700 dark:text-gray-300">Select</span>
+           </div>
+           <div className="flex items-center gap-2">
+             <span className="text-sm text-gray-700 dark:text-gray-300">Revisit</span>
+             <button
+               role="switch"
+               aria-checked={revisitOnly}
+               onClick={() => setRevisitOnly(!revisitOnly)}
+               className={`
+                 relative inline-flex h-6 w-11 items-center rounded-full
+                 ${revisitOnly ? 'bg-green-500' : 'bg-gray-300 dark:bg-zinc-700'}
+                 transition-colors
+               `}
+             >
+               <span
+                 className={`
+                   inline-block h-4 w-4 transform rounded-full bg-white shadow transition
+                   ${revisitOnly ? 'translate-x-6' : 'translate-x-1'}
+                 `}
+               />
+             </button>
+           </div>
+         </div>
+
          <div className="text-sm text-gray-600 dark:text-gray-300 whitespace-nowrap">
            {filteredCount} problems
          </div>
@@ -509,7 +541,7 @@ export function DataTable({ data, columns,onDataChange }) {
        </div>
      </div>
 
-     <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-zinc-900 text-black dark:text-white shadow-sm">
+     <div className="rounded-md border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-black dark:text-white shadow-sm">
        <Table>
          <TableHeader className="bg-gray-100 dark:bg-zinc-800">
            {table.getHeaderGroups().map((headerGroup) => (
