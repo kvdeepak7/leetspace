@@ -45,6 +45,10 @@ export const columns = (onEdit, onDelete) => [
     ),
     enableSorting: false,
     enableHiding: false,
+    meta: {
+      headerClass: "table-cell",
+      cellClass: "table-cell",
+    },
   },
     {
       accessorKey: "title",
@@ -62,6 +66,11 @@ export const columns = (onEdit, onDelete) => [
       },
       enableSorting: true,
       enableHiding: false,
+      cell: ({ row }) => (
+        <div className="max-w-[140px] sm:max-w-none truncate">
+          {row.original.title}
+        </div>
+      ),
     },
     {
       accessorKey: "difficulty",
@@ -129,6 +138,10 @@ export const columns = (onEdit, onDelete) => [
           </div>
         );
       },
+      meta: {
+        headerClass: "hidden md:table-cell",
+        cellClass: "hidden md:table-cell",
+      },
     },
     {
       accessorKey: "retry_later",
@@ -166,7 +179,8 @@ export const columns = (onEdit, onDelete) => [
         );
       },
       meta: {
-        cellClass: "text-center align-middle w-24", // fixed width and center alignment
+        headerClass: "hidden sm:table-cell",
+        cellClass: "hidden sm:table-cell text-center align-middle w-24",
       }
     },
     {

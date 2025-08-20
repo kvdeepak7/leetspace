@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/components/ThemeProvider";
 import { useDemo } from "@/context/DemoContext";
-import { Moon, Sun, User, LogOut, Mail, Shield, Settings } from "lucide-react";
+import { Moon, Sun, User, LogOut, Mail, Shield, Settings,Menu, X } from "lucide-react";
 
 function LogoMark({ className = "" }) {
 	return (
@@ -30,6 +30,7 @@ export default function Navbar() {
 
   const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
 
   const handleLogout = async () => {
@@ -48,7 +49,7 @@ export default function Navbar() {
   const showNavLinks = isDemo || !!user;
 
   return (
-    <nav className="flex justify-between items-center px-6 py-3 border-b bg-white dark:bg-black">
+    <nav className="relative flex justify-between items-center px-6 py-3 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-black">
       <Link to={showNavLinks ? "/dashboard" : "/"} className="group flex items-center gap-2 font-bold text-xl text-gray-900 dark:text-white cursor-pointer">
         <LogoMark className="h-5 w-5 text-indigo-600 dark:text-indigo-400 transition-transform duration-200 ease-out group-hover:-translate-y-px group-hover:rotate-1 motion-reduce:transform-none" />
         <span>LeetSpace</span>
@@ -60,7 +61,16 @@ export default function Navbar() {
       </Link>
       <div className="flex items-center gap-4 text-sm">
       {showNavLinks && (
-        <>
+        <button 
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            className="p-2 sm:hidden rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-900 dark:text-white transition-colors cursor-pointer"
+            aria-label="Toggle menu"
+          >
+            {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+      )}
+      {showNavLinks && (
+        <div className="hidden sm:flex items-center gap-4">
         <Link to="/dashboard" className="dark:text-white hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">
           Dashboard
         </Link>
@@ -74,7 +84,7 @@ export default function Navbar() {
         >
           Add Problem
         </Link>
-        </>
+      </div>
       )}
         {/* Theme toggle button */}
         <button 
@@ -92,7 +102,7 @@ export default function Navbar() {
         {isDemo && !user && (
           <button
             onClick={() => { setDemo(false); navigate("/"); }}
-            className="px-3 py-1 text-xs rounded border border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-200 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 cursor-pointer"
+            className="hidden sm:inline-flex px-3 py-1 text-xs rounded border border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-200 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 cursor-pointer"
           >
             Exit demo
           </button>
@@ -200,11 +210,49 @@ export default function Navbar() {
           </Link>
         ))}
       </div>
+      {/* Mobile menu panel */}
+      {showMobileMenu && showNavLinks && (
+        <div className="sm:hidden absolute left-0 right-0 top-full border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-black z-50">
+          <div className="px-6 py-3 flex flex-col gap-3">
+            {showNavLinks && (
+              <>
+                <Link to="/dashboard" className="dark:text-white hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" onClick={() => setShowMobileMenu(false)}>
+                  Dashboard
+                </Link>
+                <Link to="/problems" className="dark:text-white hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" onClick={() => setShowMobileMenu(false)}>
+                  Problems
+                </Link>
+                <Link 
+                  to="/add-problem" 
+                  onClick={() => { sessionStorage.setItem("addProblemIntent", "fresh"); setShowMobileMenu(false); }}
+                  className="dark:text-white hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer"
+                >
+                  Add Problem
+                </Link>
+                {isDemo && !user && (
+                  <button
+                    onClick={() => { setDemo(false); setShowMobileMenu(false); navigate("/"); }}
+                    className="mt-1 w-full text-left px-3 py-2 rounded border border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-200 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 cursor-pointer"
+                  >
+                    Exit demo
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      )}
       {/* Click outside to close menu */}
       {showUserMenu && (
         <div 
           className="fixed inset-0 z-40" 
           onClick={() => setShowUserMenu(false)}
+        />
+      )}
+      {showMobileMenu && showNavLinks && (
+        <div 
+          className="fixed inset-0 z-40 sm:hidden" 
+          onClick={() => setShowMobileMenu(false)}
         />
       )}
     </nav>

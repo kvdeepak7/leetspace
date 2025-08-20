@@ -36,25 +36,25 @@ export default function Landing() {
               <p className="mt-4 md:mt-6 text-lg md:text-xl text-gray-600 dark:text-gray-300">
                 Log what mattered. Track versions and mistakes. Review fast.
               </p>
-              <div className="mt-8 flex flex-wrap items-center gap-3">
-                <Button asChild size="lg">
+              <div className="mt-8 flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3">
+                <Button asChild size="lg" className="w-full sm:w-auto">
                   <Link to="/auth" className="cursor-pointer">
                     Start your journal
                     <ArrowRight className="ml-1" />
                   </Link>
                 </Button>
-                <Button asChild variant="ghost" size="lg" className="border border-indigo-300 bg-white/90 text-indigo-700 shadow-sm hover:bg-indigo-50/80 dark:bg-zinc-900/70 dark:text-indigo-200 dark:hover:bg-zinc-800/70">
+                <Button asChild variant="ghost" size="lg" className="w-full sm:w-auto border border-indigo-300 bg-white/90 text-indigo-700 shadow-sm hover:bg-indigo-50/80 dark:bg-zinc-900/70 dark:text-indigo-200 dark:hover:bg-zinc-800/70">
                   <Link to="/sample/problem" className="cursor-pointer">View sample problem</Link>
                 </Button>
                 <Button
                   variant="outline"
                   size="lg"
                   onClick={() => { setDemo(true); navigate("/dashboard"); }}
-                  className="cursor-pointer"
+                  className="w-full sm:w-auto cursor-pointer"
                 >
                   Explore demo workspace
                 </Button>
-                <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">Built for serious interview prep</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400 sm:ml-1">Built for serious interview prep</span>
               </div>
             </div>
             <div className="relative">
@@ -140,11 +140,11 @@ export default function Landing() {
           />
         </div>
         {/* Mid-page CTA */}
-        <div className="mt-10 flex items-center gap-3">
-          <Button asChild size="lg">
+        <div className="mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <Button asChild size="lg" className="w-full sm:w-auto">
             <Link to="/auth" className="cursor-pointer">Start your journal</Link>
           </Button>
-          <Button asChild variant="ghost" size="lg" className="border border-indigo-300 bg-white/90 text-indigo-700 shadow-sm hover:bg-indigo-50/80 dark:bg-zinc-900/70 dark:text-indigo-200 dark:hover:bg-zinc-800/70">
+          <Button asChild variant="ghost" size="lg" className="w-full sm:w-auto border border-indigo-300 bg-white/90 text-indigo-700 shadow-sm hover:bg-indigo-50/80 dark:bg-zinc-900/70 dark:text-indigo-200 dark:hover:bg-zinc-800/70">
             <Link to="/sample/problem" className="cursor-pointer">View sample problem</Link>
           </Button>
         </div>
@@ -431,14 +431,14 @@ function PatternTilesGraphic() {
       </defs>
       {/* connections */}
       {tiles.map((t) => (
-        <>
+        <g key={`g-${t.key}`}>
           {t.x + tileW + gap < width && (
-            <line key={`h-${t.key}`} x1={t.x + tileW} y1={t.y + tileH / 2} x2={t.x + tileW + gap} y2={t.y + tileH / 2} stroke="rgba(99,102,241,0.25)" strokeWidth="1" />
+            <line x1={t.x + tileW} y1={t.y + tileH / 2} x2={t.x + tileW + gap} y2={t.y + tileH / 2} stroke="rgba(99,102,241,0.25)" strokeWidth="1" />
           )}
           {t.y + tileH + gap < height && (
-            <line key={`v-${t.key}`} x1={t.x + tileW / 2} y1={t.y + tileH} x2={t.x + tileW / 2} y2={t.y + tileH + gap} stroke="rgba(34,211,238,0.25)" strokeWidth="1" />
+            <line x1={t.x + tileW / 2} y1={t.y + tileH} x2={t.x + tileW / 2} y2={t.y + tileH + gap} stroke="rgba(34,211,238,0.25)" strokeWidth="1" />
           )}
-        </>
+        </g>
       ))}
       {/* tiles */}
       {tiles.map((t) => (
