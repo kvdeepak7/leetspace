@@ -232,6 +232,42 @@ export function DataTable({ data, columns, onDataChange }) {
               className="pl-9 pr-3 py-2 text-sm rounded-md border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+          {selectedCount > 0 && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="shrink-0 relative flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white border-0"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete ({selectedCount})
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="text-gray-900 dark:text-white flex items-center gap-2">
+                    <Trash2 className="h-5 w-5 text-red-500" />
+                    Confirm Deletion
+                  </AlertDialogTitle>
+                  <AlertDialogDescription className="text-gray-600 dark:text-gray-400">
+                    Are you sure you want to delete {selectedCount} problem{selectedCount > 1 ? "s" : ""}? This action cannot be undone and will permanently remove the selected problems from your collection.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="text-gray-700 dark:text-gray-300 border-gray-300 dark:border-zinc-600 hover:bg-gray-100 dark:hover:bg-zinc-800">
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleMassDelete}
+                    className="bg-red-500 hover:bg-red-600 text-white border-red-500 hover:border-red-600"
+                  >
+                    Delete {selectedCount} Problem{selectedCount > 1 ? "s" : ""}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
           <Button
             variant="outline"
             className="whitespace-nowrap"
@@ -254,6 +290,42 @@ export function DataTable({ data, columns, onDataChange }) {
               className="pl-9 pr-3 py-2 text-sm rounded-md border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+          {selectedCount > 0 && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="shrink-0 relative flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white border-0"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete ({selectedCount})
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="text-gray-900 dark:text-white flex items-center gap-2">
+                    <Trash2 className="h-5 w-5 text-red-500" />
+                    Confirm Deletion
+                  </AlertDialogTitle>
+                  <AlertDialogDescription className="text-gray-600 dark:text-gray-400">
+                    Are you sure you want to delete {selectedCount} problem{selectedCount > 1 ? "s" : ""}? This action cannot be undone and will permanently remove the selected problems from your collection.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="text-gray-700 dark:text-gray-300 border-gray-300 dark:border-zinc-600 hover:bg-gray-100 dark:hover:bg-zinc-800">
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleMassDelete}
+                    className="bg-red-500 hover:bg-red-600 text-white border-red-500 hover:border-red-600"
+                  >
+                    Delete {selectedCount} Problem{selectedCount > 1 ? "s" : ""}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
 
           {/* Selection & Revisit */}
           <div className="flex items-center gap-4 shrink-0">
@@ -567,44 +639,7 @@ export function DataTable({ data, columns, onDataChange }) {
         </Table>
       </div>
 
-      {/* Mass delete button - only show when items are selected */}
-      {selectedCount > 0 && (
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button
-              variant="destructive"
-              size="sm"
-              className="w-full sm:w-auto relative flex items-center justify-center gap-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 border-0 font-medium"
-            >
-              <Trash2 className="h-4 w-4" />
-              Delete ({selectedCount})
-              <div className="absolute inset-0 bg-gradient-to-r from-red-400/20 to-red-500/20 rounded-md blur-sm"></div>
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
-            <AlertDialogHeader>
-              <AlertDialogTitle className="text-gray-900 dark:text-white flex items-center gap-2">
-                <Trash2 className="h-5 w-5 text-red-500" />
-                Confirm Deletion
-              </AlertDialogTitle>
-              <AlertDialogDescription className="text-gray-600 dark:text-gray-400">
-                Are you sure you want to delete {selectedCount} problem{selectedCount > 1 ? "s" : ""}? This action cannot be undone and will permanently remove the selected problems from your collection.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel className="text-gray-700 dark:text-gray-300 border-gray-300 dark:border-zinc-600 hover:bg-gray-100 dark:hover:bg-zinc-800">
-                Cancel
-              </AlertDialogCancel>
-              <AlertDialogAction
-                onClick={handleMassDelete}
-                className="bg-red-500 hover:bg-red-600 text-white border-red-500 hover:border-red-600"
-              >
-                Delete {selectedCount} Problem{selectedCount > 1 ? "s" : ""}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      )}
+      {/* Mass delete moved to top toolbars */}
 
       {/* Mobile Filters Dialog */}
       <Dialog open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
