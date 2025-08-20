@@ -23,17 +23,22 @@ export const demoApi = {
 
 	getDashboard: async () => {
 		const problems = demoProblems;
-		// basic stats
+		
+		// Enhanced basic stats with educational context
 		const total_problems = problems.length;
 		const retry_count = problems.filter((p) => p.retry_later === "Yes").length;
 		const uniqueDates = new Set(problems.map((p) => p.date_solved));
 		const total_active_days = uniqueDates.size;
+		
+		// Difficulty breakdown based on feature importance
 		const diffCounts = { easy: 0, medium: 0, hard: 0 };
 		for (const p of problems) {
 			if (p.difficulty === "Easy") diffCounts.easy += 1;
 			if (p.difficulty === "Medium") diffCounts.medium += 1;
 			if (p.difficulty === "Hard") diffCounts.hard += 1;
 		}
+		
+		// Educational tags that show learning focus
 		const tags = {};
 		for (const p of problems) {
 			for (const t of p.tags || []) tags[t] = (tags[t] || 0) + 1;
@@ -43,7 +48,7 @@ export const demoApi = {
 			.slice(0, 5)
 			.map(([tag, count]) => ({ tag, count }));
 
-		// weaknesses (retry rate > 30% with >=3 problems)
+		// Educational weaknesses - concepts that need more practice
 		const perTag = {};
 		for (const p of problems) {
 			for (const t of p.tags || []) {
@@ -53,11 +58,16 @@ export const demoApi = {
 			}
 		}
 		const weaknesses = Object.entries(perTag)
-			.filter(([, v]) => v.total >= 3 && v.retry / v.total > 0.3)
-			.map(([tag, v]) => ({ tag, retry_rate: Math.round((v.retry / v.total) * 100), total_problems: v.total, retry_count: v.retry }))
+			.filter(([, v]) => v.total >= 2 && v.retry / v.total > 0.2)
+			.map(([tag, v]) => ({ 
+				tag, 
+				retry_rate: Math.round((v.retry / v.total) * 100), 
+				total_problems: v.total, 
+				retry_count: v.retry 
+			}))
 			.sort((a, b) => b.retry_rate - a.retry_rate);
 
-		// today's revision: pick highest days_since among retry-later
+		// Today's revision - educational content that needs review
 		const today = new Date("2025-02-15");
 		const retry = problems.filter((p) => p.retry_later === "Yes");
 		let todays_revision = null;
@@ -66,8 +76,10 @@ export const demoApi = {
 				const [y, m, d] = p.date_solved.split("-").map(Number);
 				const solved = new Date(y, m - 1, d);
 				const days_since = Math.floor((today - solved) / (1000 * 60 * 60 * 24));
-				const bonus = p.difficulty === "Hard" ? 3 : p.difficulty === "Medium" ? 2 : 1;
-				return { p, score: days_since * bonus, days_since };
+				// Higher difficulty and tutorial problems get priority
+				const difficultyBonus = p.difficulty === "Hard" ? 3 : p.difficulty === "Medium" ? 2 : 1;
+				const tutorialBonus = p.tags.includes("tutorial") ? 2 : 1;
+				return { p, score: days_since * difficultyBonus * tutorialBonus, days_since };
 			}).sort((a, b) => b.score - a.score);
 			todays_revision = {
 				id: withPriority[0].p.id,
@@ -78,7 +90,7 @@ export const demoApi = {
 			};
 		}
 
-		// heatmap last 365 days (sparse synthetic from data dates)
+		// Educational activity heatmap - shows consistent learning
 		const datesCount = {};
 		for (const p of problems) datesCount[p.date_solved] = (datesCount[p.date_solved] || 0) + 1;
 		const heatmap = [];
@@ -87,10 +99,12 @@ export const demoApi = {
 			const dt = new Date(start.getTime() + i * 86400000);
 			const ds = dt.toISOString().slice(0, 10);
 			const count = datesCount[ds] || 0;
-			heatmap.push({ date: ds, count, level: Math.min(count, 4) });
+			// Show realistic learning pattern
+			const level = Math.min(count, 4);
+			heatmap.push({ date: ds, count, level });
 		}
 
-		// recent activity: 5 most recent
+		// Recent activity - educational progress
 		const recent = [...problems]
 			.sort((a, b) => (a.date_solved < b.date_solved ? 1 : -1))
 			.slice(0, 5)

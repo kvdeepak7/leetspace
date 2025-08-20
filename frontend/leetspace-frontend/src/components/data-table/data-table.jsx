@@ -382,7 +382,7 @@ export function DataTable({ data, columns, onDataChange }) {
               </DropdownMenuLabel>
               <div className="px-3 py-2" onClick={(e) => e.stopPropagation()}>
                 <Select
-                  value={difficultyFilter || "all"}
+                  value={difficultyFilter || ""}
                   onValueChange={(value) => {
                     setDifficultyFilter(value === "all" ? "" : value);
                   }}
@@ -391,9 +391,6 @@ export function DataTable({ data, columns, onDataChange }) {
                     <SelectValue placeholder="Select difficulty" />
                   </SelectTrigger>
                   <SelectContent className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 text-gray-800 dark:text-white">
-                    <SelectItem value="all" className="text-gray-800 dark:text-white">
-                      All Difficulties
-                    </SelectItem>
                     <SelectItem value="Easy" className="text-gray-800 dark:text-white">
                       <div className="flex items-center">
                         <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800 mr-2">
@@ -654,7 +651,7 @@ export function DataTable({ data, columns, onDataChange }) {
                 Difficulty
               </div>
               <Select
-                value={difficultyFilter || "all"}
+                value={difficultyFilter || ""}
                 onValueChange={(value) => {
                   setDifficultyFilter(value === "all" ? "" : value);
                 }}
@@ -663,7 +660,6 @@ export function DataTable({ data, columns, onDataChange }) {
                   <SelectValue placeholder="Select difficulty" />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 text-gray-800 dark:text-white">
-                  <SelectItem value="all">All Difficulties</SelectItem>
                   <SelectItem value="Easy">Easy</SelectItem>
                   <SelectItem value="Medium">Medium</SelectItem>
                   <SelectItem value="Hard">Hard</SelectItem>

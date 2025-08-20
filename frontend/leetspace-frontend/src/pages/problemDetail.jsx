@@ -153,6 +153,10 @@ export default function ProblemDetail() {
             variant="ghost"
             size="icon"
             onClick={() => {
+              if (isDemo) {
+                toast.info("Demo mode: editing is not available. Sign up to edit your problems!");
+                return;
+              }
               sessionStorage.setItem(`editProblemIntent-${problem.id}`, "fresh");
               navigate(`/edit-problem/${problem.id}`);
             }}
