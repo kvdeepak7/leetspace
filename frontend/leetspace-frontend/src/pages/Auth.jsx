@@ -32,7 +32,7 @@ export default function Auth() {
             <div className="bg-blue-600 text-white flex size-6 items-center justify-center rounded-md">
               <span className="text-xs font-bold">LS</span>
             </div>
-            LeetSpace
+            myLeetSpace
           </Link>
           <Link to="/" className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer">Back to landing</Link>
         </div>

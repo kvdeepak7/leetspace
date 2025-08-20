@@ -20,7 +20,7 @@ export default function SampleProblem() {
   }, []);
 
   const problem = {
-    title: "LeetSpace Mission: From Chaos to Clarity",
+    title: "myLeetSpace Mission: From Chaos to Clarity",
     url: "https://warp.leetspace.dev/missions/chaos-to-clarity",
     difficulty: "Easy",
     date_solved: "2025-02-14",
@@ -33,7 +33,7 @@ export default function SampleProblem() {
       "Review Mode",
       "SRS"
     ],
-    notes: `# LeetSpace Mission: From Chaos to Clarity
+    notes: `# myLeetSpace Mission: From Chaos to Clarity
 
 You used to grind problems and scatter notes across tabs and docs. Today’s mission: **turn raw practice into a private coding journal** that’s fast to review and hard to forget.
 
