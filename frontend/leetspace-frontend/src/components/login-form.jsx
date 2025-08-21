@@ -226,7 +226,7 @@ export function LoginForm({ className, ...props }) {
         <p className="text-gray-600 dark:text-gray-400 text-sm text-balance">
           {isLogin
             ? "Enter your credentials to access your account"
-            : "Sign up to get started with LeetSpace"}
+            : "Sign up to get started with myLeetSpace"}
         </p>
       </div>
 

@@ -11,7 +11,7 @@ export default function Sample() {
             <Link to="/auth" className="cursor-pointer">Start your journal</Link>
           </Button>
         </div>
-        <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">A quick look at how entries feel inside LeetSpace.</p>
+        <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">A quick look at how entries feel inside myLeetSpace.</p>
 
         <div className="mt-8 grid md:grid-cols-3 gap-6">
           <Card

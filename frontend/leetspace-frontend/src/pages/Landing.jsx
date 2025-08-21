@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useDemo } from "@/context/DemoContext";
 import { Button } from "@/components/ui/button";
-import { Check, ArrowRight, Layers, BookOpen, Target, ListChecks, Timer, Code2, Sparkles } from "lucide-react";
+import { Check, ArrowRight, Layers, BookOpen, Target, ListChecks, Timer, Code2, Sparkles, Star, Users, TrendingUp, Zap } from "lucide-react";
 
 export default function Landing() {
   const { user, initialized } = useAuth();
@@ -26,21 +26,34 @@ export default function Landing() {
         <div className="relative max-w-7xl mx-auto px-6 py-16 md:py-24">
           <div className="grid lg:grid-cols-2 gap-10 items-center">
             <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-2 text-sm text-indigo-600 dark:text-indigo-400">
+              <div className="inline-flex items-center gap-2 text-sm text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1 rounded-full">
                 <Sparkles className="size-4" />
                 <span>Journal, not a feed</span>
               </div>
-              <h1 className="mt-3 text-4xl md:text-6xl font-bold tracking-tight">
-                A private coding journal for real interview progress.
+              <h1 className="mt-4 text-4xl md:text-6xl font-bold tracking-tight">
+                Stop grinding. Start <span className="text-indigo-600 dark:text-indigo-400">learning.</span>
               </h1>
               <p className="mt-4 md:mt-6 text-lg md:text-xl text-gray-600 dark:text-gray-300">
-                Log what mattered. Track versions and mistakes. Review fast.
+                Transform random practice into systematic improvement. Track versions, learn from mistakes, and review with intent.
               </p>
+              
+              {/* Pre-launch credibility */}
+              <div className="mt-6 flex items-center gap-6 text-sm text-gray-600 dark:text-gray-400">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="size-4 text-indigo-500" />
+                  <span>Built by developers, for developers</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Target className="size-4 text-indigo-500" />
+                  <span>Science-backed learning approach</span>
+                </div>
+              </div>
+
               <div className="mt-8 flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3">
-                <Button asChild size="lg" className="w-full sm:w-auto">
+                <Button asChild size="lg" className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200">
                   <Link to="/auth" className="cursor-pointer">
                     Start your journal
-                    <ArrowRight className="ml-1" />
+                    <ArrowRight className="ml-2" />
                   </Link>
                 </Button>
                 <Button asChild variant="ghost" size="lg" className="w-full sm:w-auto border border-indigo-300 bg-white/90 text-indigo-700 shadow-sm hover:bg-indigo-50/80 dark:bg-zinc-900/70 dark:text-indigo-200 dark:hover:bg-zinc-800/70">
@@ -50,11 +63,14 @@ export default function Landing() {
                   variant="outline"
                   size="lg"
                   onClick={() => { setDemo(true); navigate("/dashboard"); }}
-                  className="w-full sm:w-auto cursor-pointer"
+                  className="w-full sm:w-auto cursor-pointer border-gray-300 dark:border-zinc-600 hover:bg-gray-50 dark:hover:bg-zinc-800"
                 >
                   Explore demo workspace
                 </Button>
-                <span className="text-sm text-gray-500 dark:text-gray-400 sm:ml-1">Built for serious interview prep</span>
+              </div>
+              
+              <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+                <span className="font-medium">Built for serious interview prep</span> • No more scattered notes
               </div>
             </div>
             <div className="relative">
@@ -64,18 +80,47 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Results preview */}
+      <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-2xl md:text-3xl font-semibold">Why this approach works</h2>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">Based on proven learning science and developer feedback</p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-6">
+          <div className="text-center p-6 rounded-xl border border-gray-200 dark:border-zinc-700 bg-white/80 dark:bg-zinc-900/60">
+            <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">Spaced Repetition</div>
+            <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">Review concepts at optimal intervals for better retention</div>
+          </div>
+          <div className="text-center p-6 rounded-xl border border-gray-200 dark:border-zinc-700 bg-white/80 dark:bg-zinc-900/60">
+            <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">Active Recall</div>
+            <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">Practice retrieving information instead of just re-reading</div>
+          </div>
+          <div className="text-center p-6 rounded-xl border border-gray-200 dark:border-zinc-700 bg-white/80 dark:bg-zinc-900/60">
+            <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">Mistake Learning</div>
+            <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">Track and learn from errors to avoid repeating them</div>
+          </div>
+        </div>
+      </section>
+
       {/* Benefits */}
       <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-2xl md:text-3xl font-semibold">Why developers choose myLeetSpace</h2>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">Built by developers, for developers</p>
+        </div>
         <div className="grid md:grid-cols-3 gap-6">
           <BenefitCard icon={<BookOpen className="size-5" />} title="Selective logging" desc="Capture only high‑signal problems with tags, notes, time, and difficulty." visual={<MiniChipRowVisual />} />
           <BenefitCard icon={<Layers className="size-5" />} title="Multiple solutions" desc="Save Python/JS/Java approaches and record trade‑offs." visual={<MiniDiffBarsVisual />} />
-          <BenefitCard icon={<Target className="size-5" />} title="Intentional review" desc={"Use “retry later” and filters for fast, focused review."} visual={<MiniFilterChipsVisual />} />
+          <BenefitCard icon={<Target className="size-5" />} title="Intentional review" desc={"Use 'retry later' and filters for fast, focused review."} visual={<MiniFilterChipsVisual />} />
         </div>
       </section>
 
       {/* How it works */}
       <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
-        <h2 className="text-2xl md:text-3xl font-semibold">How it works</h2>
+        <div className="text-center mb-12">
+          <h2 className="text-2xl md:text-3xl font-semibold">How it works</h2>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">Simple 3-step process to transform your practice</p>
+        </div>
         <ol className="mt-6 grid md:grid-cols-3 gap-6">
           <StepCard
             num="1"
@@ -86,7 +131,7 @@ export default function Landing() {
           <StepCard
             num="2"
             title="Tag + retry"
-            desc="Tag by topic/difficulty and mark “retry later”."
+            desc="Tag by topic/difficulty and mark 'retry later'."
             visual={<StepVisual kind="tag" />}
           />
           <StepCard
@@ -100,7 +145,10 @@ export default function Landing() {
 
       {/* Feature deep‑dive */}
       <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
-        <h2 className="text-2xl md:text-3xl font-semibold">What you get</h2>
+        <div className="text-center mb-12">
+          <h2 className="text-2xl md:text-3xl font-semibold">Everything you need to succeed</h2>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">Professional tools for serious developers</p>
+        </div>
         <div className="mt-6 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <FeatureCard
             icon={<ListChecks className="size-5" />}
@@ -123,7 +171,7 @@ export default function Landing() {
           <FeatureCard
             icon={<Timer className="size-5" />}
             title="Review Mode"
-            desc={"Filters for tag/difficulty and a “retry later” queue."}
+            desc={"Filters for tag/difficulty and a 'retry later' queue."}
             visual={<MiniReviewVisual />}
           />
           <FeatureCard
@@ -140,30 +188,66 @@ export default function Landing() {
           />
         </div>
         {/* Mid-page CTA */}
-        <div className="mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-          <Button asChild size="lg" className="w-full sm:w-auto">
-            <Link to="/auth" className="cursor-pointer">Start your journal</Link>
-          </Button>
-          <Button asChild variant="ghost" size="lg" className="w-full sm:w-auto border border-indigo-300 bg-white/90 text-indigo-700 shadow-sm hover:bg-indigo-50/80 dark:bg-zinc-900/70 dark:text-indigo-200 dark:hover:bg-zinc-800/70">
-            <Link to="/sample/problem" className="cursor-pointer">View sample problem</Link>
-          </Button>
+        <div className="mt-12 text-center">
+          <div className="inline-flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <Button asChild size="lg" className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200">
+              <Link to="/auth" className="cursor-pointer">Start your journal</Link>
+            </Button>
+            <Button asChild variant="ghost" size="lg" className="w-full sm:w-auto border border-indigo-300 bg-white/90 text-indigo-700 shadow-sm hover:bg-indigo-50/80 dark:bg-zinc-900/70 dark:text-indigo-200 dark:hover:bg-zinc-800/70">
+              <Link to="/sample/problem" className="cursor-pointer">View sample problem</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Future features */}
+      <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-2xl md:text-3xl font-semibold">Coming soon</h2>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">Exciting features in development</p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-6">
+          <BenefitCard 
+            icon={<Users className="size-5" />} 
+            title="Share your LeetSpace" 
+            desc="Collaborate with study groups and share insights with fellow developers." 
+            visual={<MiniChipRowVisual />} 
+          />
+          <BenefitCard 
+            icon={<Timer className="size-5" />} 
+            title="Smart reminders" 
+            desc="Get email notifications for problems marked 'retry later' based on your schedule preferences." 
+            visual={<MiniRetryChipVisual />} 
+          />
+          <BenefitCard 
+            icon={<Sparkles className="size-5" />} 
+            title="AI integration" 
+            desc="Something special is brewing... Wait for version 2 to experience the magic." 
+            visual={<MiniInsightsVisual />} 
+          />
         </div>
       </section>
 
       {/* Security & privacy */}
       <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
-        <h2 className="text-2xl md:text-3xl font-semibold">Security & privacy</h2>
-        <div className="mt-6 grid md:grid-cols-3 gap-6">
-          <BenefitCard icon={<ShieldIcon />} title="Private by default" desc="Your journal is private unless you choose to share (coming soon)." visual={<MiniDocVisual />} />
-          <BenefitCard icon={<LockIcon />} title="Trusted auth" desc="Sign in with Firebase Auth; no passwords stored by us." visual={<MiniLinesVisual />} />
-          <BenefitCard icon={<DownloadIcon />} title="Export anytime" desc="Export entries to CSV when you need a backup." visual={<MiniLinesVisual />} />
+        <div className="text-center mb-12">
+          <h2 className="text-2xl md:text-3xl font-semibold">Security & privacy</h2>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">Your data is safe with us</p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-6">
+          <BenefitCard icon={<ShieldIcon />} title="Private by default" desc="Your journal is completely private and secure by default." visual={<MiniDocVisual />} />
+          <BenefitCard icon={<LockIcon />} title="Trusted auth" desc="Secure authentication with industry-standard protocols." visual={<MiniLinesVisual />} />
+          <BenefitCard icon={<DownloadIcon />} title="Export anytime" desc="Export entries to CSV when you need a backup (coming soon)." visual={<MiniExportVisual />} />
         </div>
       </section>
 
       {/* Supported languages */}
       <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
-        <h2 className="text-2xl md:text-3xl font-semibold">Supported languages</h2>
-        <div className="mt-4 flex flex-wrap gap-3">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-semibold">Supported languages</h2>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">Code in your preferred language</p>
+        </div>
+        <div className="mt-4 flex flex-wrap justify-center gap-3">
           <Chip label="Python" />
           <Chip label="JavaScript" />
           <Chip label="Java" />
@@ -184,7 +268,7 @@ export default function Landing() {
         <div className="mt-10 grid lg:grid-cols-2 gap-8 items-center">
           <div>
             <h3 className="text-xl font-semibold">Review Mode, built for speed</h3>
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">Filter by difficulty and topic. Focus on your “retry later” queue.</p>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">Filter by difficulty and topic. Focus on your "retry later" queue.</p>
           </div>
           <PreviewImage src="/review-mode.png" alt="Review mode with filters and retry queue" fallback={<ReviewModeGraphic />} />
         </div>
@@ -192,7 +276,10 @@ export default function Landing() {
 
       {/* Sample log snapshot */}
       <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
-        <h2 className="text-2xl md:text-3xl font-semibold">Sample log snapshot</h2>
+        <div className="text-center mb-12">
+          <h2 className="text-2xl md:text-3xl font-semibold">See it in action</h2>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">Example entries showing how myLeetSpace works</p>
+        </div>
         <div className="mt-6 grid md:grid-cols-3 gap-6">
           <LogCard
             title="Two Sum"
@@ -213,7 +300,7 @@ export default function Landing() {
           <LogCard
             title="Course Schedule"
             meta="Medium • Graph, BFS • 34m"
-            notes="Kahn’s algorithm for cycle detection"
+            notes="Kahn's algorithm for cycle detection"
             mistakes="Missed indegree init edge case"
             versions="Python queue BFS; JS adjacency list"
             retry="Yes"
@@ -223,7 +310,10 @@ export default function Landing() {
 
       {/* Use cases */}
       <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
-        <h2 className="text-2xl md:text-3xl font-semibold">Built for your journey</h2>
+        <div className="text-center mb-12">
+          <h2 className="text-2xl md:text-3xl font-semibold">Built for your journey</h2>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">Whether you're just starting or a senior developer</p>
+        </div>
         <div className="mt-6 grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           <UseCase title="FAANG prep" desc="Focused log + mistake patterns → confident onsite review." visual={<MiniTimelineVisual />} />
           <UseCase title="CS student" desc="Tags align with course topics → weekly weak‑area review." visual={<MiniTagGridVisual className="max-h-16 overflow-hidden" />} />
@@ -234,30 +324,59 @@ export default function Landing() {
 
       {/* Why it works */}
       <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
-        <h2 className="text-2xl md:text-3xl font-semibold">Why it works</h2>
+        <div className="text-center mb-12">
+          <h2 className="text-2xl md:text-3xl font-semibold">Why it works</h2>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">Science-backed approach to learning</p>
+        </div>
         <div className="mt-6 grid md:grid-cols-3 gap-6">
-          <BenefitCard icon={<BookOpen className="size-5" />} title="Journal, not a feed" desc="Depth over volume. Reflect, don’t grind." visual={<MiniDocVisual />} />
-          <BenefitCard icon={<Code2 className="size-5" />} title="Your editorial" desc="Explanations in your words—what you’ll recall under pressure." visual={<MiniLinesVisual />} />
-          <BenefitCard icon={<Target className="size-5" />} title="Review triggers" desc={'“Retry later” makes learning sticky and targeted.'} visual={<MiniRetryChipVisual />} />
+          <BenefitCard icon={<BookOpen className="size-5" />} title="Journal, not a feed" desc="Depth over volume. Reflect, don't grind." visual={<MiniDocVisual />} />
+          <BenefitCard icon={<Code2 className="size-5" />} title="Your editorial" desc="Explanations in your words—what you'll recall under pressure." visual={<MiniLinesVisual />} />
+          <BenefitCard icon={<Target className="size-5" />} title="Review triggers" desc={"'Retry later' makes learning sticky and targeted."} visual={<MiniRetryChipVisual />} />
         </div>
       </section>
 
       {/* Testimonials */}
       <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-2xl md:text-3xl font-semibold">What developers need</h2>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">Based on real feedback from the developer community</p>
+        </div>
         <div className="grid md:grid-cols-2 gap-6">
-          <Testimonial quote="Half the time, twice the impact." author="Sarah" role="Backend Engineer" />
-          <Testimonial quote="My weak areas were obvious—and fixable." author="Alex" role="CS Student" />
+          <div className="rounded-xl border border-gray-200 dark:border-zinc-700 p-6 bg-white/80 dark:bg-zinc-900/60">
+            <div className="flex items-center gap-3">
+              <div className="size-8 rounded-full bg-indigo-200 dark:bg-indigo-800" />
+              <div className="flex items-center gap-1">
+                <div className="size-3 rounded-full bg-indigo-400" />
+                <div className="size-3 rounded-full bg-indigo-400" />
+                <div className="size-3 rounded-full bg-indigo-400" />
+              </div>
+            </div>
+            <p className="mt-3 text-base">"I need a way to track my learning progress systematically, not just solve random problems."</p>
+            <div className="mt-2 text-sm text-gray-600 dark:text-gray-300">— Common developer feedback</div>
+          </div>
+          <div className="rounded-xl border border-gray-200 dark:border-zinc-700 p-6 bg-white/80 dark:bg-zinc-900/60">
+            <div className="flex items-center gap-3">
+              <div className="size-8 rounded-full bg-cyan-200 dark:bg-cyan-800" />
+              <div className="flex items-center gap-1">
+                <div className="size-3 rounded-full bg-cyan-400" />
+                <div className="size-3 rounded-full bg-cyan-400" />
+                <div className="size-3 rounded-full bg-cyan-400" />
+              </div>
+            </div>
+            <p className="mt-3 text-base">"I want to learn from my mistakes and review concepts when I'm most likely to forget them."</p>
+            <div className="mt-2 text-sm text-gray-600 dark:text-gray-300">— Common developer feedback</div>
+          </div>
         </div>
       </section>
 
       {/* CTA band */}
       <section className="max-w-7xl mx-auto px-6 py-16 md:py-20">
-        <div className="rounded-2xl border border-gray-200 dark:border-zinc-700 p-8 md:p-10 bg-white/80 dark:bg-zinc-900/60 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div className="rounded-2xl border border-gray-200 dark:border-zinc-700 p-8 md:p-10 bg-gradient-to-r from-indigo-50 to-cyan-50 dark:from-indigo-900/30 dark:to-cyan-900/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div>
             <h3 className="text-2xl font-semibold">Ready to practice smarter?</h3>
             <p className="mt-1 text-gray-600 dark:text-gray-300">Start your journal and make every review count.</p>
           </div>
-          <Button asChild size="lg">
+          <Button asChild size="lg" className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200">
             <Link to="/auth" className="cursor-pointer">Start your journal</Link>
           </Button>
         </div>
@@ -268,7 +387,7 @@ export default function Landing() {
         <div className="mx-auto max-w-md rounded-full bg-white/90 dark:bg-zinc-900/90 border border-gray-200 dark:border-zinc-700 p-2 shadow-lg">
           <div className="flex items-center justify-between gap-3">
             <div className="text-sm text-gray-700 dark:text-gray-300">Ready to start?</div>
-            <Button asChild size="sm">
+            <Button asChild size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white">
               <Link to="/auth" className="cursor-pointer">Start free</Link>
             </Button>
           </div>
@@ -581,15 +700,16 @@ function MiniCodeDiffVisual() {
       <div className="rounded-md bg-gray-50 dark:bg-zinc-800 p-2">
         <div className="text-[10px] uppercase tracking-wide text-gray-500">Python</div>
         <div className="mt-2 space-y-1">
-          <div className="h-2 w-10/12 rounded bg-gray-300 dark:bg-zinc-700" />
-          <div className="h-2 w-7/12 rounded bg-gray-300 dark:bg-zinc-700" />
+          <div className="text-[9px] font-mono text-gray-700 dark:text-gray-300">def twoSum(nums, target):</div>
+          <div className="text-[9px] font-mono text-gray-700 dark:text-gray-300">    seen = dict()</div>
         </div>
       </div>
       <div className="rounded-md bg-gray-50 dark:bg-zinc-800 p-2">
         <div className="text-[10px] uppercase tracking-wide text-gray-500">JavaScript</div>
         <div className="mt-2 space-y-1">
-          <div className="h-2 w-11/12 rounded bg-gray-300 dark:bg-zinc-700" />
-          <div className="h-2 w-6/12 rounded bg-gray-300 dark:bg-zinc-700" />
+          <div className="text-[9px] font-mono text-gray-700 dark:text-gray-300">function twoSum(nums, target)</div>
+          <div className="text-[9px] font-mono text-gray-700 dark:text-gray-300">    const seen = new Map();</div>
+          <div className="text-[9px] font-mono text-gray-700 dark:text-gray-300">    return [];</div>
         </div>
       </div>
     </div>
@@ -627,13 +747,13 @@ function MiniReviewVisual() {
 
 function MiniTagGridVisual({ className = "" }) {
   return (
-    <div className={`rounded-lg border border-gray-200 dark:border-zinc-700 p-3 bg-white/60 dark:bg-zinc-800/50 flex flex-wrap gap-2 ${className}`}>
-      <Chip label="DP" />
-      <Chip label="Greedy" />
-      <Chip label="Stack" />
-      <Chip label="Queue" />
-      <Chip label="Tree" />
-      <Chip label="Binary Search" />
+    <div className={`rounded-lg border border-gray-200 dark:border-zinc-700 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 flex flex-wrap gap-2 ${className}`}>
+      <div className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-200 border border-blue-200/70 dark:border-blue-700/50">Arrays</div>
+      <div className="px-2 py-1 rounded-full text-xs bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-200 border border-indigo-200/70 dark:border-indigo-700/50">Graphs</div>
+      <div className="px-2 py-1 rounded-full text-xs bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-200 border border-purple-200/70 dark:border-purple-700/50">DP</div>
+      <div className="px-2 py-1 rounded-full text-xs bg-cyan-100 text-cyan-700 dark:bg-cyan-900/50 dark:text-cyan-200 border border-cyan-200/70 dark:border-cyan-700/50">Trees</div>
+      <div className="px-2 py-1 rounded-full text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-200 border border-emerald-200/70 dark:border-emerald-700/50">Sorting</div>
+      <div className="px-2 py-1 rounded-full text-xs bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-200 border border-amber-200/70 dark:border-amber-700/50">BFS/DFS</div>
     </div>
   );
 }
@@ -769,15 +889,10 @@ function MiniChipRowVisual() {
 
 function MiniDiffBarsVisual() {
   return (
-    <div className="grid grid-cols-2 gap-3">
-      <div className="space-y-1">
-        <div className="h-2 w-10/12 rounded bg-gray-300 dark:bg-zinc-700" />
-        <div className="h-2 w-7/12 rounded bg-gray-300 dark:bg-zinc-700" />
-      </div>
-      <div className="space-y-1">
-        <div className="h-2 w-11/12 rounded bg-gray-300 dark:bg-zinc-700" />
-        <div className="h-2 w-6/12 rounded bg-gray-300 dark:bg-zinc-700" />
-      </div>
+    <div className="space-y-1">
+      <div className="h-2 w-10/12 rounded bg-blue-400/70 dark:bg-blue-500/70" />
+      <div className="h-2 w-7/12 rounded bg-indigo-400/70 dark:bg-indigo-500/70" />
+      <div className="h-2 w-11/12 rounded bg-purple-400/70 dark:bg-purple-500/70" />
     </div>
   );
 }
@@ -795,9 +910,9 @@ function MiniFilterChipsVisual() {
 function MiniDocVisual() {
   return (
     <div className="rounded-md border border-gray-200 dark:border-zinc-700 p-2 bg-white/50 dark:bg-zinc-800/40 space-y-1">
-      <div className="h-2 w-9/12 rounded bg-gray-300 dark:bg-zinc-700" />
-      <div className="h-2 w-7/12 rounded bg-gray-300 dark:bg-zinc-700" />
-      <div className="h-2 w-8/12 rounded bg-gray-300 dark:bg-zinc-700" />
+      <div className="h-2 w-9/12 rounded bg-green-400/70 dark:bg-green-500/70" />
+      <div className="h-2 w-7/12 rounded bg-green-400/70 dark:bg-green-500/70" />
+      <div className="h-2 w-8/12 rounded bg-green-400/70 dark:bg-green-500/70" />
     </div>
   );
 }
@@ -805,8 +920,8 @@ function MiniDocVisual() {
 function MiniLinesVisual() {
   return (
     <div className="space-y-1">
-      <div className="h-2 w-10/12 rounded bg-gray-300 dark:bg-zinc-700" />
-      <div className="h-2 w-7/12 rounded bg-gray-300 dark:bg-zinc-700" />
+      <div className="h-2 w-10/12 rounded bg-amber-400/70 dark:bg-amber-500/70" />
+      <div className="h-2 w-7/12 rounded bg-amber-400/70 dark:bg-amber-500/70" />
     </div>
   );
 }
@@ -814,8 +929,17 @@ function MiniLinesVisual() {
 function MiniRetryChipVisual() {
   return (
     <div className="flex items-center gap-2">
-      <div className="text-[10px] px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">retry</div>
-      <div className="h-2 w-10 rounded bg-gray-300 dark:bg-zinc-700" />
+      <div className="text-[10px] px-1.5 py-0.5 rounded bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200">retry</div>
+      <div className="h-2 w-10 rounded bg-orange-400/70 dark:bg-orange-500/70" />
+    </div>
+  );
+}
+
+function MiniExportVisual() {
+  return (
+    <div className="space-y-1">
+      <div className="h-2 w-10/12 rounded bg-teal-400/70 dark:bg-teal-500/70" />
+      <div className="h-2 w-7/12 rounded bg-teal-400/70 dark:bg-teal-500/70" />
     </div>
   );
 }
@@ -823,9 +947,9 @@ function MiniRetryChipVisual() {
 function MiniTimelineVisual() {
   return (
     <div className="space-y-1">
-      <div className="h-2 w-full rounded bg-indigo-300/60 dark:bg-indigo-700/50" />
-      <div className="h-2 w-10/12 rounded bg-indigo-300/60 dark:bg-indigo-700/50" />
-      <div className="h-2 w-8/12 rounded bg-indigo-300/60 dark:bg-indigo-700/50" />
+      <div className="h-2 w-full rounded bg-red-400/70 dark:bg-red-500/70" />
+      <div className="h-2 w-10/12 rounded bg-orange-400/70 dark:bg-orange-500/70" />
+      <div className="h-2 w-8/12 rounded bg-yellow-400/70 dark:bg-yellow-500/70" />
     </div>
   );
 }
@@ -834,16 +958,16 @@ function MiniChecklistVisual() {
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
-        <div className="size-3 rounded bg-green-400" />
-        <div className="h-2 w-28 rounded bg-gray-300 dark:bg-zinc-700" />
+        <div className="size-3 rounded bg-violet-400" />
+        <div className="h-2 w-28 rounded bg-violet-400/70 dark:bg-violet-500/70" />
       </div>
       <div className="flex items-center gap-2">
-        <div className="size-3 rounded bg-green-400" />
-        <div className="h-2 w-24 rounded bg-gray-300 dark:bg-zinc-700" />
+        <div className="size-3 rounded bg-violet-400" />
+        <div className="h-2 w-24 rounded bg-violet-400/70 dark:bg-violet-500/70" />
       </div>
       <div className="flex items-center gap-2">
-        <div className="size-3 rounded bg-green-400" />
-        <div className="h-2 w-32 rounded bg-gray-300 dark:bg-zinc-700" />
+        <div className="size-3 rounded bg-violet-400" />
+        <div className="h-2 w-32 rounded bg-violet-400/70 dark:bg-violet-500/70" />
       </div>
     </div>
   );

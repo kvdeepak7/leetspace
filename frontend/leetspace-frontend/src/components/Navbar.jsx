@@ -5,6 +5,40 @@ import { useTheme } from "@/components/ThemeProvider";
 import { useDemo } from "@/context/DemoContext";
 import { Moon, Sun, User, LogOut, Mail, Shield, Settings,Menu, X } from "lucide-react";
 
+function ProfilePicture({ user, size = "w-6 h-6" }) {
+  const [imageError, setImageError] = useState(false);
+  
+  if (user.photoURL && !imageError) {
+    return (
+      <img 
+        src={user.photoURL} 
+        alt="Profile" 
+        className={`${size} rounded-full`}
+        onError={() => setImageError(true)}
+        onLoad={() => setImageError(false)}
+      />
+    );
+  }
+
+  const displayName = user.displayName || user.email?.split('@')[0] || 'U';
+  const firstLetter = displayName.charAt(0).toUpperCase();
+  
+  // Generate a nice background color based on the first letter
+  const colors = [
+    'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500', 
+    'bg-indigo-500', 'bg-teal-500', 'bg-orange-500', 'bg-red-500',
+    'bg-cyan-500', 'bg-emerald-500', 'bg-violet-500', 'bg-rose-500'
+  ];
+  const colorIndex = firstLetter.charCodeAt(0) % colors.length;
+  const bgColor = colors[colorIndex];
+
+  return (
+    <div className={`${size} ${bgColor} rounded-full flex items-center justify-center text-white font-semibold text-sm`}>
+      {firstLetter}
+    </div>
+  );
+}
+
 function LogoMark({ className = "" }) {
 	return (
 		<svg
@@ -52,7 +86,7 @@ export default function Navbar() {
     <nav className="relative flex justify-between items-center px-6 py-3 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-black">
       <Link to={showNavLinks ? "/dashboard" : "/"} className="group flex items-center gap-2 font-bold text-xl text-gray-900 dark:text-white cursor-pointer">
         <LogoMark className="h-5 w-5 text-indigo-600 dark:text-indigo-400 transition-transform duration-200 ease-out group-hover:-translate-y-px group-hover:rotate-1 motion-reduce:transform-none" />
-        <span>LeetSpace</span>
+        <span>myLeetSpace</span>
         {isDemo && (
           <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-200 border border-indigo-200/70 dark:border-indigo-700/50">
             Demo
@@ -115,15 +149,7 @@ export default function Navbar() {
                       className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
                     >
                       <div className="flex items-center gap-2">
-                        {user.photoURL ? (
-                          <img 
-                            src={user.photoURL} 
-                            alt="Profile" 
-                            className="w-6 h-6 rounded-full"
-                          />
-                        ) : (
-                          <User className="w-5 h-5 dark:text-white" />
-                        )}
+                        <ProfilePicture user={user} size="w-6 h-6" />
                         <span className="dark:text-white hidden sm:inline">
                           {user.displayName || user.email?.split('@')[0]}
                         </span>
@@ -135,17 +161,7 @@ export default function Navbar() {
                       <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
                         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
                           <div className="flex items-center gap-3">
-                            {user.photoURL ? (
-                              <img 
-                                src={user.photoURL} 
-                                alt="Profile" 
-                                className="w-10 h-10 rounded-full"
-                              />
-                            ) : (
-                              <div className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center">
-                                <User className="w-6 h-6 text-gray-600 dark:text-gray-300" />
-                              </div>
-                            )}
+                            <ProfilePicture user={user} size="w-10 h-10" />
                             <div className="flex-1 min-w-0">
                               <p className="font-medium text-gray-900 dark:text-white truncate">
                                 {user.displayName || "User"}
@@ -159,7 +175,7 @@ export default function Navbar() {
                           {/* User status indicators */}
                           <div className="mt-3 space-y-2">
                             <div className="flex items-center gap-2 text-xs">
-                              <Mail className="w-4 h-4" />
+                              <Mail className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                               <span className={`px-2 py-1 rounded-full ${
                                 isEmailVerified 
                                   ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
@@ -171,7 +187,7 @@ export default function Navbar() {
                             
                             {hasGoogleProvider && (
                               <div className="flex items-center gap-2 text-xs">
-                                <Shield className="w-4 h-4" />
+                                <Shield className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                                 <span className="px-2 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
                                   Google Account
                                 </span>
@@ -204,7 +220,7 @@ export default function Navbar() {
         ) : (!isDemo && (
           <Link 
             to="/auth" 
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors cursor-pointer"
+            className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer border border-indigo-500/20"
           >
             Sign In
           </Link>
