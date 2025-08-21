@@ -130,14 +130,58 @@ def detect_weaknesses(problems: List[Dict]) -> List[Dict[str, Any]]:
 def suggest_todays_revision(problems: List[Dict]) -> Dict[str, Any]:
     """Suggest a problem to revise today using spaced repetition"""
     
+    today = datetime.now()
+    
+    # First, check for problems that need revision based on spaced repetition
+    spaced_repetition_problems = []
+    for problem in problems:
+        sr_data = problem.get("spaced_repetition")
+        if sr_data and sr_data.get("next_review"):
+            try:
+                next_review = datetime.fromisoformat(sr_data["next_review"])
+                if next_review <= today:
+                    # Calculate priority based on overdue days and difficulty
+                    overdue_days = (today - next_review).days
+                    difficulty_bonus = {"Easy": 1, "Medium": 2, "Hard": 3}
+                    priority_score = overdue_days * difficulty_bonus.get(problem.get("difficulty"), 1)
+                    
+                    spaced_repetition_problems.append({
+                        "problem": problem,
+                        "priority_score": priority_score,
+                        "days_since": 0,  # Will be calculated below
+                        "is_spaced_repetition": True
+                    })
+            except (ValueError, TypeError):
+                continue
+    
+    # If we have spaced repetition problems, return the highest priority one
+    if spaced_repetition_problems:
+        spaced_repetition_problems.sort(key=lambda x: x["priority_score"], reverse=True)
+        best_sr_problem = spaced_repetition_problems[0]
+        
+        # Calculate days since solved for display
+        try:
+            solved_date = datetime.strptime(str(best_sr_problem["problem"]["date_solved"]), "%Y-%m-%d")
+            best_sr_problem["days_since"] = (today - solved_date).days
+        except (ValueError, TypeError):
+            best_sr_problem["days_since"] = 0
+        
+        return {
+            "id": best_sr_problem["problem"]["id"],
+            "title": best_sr_problem["problem"]["title"],
+            "difficulty": best_sr_problem["problem"]["difficulty"],
+            "tags": best_sr_problem["problem"].get("tags", []),
+            "days_since_solved": best_sr_problem["days_since"],
+            "spaced_repetition": best_sr_problem["problem"].get("spaced_repetition")
+        }
+    
+    # Fallback to old logic for problems without spaced repetition data
     retry_problems = [p for p in problems if p.get("retry_later") in ("Yes", True)]
     
     if not retry_problems:
         return None
     
-    today = datetime.now()
-    
-    # Calculate priority scores for spaced repetition
+    # Calculate priority scores for retry problems
     suggestions = []
     for problem in retry_problems:
         try:
@@ -258,3 +302,88 @@ def get_recent_activity(problems: List[Dict]) -> List[Dict[str, Any]]:
             continue
     
     return formatted_recent
+
+@router.get("/spaced-repetition")
+async def get_spaced_repetition_stats(current_user: dict = Depends(get_current_active_user)):
+    """
+    Get spaced repetition statistics for the authenticated user
+    """
+    try:
+        # Get all problems for the authenticated user
+        cursor = collection.find({"user_id": current_user["uid"]})
+        problems = []
+        async for doc in cursor:
+            doc["id"] = str(doc["_id"])
+            del doc["_id"]
+            problems.append(doc)
+
+        if not problems:
+            return {
+                "total_problems": 0,
+                "problems_with_sr": 0,
+                "todays_revisions": 0,
+                "overdue_revisions": 0,
+                "average_easiness": 0,
+                "total_reviews": 0,
+                "recent_reviews": []
+            }
+
+        # Calculate spaced repetition statistics
+        problems_with_sr = [p for p in problems if p.get("spaced_repetition")]
+        todays_revisions = []
+        overdue_revisions = []
+        total_reviews = 0
+        easiness_scores = []
+        recent_reviews = []
+
+        today = datetime.now()
+        
+        for problem in problems_with_sr:
+            sr_data = problem["spaced_repetition"]
+            
+            # Count total reviews
+            if sr_data.get("review_history"):
+                total_reviews += len(sr_data["review_history"])
+                
+                # Get recent reviews (last 10)
+                for review in sr_data["review_history"][-10:]:
+                    recent_reviews.append({
+                        "problem_id": problem["id"],
+                        "problem_title": problem["title"],
+                        "review_date": review.get("date"),
+                        "quality": review.get("quality"),
+                        "action": review.get("action", "reviewed")
+                    })
+            
+            # Check if due for revision today
+            if sr_data.get("next_review"):
+                try:
+                    next_review = datetime.fromisoformat(sr_data["next_review"])
+                    if next_review <= today:
+                        if next_review.date() == today.date():
+                            todays_revisions.append(problem["id"])
+                        else:
+                            overdue_revisions.append(problem["id"])
+                except (ValueError, TypeError):
+                    continue
+            
+            # Collect easiness scores
+            if sr_data.get("easiness"):
+                easiness_scores.append(sr_data["easiness"])
+
+        # Sort recent reviews by date (most recent first)
+        recent_reviews.sort(key=lambda x: x.get("review_date", ""), reverse=True)
+        recent_reviews = recent_reviews[:10]  # Keep only last 10
+
+        return {
+            "total_problems": len(problems),
+            "problems_with_sr": len(problems_with_sr),
+            "todays_revisions": len(todays_revisions),
+            "overdue_revisions": len(overdue_revisions),
+            "average_easiness": round(sum(easiness_scores) / len(easiness_scores), 2) if easiness_scores else 0,
+            "total_reviews": total_reviews,
+            "recent_reviews": recent_reviews
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

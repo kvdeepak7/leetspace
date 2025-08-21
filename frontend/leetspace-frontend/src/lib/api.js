@@ -142,6 +142,25 @@ export const analyticsAPI = {
     }
     return api.get('/api/analytics/dashboard');
   },
+
+  // Get spaced repetition statistics
+  getSpacedRepetitionStats: () => {
+    if (isDemoMode()) {
+      // Return demo data for spaced repetition stats
+      return Promise.resolve({
+        data: {
+          total_problems: 0,
+          problems_with_sr: 0,
+          todays_revisions: 0,
+          overdue_revisions: 0,
+          average_easiness: 0,
+          total_reviews: 0,
+          recent_reviews: []
+        }
+      });
+    }
+    return api.get('/api/analytics/spaced-repetition');
+  },
 };
 
 // Export the configured axios instance for custom requests

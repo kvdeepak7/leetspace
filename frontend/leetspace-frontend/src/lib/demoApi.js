@@ -1,4 +1,5 @@
 import { demoProblems } from "./demoData";
+import { getNextRevision, getTodaysRevisions } from "./spacedRepetition";
 
 const copy = (obj) => JSON.parse(JSON.stringify(obj));
 
@@ -67,27 +68,61 @@ export const demoApi = {
 			}))
 			.sort((a, b) => b.retry_rate - a.retry_rate);
 
-		// Today's revision - educational content that needs review
-		const today = new Date("2025-02-15");
-		const retry = problems.filter((p) => p.retry_later === "Yes");
+		// Today's revision using spaced repetition system
 		let todays_revision = null;
-		if (retry.length) {
-			const withPriority = retry.map((p) => {
-				const [y, m, d] = p.date_solved.split("-").map(Number);
-				const solved = new Date(y, m - 1, d);
-				const days_since = Math.floor((today - solved) / (1000 * 60 * 60 * 24));
-				// Higher difficulty and tutorial problems get priority
-				const difficultyBonus = p.difficulty === "Hard" ? 3 : p.difficulty === "Medium" ? 2 : 1;
-				const tutorialBonus = p.tags.includes("tutorial") ? 2 : 1;
-				return { p, score: days_since * difficultyBonus * tutorialBonus, days_since };
-			}).sort((a, b) => b.score - a.score);
-			todays_revision = {
-				id: withPriority[0].p.id,
-				title: withPriority[0].p.title,
-				difficulty: withPriority[0].p.difficulty,
-				tags: withPriority[0].p.tags || [],
-				days_since_solved: withPriority[0].days_since,
-			};
+		
+		// Add some demo spaced repetition data to problems
+		const problemsWithSR = problems.map(p => {
+			// Simulate some problems having been reviewed before
+			if (p.id === "demo3" || p.id === "demo4") {
+				return {
+					...p,
+					spaced_repetition: {
+						repetitions: p.id === "demo3" ? 2 : 1,
+						interval: p.id === "demo3" ? 6 : 1,
+						easiness: 2.5,
+						next_review: p.id === "demo3" ? "2025-02-15" : "2025-02-16",
+						last_reviewed: p.id === "demo3" ? "2025-02-09" : "2025-02-15",
+						review_history: []
+					}
+				};
+			}
+			return p;
+		});
+
+		// Get today's revision using the spaced repetition system
+		todays_revision = getNextRevision(problemsWithSR);
+		
+		// If no revision from SR system, fall back to old logic
+		if (!todays_revision) {
+			const today = new Date("2025-02-15");
+			const retry = problems.filter((p) => p.retry_later === "Yes");
+			if (retry.length) {
+				const withPriority = retry.map((p) => {
+					const [y, m, d] = p.date_solved.split("-").map(Number);
+					const solved = new Date(y, m - 1, d);
+					const days_since = Math.floor((today - solved) / (1000 * 60 * 60 * 24));
+					// Higher difficulty and tutorial problems get priority
+					const difficultyBonus = p.difficulty === "Hard" ? 3 : p.difficulty === "Medium" ? 2 : 1;
+					const tutorialBonus = p.tags.includes("tutorial") ? 2 : 1;
+					return { p, score: days_since * difficultyBonus * tutorialBonus, days_since };
+				}).sort((a, b) => b.score - a.score);
+				todays_revision = {
+					id: withPriority[0].p.id,
+					title: withPriority[0].p.title,
+					difficulty: withPriority[0].p.difficulty,
+					tags: withPriority[0].p.tags || [],
+					days_since_solved: withPriority[0].days_since,
+				};
+			}
+		}
+
+		// Add days_since_solved if not present
+		if (todays_revision && !todays_revision.days_since_solved) {
+			const today = new Date("2025-02-15");
+			const [y, m, d] = todays_revision.date_solved.split("-").map(Number);
+			const solved = new Date(y, m - 1, d);
+			todays_revision.days_since_solved = Math.floor((today - solved) / (1000 * 60 * 60 * 24));
 		}
 
 		// Educational activity heatmap - shows consistent learning
