@@ -19,7 +19,7 @@ export function TodaysRevision({ revision, className = "" }) {
         <CardContent>
           <div className="text-center py-4">
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              No problems to review today! 🎉
+              No problems to review today!
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               All caught up with your spaced repetition
@@ -117,7 +117,7 @@ export function TodaysRevision({ revision, className = "" }) {
           {/* Spaced Repetition Info */}
           <div className="p-2 rounded-lg bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700">
             <p className="text-xs text-gray-600 dark:text-gray-400">
-              📚 Spaced repetition helps you retain knowledge longer
+              Spaced repetition helps you retain knowledge longer
             </p>
           </div>
         </div>

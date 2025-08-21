@@ -91,7 +91,7 @@ export default function Dashboard() {
         {/* Header */}
         <div className="space-y-2">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Hi {user?.displayName?.trim() || (user?.email ? user.email.split('@')[0] : (isDemo ? 'demo explorer' : 'there'))} 👋
+            Hi {user?.displayName?.trim() || (user?.email ? user.email.split('@')[0] : (isDemo ? 'demo explorer' : 'there'))}
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
             Your LeetSpace learning analytics and insights {isDemo && '(demo)'}

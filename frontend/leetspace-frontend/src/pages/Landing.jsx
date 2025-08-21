@@ -200,6 +200,34 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Future features */}
+      <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-2xl md:text-3xl font-semibold">Coming soon</h2>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">Exciting features in development</p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-6">
+          <BenefitCard 
+            icon={<Users className="size-5" />} 
+            title="Share your LeetSpace" 
+            desc="Collaborate with study groups and share insights with fellow developers." 
+            visual={<MiniChipRowVisual />} 
+          />
+          <BenefitCard 
+            icon={<Timer className="size-5" />} 
+            title="Smart reminders" 
+            desc="Get email notifications for problems marked 'retry later' based on your schedule preferences." 
+            visual={<MiniRetryChipVisual />} 
+          />
+          <BenefitCard 
+            icon={<Sparkles className="size-5" />} 
+            title="AI integration" 
+            desc="Something special is brewing... Wait for version 2 to experience the magic." 
+            visual={<MiniInsightsVisual />} 
+          />
+        </div>
+      </section>
+
       {/* Security & privacy */}
       <section className="max-w-7xl mx-auto px-6 py-12 md:py-16">
         <div className="text-center mb-12">
@@ -207,9 +235,9 @@ export default function Landing() {
           <p className="mt-2 text-gray-600 dark:text-gray-300">Your data is safe with us</p>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
-          <BenefitCard icon={<ShieldIcon />} title="Private by default" desc="Your journal is private unless you choose to share (coming soon)." visual={<MiniDocVisual />} />
-          <BenefitCard icon={<LockIcon />} title="Trusted auth" desc="Sign in with Firebase Auth; no passwords stored by us." visual={<MiniLinesVisual />} />
-          <BenefitCard icon={<DownloadIcon />} title="Export anytime" desc="Export entries to CSV when you need a backup." visual={<MiniLinesVisual />} />
+          <BenefitCard icon={<ShieldIcon />} title="Private by default" desc="Your journal is completely private and secure by default." visual={<MiniDocVisual />} />
+          <BenefitCard icon={<LockIcon />} title="Trusted auth" desc="Secure authentication with industry-standard protocols." visual={<MiniLinesVisual />} />
+          <BenefitCard icon={<DownloadIcon />} title="Export anytime" desc="Export entries to CSV when you need a backup (coming soon)." visual={<MiniExportVisual />} />
         </div>
       </section>
 
@@ -719,13 +747,13 @@ function MiniReviewVisual() {
 
 function MiniTagGridVisual({ className = "" }) {
   return (
-    <div className={`rounded-lg border border-gray-200 dark:border-zinc-700 p-3 bg-white/60 dark:bg-zinc-800/50 flex flex-wrap gap-2 ${className}`}>
-      <Chip label="DP" />
-      <Chip label="Greedy" />
-      <Chip label="Stack" />
-      <Chip label="Queue" />
-      <Chip label="Tree" />
-      <Chip label="Binary Search" />
+    <div className={`rounded-lg border border-gray-200 dark:border-zinc-700 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 flex flex-wrap gap-2 ${className}`}>
+      <div className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-200 border border-blue-200/70 dark:border-blue-700/50">Arrays</div>
+      <div className="px-2 py-1 rounded-full text-xs bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-200 border border-indigo-200/70 dark:border-indigo-700/50">Graphs</div>
+      <div className="px-2 py-1 rounded-full text-xs bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-200 border border-purple-200/70 dark:border-purple-700/50">DP</div>
+      <div className="px-2 py-1 rounded-full text-xs bg-cyan-100 text-cyan-700 dark:bg-cyan-900/50 dark:text-cyan-200 border border-cyan-200/70 dark:border-cyan-700/50">Trees</div>
+      <div className="px-2 py-1 rounded-full text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-200 border border-emerald-200/70 dark:border-emerald-700/50">Sorting</div>
+      <div className="px-2 py-1 rounded-full text-xs bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-200 border border-amber-200/70 dark:border-amber-700/50">BFS/DFS</div>
     </div>
   );
 }
@@ -861,15 +889,10 @@ function MiniChipRowVisual() {
 
 function MiniDiffBarsVisual() {
   return (
-    <div className="grid grid-cols-2 gap-3">
-      <div className="space-y-1">
-        <div className="h-2 w-10/12 rounded bg-gray-300 dark:bg-zinc-700" />
-        <div className="h-2 w-7/12 rounded bg-gray-300 dark:bg-zinc-700" />
-      </div>
-      <div className="space-y-1">
-        <div className="h-2 w-11/12 rounded bg-gray-300 dark:bg-zinc-700" />
-        <div className="h-2 w-6/12 rounded bg-gray-300 dark:bg-zinc-700" />
-      </div>
+    <div className="space-y-1">
+      <div className="h-2 w-10/12 rounded bg-blue-400/70 dark:bg-blue-500/70" />
+      <div className="h-2 w-7/12 rounded bg-indigo-400/70 dark:bg-indigo-500/70" />
+      <div className="h-2 w-11/12 rounded bg-purple-400/70 dark:bg-purple-500/70" />
     </div>
   );
 }
@@ -887,9 +910,9 @@ function MiniFilterChipsVisual() {
 function MiniDocVisual() {
   return (
     <div className="rounded-md border border-gray-200 dark:border-zinc-700 p-2 bg-white/50 dark:bg-zinc-800/40 space-y-1">
-      <div className="h-2 w-9/12 rounded bg-gray-300 dark:bg-zinc-700" />
-      <div className="h-2 w-7/12 rounded bg-gray-300 dark:bg-zinc-700" />
-      <div className="h-2 w-8/12 rounded bg-gray-300 dark:bg-zinc-700" />
+      <div className="h-2 w-9/12 rounded bg-green-400/70 dark:bg-green-500/70" />
+      <div className="h-2 w-7/12 rounded bg-green-400/70 dark:bg-green-500/70" />
+      <div className="h-2 w-8/12 rounded bg-green-400/70 dark:bg-green-500/70" />
     </div>
   );
 }
@@ -897,8 +920,8 @@ function MiniDocVisual() {
 function MiniLinesVisual() {
   return (
     <div className="space-y-1">
-      <div className="h-2 w-10/12 rounded bg-gray-300 dark:bg-zinc-700" />
-      <div className="h-2 w-7/12 rounded bg-gray-300 dark:bg-zinc-700" />
+      <div className="h-2 w-10/12 rounded bg-amber-400/70 dark:bg-amber-500/70" />
+      <div className="h-2 w-7/12 rounded bg-amber-400/70 dark:bg-amber-500/70" />
     </div>
   );
 }
@@ -906,8 +929,17 @@ function MiniLinesVisual() {
 function MiniRetryChipVisual() {
   return (
     <div className="flex items-center gap-2">
-      <div className="text-[10px] px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">retry</div>
-      <div className="h-2 w-10 rounded bg-gray-300 dark:bg-zinc-700" />
+      <div className="text-[10px] px-1.5 py-0.5 rounded bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200">retry</div>
+      <div className="h-2 w-10 rounded bg-orange-400/70 dark:bg-orange-500/70" />
+    </div>
+  );
+}
+
+function MiniExportVisual() {
+  return (
+    <div className="space-y-1">
+      <div className="h-2 w-10/12 rounded bg-teal-400/70 dark:bg-teal-500/70" />
+      <div className="h-2 w-7/12 rounded bg-teal-400/70 dark:bg-teal-500/70" />
     </div>
   );
 }
@@ -915,9 +947,9 @@ function MiniRetryChipVisual() {
 function MiniTimelineVisual() {
   return (
     <div className="space-y-1">
-      <div className="h-2 w-full rounded bg-indigo-300/60 dark:bg-indigo-700/50" />
-      <div className="h-2 w-10/12 rounded bg-indigo-300/60 dark:bg-indigo-700/50" />
-      <div className="h-2 w-8/12 rounded bg-indigo-300/60 dark:bg-indigo-700/50" />
+      <div className="h-2 w-full rounded bg-red-400/70 dark:bg-red-500/70" />
+      <div className="h-2 w-10/12 rounded bg-orange-400/70 dark:bg-orange-500/70" />
+      <div className="h-2 w-8/12 rounded bg-yellow-400/70 dark:bg-yellow-500/70" />
     </div>
   );
 }
@@ -926,16 +958,16 @@ function MiniChecklistVisual() {
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
-        <div className="size-3 rounded bg-green-400" />
-        <div className="h-2 w-28 rounded bg-gray-300 dark:bg-zinc-700" />
+        <div className="size-3 rounded bg-violet-400" />
+        <div className="h-2 w-28 rounded bg-violet-400/70 dark:bg-violet-500/70" />
       </div>
       <div className="flex items-center gap-2">
-        <div className="size-3 rounded bg-green-400" />
-        <div className="h-2 w-24 rounded bg-gray-300 dark:bg-zinc-700" />
+        <div className="size-3 rounded bg-violet-400" />
+        <div className="h-2 w-24 rounded bg-violet-400/70 dark:bg-violet-500/70" />
       </div>
       <div className="flex items-center gap-2">
-        <div className="size-3 rounded bg-green-400" />
-        <div className="h-2 w-32 rounded bg-gray-300 dark:bg-zinc-700" />
+        <div className="size-3 rounded bg-violet-400" />
+        <div className="h-2 w-32 rounded bg-violet-400/70 dark:bg-violet-500/70" />
       </div>
     </div>
   );

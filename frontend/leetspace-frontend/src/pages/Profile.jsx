@@ -20,6 +20,40 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+function ProfilePicture({ user, size = "w-20 h-20" }) {
+  const [imageError, setImageError] = useState(false);
+  
+  if (user.photoURL && !imageError) {
+    return (
+      <img 
+        src={user.photoURL} 
+        alt="Profile" 
+        className={`${size} rounded-full border-4 border-white dark:border-zinc-700 shadow-sm`}
+        onError={() => setImageError(true)}
+        onLoad={() => setImageError(false)}
+      />
+    );
+  }
+
+  const displayName = user.displayName || user.email?.split('@')[0] || 'U';
+  const firstLetter = displayName.charAt(0).toUpperCase();
+  
+  // Generate a nice background color based on the first letter
+  const colors = [
+    'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500', 
+    'bg-indigo-500', 'bg-teal-500', 'bg-orange-500', 'bg-red-500',
+    'bg-cyan-500', 'bg-emerald-500', 'bg-violet-500', 'bg-rose-500',
+  ];
+  const colorIndex = firstLetter.charCodeAt(0) % colors.length;
+  const bgColor = colors[colorIndex];
+
+  return (
+    <div className={`${size} ${bgColor} rounded-full flex items-center justify-center text-white font-bold text-2xl border-4 border-white dark:border-zinc-700 shadow-sm`}>
+      {firstLetter}
+    </div>
+  );
+}
+
 export default function Profile() {
   const { 
     user, 
@@ -242,17 +276,7 @@ export default function Profile() {
                   <form onSubmit={handleProfileUpdate} className="space-y-6">
                   <div className="flex items-center gap-6 p-4 bg-gray-50 dark:bg-zinc-800 rounded-lg">
                       <div className="flex-shrink-0">
-                        {user.photoURL ? (
-                          <img 
-                            src={user.photoURL} 
-                            alt="Profile" 
-                            className="w-20 h-20 rounded-full border-4 border-white dark:border-zinc-700 shadow-sm"
-                          />
-                        ) : (
-                          <div className="w-20 h-20 bg-gray-300 dark:bg-zinc-700 rounded-full flex items-center justify-center border-4 border-white dark:border-zinc-700 shadow-sm">
-                            <User className="w-8 h-8 text-gray-600 dark:text-gray-300" />
-                          </div>
-                        )}
+                        <ProfilePicture user={user} size="w-20 h-20" />
                       </div>
                       <div className="flex-1">
                         <h3 className="text-lg font-medium text-gray-900 dark:text-white">

@@ -15,7 +15,7 @@ export function WeaknessCard({ weaknesses = [], className = "" }) {
         <CardContent>
           <div className="text-center py-4">
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              No weakness areas detected! 🎉
+              No weakness areas detected!
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Keep up the great work!
@@ -63,7 +63,7 @@ export function WeaknessCard({ weaknesses = [], className = "" }) {
           {weaknesses.length > 0 && (
             <div className="mt-4 p-3 rounded-lg bg-orange-50 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-700">
               <p className="text-sm text-orange-800 dark:text-orange-200">
-                💡 Consider reviewing and practicing more problems in these areas
+                Consider reviewing and practicing more problems in these areas
               </p>
             </div>
           )}
