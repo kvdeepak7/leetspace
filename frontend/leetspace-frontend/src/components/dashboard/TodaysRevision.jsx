@@ -210,26 +210,24 @@ export function TodaysRevision({ revision, className = "", onRevisionUpdate }) {
             </div>
             
             {/* Tags */}
-            {revision.tags && revision.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {revision.tags.slice(0, 3).map(tag => (
-                  <span 
-                    key={tag}
-                    className="px-2 py-0.5 text-xs bg-gray-100 dark:bg-zinc-800 rounded text-gray-600 dark:text-gray-300"
-                  >
-                    {tag}
-                  </span>
-                ))}
-                {revision.tags.length > 3 && (
-                  <span className="px-2 py-0.5 text-xs bg-gray-100 dark:bg-zinc-800 rounded text-gray-600 dark:text-gray-300">
-                    +{revision.tags.length - 3}
-                  </span>
-                )}
-              </div>
-            )}
-
-            {/* Time since solved */}
-            <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+            <div className="flex flex-wrap gap-1">
+              {revision.tags.slice(0, 3).map(tag => (
+                <span 
+                  key={tag}
+                  className="px-2 py-0.5 text-xs bg-gray-100 dark:bg-zinc-800 rounded text-gray-600 dark:text-gray-300"
+                >
+                  {tag}
+                </span>
+              ))}
+              {revision.tags.length > 3 && (
+                <span className="px-2 py-0.5 text-xs bg-gray-100 dark:bg-zinc-800 rounded text-gray-600 dark:text-gray-300">
+                  +{revision.tags.length - 3}
+                </span>
+              )}
+            </div>
+            
+            {/* Days since solved */}
+            <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
               <Calendar className="h-3 w-3" />
               <span>
                 Solved {revision.days_since_solved} day{revision.days_since_solved !== 1 ? 's' : ''} ago

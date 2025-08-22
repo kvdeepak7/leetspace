@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   FileText, 
   RotateCcw, 
+  Target, 
   Tags, 
   TrendingUp,
   Calendar,
@@ -127,11 +128,11 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-zinc-950 text-gray-900 dark:text-white p-6">
+      <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 text-gray-900 dark:text-white p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col items-center justify-center h-64 space-y-4">
             <Loader2 className="h-8 w-8 animate-spin text-gray-600 dark:text-gray-400" />
-            <span className="text-gray-600 dark:text-gray-400">Loading your dashboard...</span>
+            <span className="text-gray-600 dark:text-gray-400">Loading dashboard...</span>
           </div>
         </div>
       </div>
@@ -140,21 +141,11 @@ export default function Dashboard() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-white dark:bg-zinc-950 text-gray-900 dark:text-white p-6">
+      <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 text-gray-900 dark:text-white p-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center py-16">
-            <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-300 mb-2">Something went wrong</h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
-            <div className="flex gap-3 justify-center">
-              <Button onClick={handleRefresh} variant="outline" className="gap-2">
-                <RefreshCw className="h-4 w-4" />
-                Try Again
-              </Button>
-              <Button onClick={handleAddProblem} className="gap-2">
-                <Plus className="h-4 w-4" />
-                Add First Problem
-              </Button>
-            </div>
+            <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-300 mb-2">Error</h2>
+            <p className="text-gray-600 dark:text-gray-400">{error}</p>
           </div>
         </div>
       </div>
@@ -163,15 +154,11 @@ export default function Dashboard() {
 
   if (!data) {
     return (
-      <div className="min-h-screen bg-white dark:bg-zinc-950 text-gray-900 dark:text-white p-6">
+      <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 text-gray-900 dark:text-white p-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center py-16">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">No Data Available</h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">Start solving problems to see your analytics here</p>
-            <Button onClick={handleAddProblem} className="gap-2">
-              <Plus className="h-4 w-4" />
-              Add Your First Problem
-            </Button>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">No Data</h2>
+            <p className="text-gray-600 dark:text-gray-400">No dashboard data available</p>
           </div>
         </div>
       </div>
@@ -182,27 +169,19 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 text-gray-900 dark:text-white p-6">
-      <div className="max-w-7xl mx-auto space-y-8">
-        {/* Simple Header */}
-        <div className="space-y-3">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Hi {user?.displayName?.trim() || (user?.email ? user.email.split('@')[0] : (isDemo ? 'demo explorer' : 'there'))}
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400">
+          <p className="text-gray-600 dark:text-gray-400">
             Your LeetSpace learning analytics and insights {isDemo && '(demo)'}
           </p>
         </div>
 
-        {/* Quick Actions */}
-        <div className="flex gap-3">
-          <Button onClick={handleAddProblem} className="gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-sm">
-            <Plus className="h-4 w-4" />
-            Add Problem
-          </Button>
-        </div>
-
         {/* Stats Cards Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
             title="Total Problems"
             value={basic_stats.total_problems}
@@ -233,29 +212,11 @@ export default function Dashboard() {
 
         {/* Most Used Tags */}
         {basic_stats.most_used_tags.length > 0 && (
-          <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-lg p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                <Tags className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                Most Used Tags
-              </h2>
-              <Button 
-                onClick={handleViewAllProblems} 
-                variant="outline" 
-                size="sm"
-                className="border-gray-300 dark:border-zinc-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800"
-              >
-                View All
-              </Button>
-            </div>
+          <div className="space-y-3 p-4 rounded-lg border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Most Used Tags</h2>
             <div className="flex flex-wrap gap-2">
-              {basic_stats.most_used_tags.map(({ tag, count }, index) => (
-                <Badge 
-                  key={tag} 
-                  variant="secondary" 
-                  className="text-sm cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/30 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
-                  onClick={() => handleViewProblemsByTag(tag)}
-                >
+              {basic_stats.most_used_tags.map(({ tag, count }) => (
+                <Badge key={tag} variant="secondary" className="text-sm bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 hover:bg-gray-150 dark:hover:bg-zinc-700 transition-colors border border-gray-200 dark:border-zinc-700">
                   {tag} ({count})
                 </Badge>
               ))}
@@ -264,7 +225,7 @@ export default function Dashboard() {
         )}
 
         {/* Two Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Column */}
           <div className="space-y-6">
             <WeaknessCard weaknesses={weaknesses} onTagClick={handleViewProblemsByWeakness} />
@@ -277,7 +238,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Activity Heatmap */}
+        {/* Activity Heatmap - Full Width */}
         <ActivityHeatmap data={activity_heatmap} />
       </div>
     </div>

@@ -69,8 +69,9 @@ export const demoApi = {
 			.sort((a, b) => b.retry_rate - a.retry_rate);
 
 		// Today's revision using spaced repetition system
+		const today = new Date("2025-02-15");
 		let todays_revision = null;
-		
+
 		// Add some demo spaced repetition data to problems
 		const problemsWithSR = problems.map(p => {
 			// Simulate some problems having been reviewed before
@@ -92,10 +93,9 @@ export const demoApi = {
 
 		// Get today's revision using the spaced repetition system
 		todays_revision = getNextRevision(problemsWithSR);
-		
+
 		// If no revision from SR system, fall back to old logic
 		if (!todays_revision) {
-			const today = new Date("2025-02-15");
 			const retry = problems.filter((p) => p.retry_later === "Yes");
 			if (retry.length) {
 				const withPriority = retry.map((p) => {
@@ -109,7 +109,7 @@ export const demoApi = {
 				}).sort((a, b) => b.score - a.score);
 				todays_revision = {
 					id: withPriority[0].p.id,
-					title: withPriority[0].p.title,
+					title: withPriority[0].p.id,
 					difficulty: withPriority[0].p.difficulty,
 					tags: withPriority[0].p.tags || [],
 					days_since_solved: withPriority[0].days_since,
