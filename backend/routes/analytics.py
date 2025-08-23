@@ -1,6 +1,6 @@
 # routes/analytics.py
 
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Query
 from typing import List, Dict, Any
 from db.mongo import db
 from datetime import datetime, timedelta
@@ -9,9 +9,14 @@ from auth.dependencies import get_current_active_user
 
 router = APIRouter()
 collection = db["problems"]
+locks_collection = db["revision_locks"]
 
 @router.get("/dashboard")
-async def get_dashboard_stats(current_user: dict = Depends(get_current_active_user)):
+async def get_dashboard_stats(
+    test_day_offset: int = Query(0, description="DEV: shift day index by N for rotation test"),
+    test_unlock: bool = Query(False, description="DEV: ignore server lock for this response"),
+    current_user: dict = Depends(get_current_active_user),
+):
     """
     Get comprehensive dashboard statistics for the authenticated user
     """
@@ -39,10 +44,21 @@ async def get_dashboard_stats(current_user: dict = Depends(get_current_active_us
                 "recent_activity": []
             }
 
+        # Server-side daily lock check (per user)
+        today_str = datetime.now().date().isoformat()
+        locked_doc = await locks_collection.find_one({
+            "user_id": current_user["uid"],
+            "date": today_str,
+        })
+        locked_today = locked_doc is not None
+        if test_unlock:
+            locked_today = False
+
         return {
             "basic_stats": calculate_basic_stats(problems),
             "weaknesses": detect_weaknesses(problems),
-            "todays_revision": suggest_todays_revision(problems),
+            "todays_revision": None if locked_today else suggest_todays_revision(problems, day_offset=test_day_offset),
+            "todays_revision_locked": locked_today,
             "activity_heatmap": generate_activity_heatmap(problems),
             "recent_activity": get_recent_activity(problems)
         }
@@ -127,102 +143,52 @@ def detect_weaknesses(problems: List[Dict]) -> List[Dict[str, Any]]:
     weaknesses.sort(key=lambda x: x["retry_rate"], reverse=True)
     return weaknesses
 
-def suggest_todays_revision(problems: List[Dict]) -> Dict[str, Any]:
-    """Suggest a problem to revise today using spaced repetition"""
+def suggest_todays_revision(problems: List[Dict], day_offset: int = 0) -> Dict[str, Any]:
+    """Suggest a problem to revise today from the retry queue"""
     
     today = datetime.now()
     
-    # First, check for problems that need revision based on spaced repetition
-    spaced_repetition_problems = []
+    # Build dynamic queue from problems with retry_later = "Yes"
+    retry_queue = []
     for problem in problems:
-        sr_data = problem.get("spaced_repetition")
-        if sr_data and sr_data.get("next_review"):
+        if problem.get("retry_later") == "Yes":
             try:
-                next_review = datetime.fromisoformat(sr_data["next_review"])
-                if next_review <= today:
-                    # Calculate priority based on overdue days and difficulty
-                    overdue_days = (today - next_review).days
-                    difficulty_bonus = {"Easy": 1, "Medium": 2, "Hard": 3}
-                    priority_score = overdue_days * difficulty_bonus.get(problem.get("difficulty"), 1)
-                    
-                    spaced_repetition_problems.append({
-                        "problem": problem,
-                        "priority_score": priority_score,
-                        "days_since": 0,  # Will be calculated below
-                        "is_spaced_repetition": True
-                    })
-            except (ValueError, TypeError):
-                continue
-    
-    # If we have spaced repetition problems, return the highest priority one
-    if spaced_repetition_problems:
-        spaced_repetition_problems.sort(key=lambda x: x["priority_score"], reverse=True)
-        best_sr_problem = spaced_repetition_problems[0]
-        
-        # Calculate days since solved for display
-        try:
-            solved_date = datetime.strptime(str(best_sr_problem["problem"]["date_solved"]), "%Y-%m-%d")
-            best_sr_problem["days_since"] = (today - solved_date).days
-        except (ValueError, TypeError):
-            best_sr_problem["days_since"] = 0
-        
-        return {
-            "id": best_sr_problem["problem"]["id"],
-            "title": best_sr_problem["problem"]["title"],
-            "difficulty": best_sr_problem["problem"]["difficulty"],
-            "tags": best_sr_problem["problem"].get("tags", []),
-            "days_since_solved": best_sr_problem["days_since"],
-            "spaced_repetition": best_sr_problem["problem"].get("spaced_repetition")
-        }
-    
-    # Fallback to old logic for problems without spaced repetition data
-    retry_problems = [p for p in problems if p.get("retry_later") in ("Yes", True)]
-    
-    if not retry_problems:
-        return None
-    
-    # Calculate priority scores for retry problems
-    suggestions = []
-    for problem in retry_problems:
-        try:
-            solved_date = datetime.strptime(str(problem["date_solved"]), "%Y-%m-%d")
-            days_since = (today - solved_date).days
-            
-            # Spaced repetition intervals: 1, 3, 7, 14, 30 days
-            intervals = [1, 3, 7, 14, 30]
-            
-            # Find the interval this problem should be reviewed at
-            priority_score = 0
-            for interval in intervals:
-                if days_since >= interval:
-                    priority_score = days_since - interval + interval  # Overdue bonus
+                solved_date = datetime.strptime(str(problem["date_solved"]), "%Y-%m-%d")
+                days_since = (today - solved_date).days
                 
-            # Add difficulty bonus (harder problems need more review)
-            difficulty_bonus = {"Easy": 1, "Medium": 2, "Hard": 3}
-            priority_score *= difficulty_bonus.get(problem.get("difficulty"), 1)
-            
-            suggestions.append({
-                "problem": problem,
-                "priority_score": priority_score,
-                "days_since": days_since
-            })
-            
-        except (ValueError, TypeError):
-            continue  # Skip problems with invalid dates
+                # Calculate priority score based on days since solved and difficulty
+                difficulty_bonus = {"Easy": 1, "Medium": 2, "Hard": 3}
+                priority_score = days_since * difficulty_bonus.get(problem.get("difficulty"), 1)
+                
+                retry_queue.append({
+                    "problem": problem,
+                    "priority_score": priority_score,
+                    "days_since": days_since
+                })
+                
+            except (ValueError, TypeError):
+                continue  # Skip problems with invalid dates
     
-    if not suggestions:
+    if not retry_queue:
         return None
     
-    # Return the highest priority problem
-    suggestions.sort(key=lambda x: x["priority_score"], reverse=True)
-    best_suggestion = suggestions[0]
+    # Sort by priority score (highest first) - problems overdue longer get higher priority
+    retry_queue.sort(key=lambda x: x["priority_score"], reverse=True)
+
+    # Daily rotation (circular): pick an index based on days since epoch
+    from datetime import date as _date
+    day_index = (_date.today() - _date(1970, 1, 1)).days + int(day_offset or 0)
+    selected_index = day_index % len(retry_queue)
+    best_suggestion = retry_queue[selected_index]
     
     return {
         "id": best_suggestion["problem"]["id"],
         "title": best_suggestion["problem"]["title"],
         "difficulty": best_suggestion["problem"]["difficulty"],
         "tags": best_suggestion["problem"].get("tags", []),
-        "days_since_solved": best_suggestion["days_since"]
+        "days_since_solved": best_suggestion["days_since"],
+        "review_count": best_suggestion["problem"].get("review_count", 0),
+        "retry_later": best_suggestion["problem"].get("retry_later")
     }
 
 def generate_activity_heatmap(problems: List[Dict]) -> List[Dict[str, Any]]:
@@ -302,6 +268,31 @@ def get_recent_activity(problems: List[Dict]) -> List[Dict[str, Any]]:
             continue
     
     return formatted_recent
+
+# POST endpoint to lock today's revision server-side (per user)
+@router.post("/lock-today")
+async def lock_todays_revision(current_user: dict = Depends(get_current_active_user)):
+    try:
+        today_str = datetime.now().date().isoformat()
+        # Upsert lock document
+        await locks_collection.update_one(
+            {"user_id": current_user["uid"], "date": today_str},
+            {"$set": {"user_id": current_user["uid"], "date": today_str, "locked_at": datetime.utcnow().isoformat()}},
+            upsert=True,
+        )
+        return {"locked": True, "date": today_str}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# POST endpoint to clear today's lock (DEV/testing convenience)
+@router.post("/unlock-today")
+async def unlock_todays_revision(current_user: dict = Depends(get_current_active_user)):
+    try:
+        today_str = datetime.now().date().isoformat()
+        await locks_collection.delete_one({"user_id": current_user["uid"], "date": today_str})
+        return {"locked": False, "date": today_str}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/spaced-repetition")
 async def get_spaced_repetition_stats(current_user: dict = Depends(get_current_active_user)):

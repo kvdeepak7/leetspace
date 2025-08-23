@@ -31,7 +31,7 @@ export const getIdToken = async () => {
   
   try {
     const idToken = await user.getIdToken();
-    console.log('✅ Got ID token:', idToken.substring(0, 50) + '...');
+    console.log('✅ Got ID token:', idToken);
     return idToken;
   } catch (error) {
     console.error('❌ Error getting ID token:', error);
@@ -159,6 +159,22 @@ export const analyticsAPI = {
       });
     }
     return api.get('/api/analytics/spaced-repetition');
+  },
+
+  // Lock today's revision on the server (no-op in demo)
+  lockToday: () => {
+    if (isDemoMode()) {
+      return Promise.resolve({ data: { locked: true, date: new Date().toISOString().slice(0, 10) } });
+    }
+    return api.post('/api/analytics/lock-today');
+  },
+
+  // Unlock today's revision on the server (no-op in demo)
+  unlockToday: () => {
+    if (isDemoMode()) {
+      return Promise.resolve({ data: { locked: false, date: new Date().toISOString().slice(0, 10) } });
+    }
+    return api.post('/api/analytics/unlock-today');
   },
 };
 
