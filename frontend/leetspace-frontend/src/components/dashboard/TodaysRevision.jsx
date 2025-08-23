@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import { problemsAPI, analyticsAPI } from "@/lib/api";
 import { toast } from "sonner";
 
-export function TodaysRevision({ revision, lockedByServer = false, className = "", onRevisionUpdate }) {
+export function TodaysRevision({ revision, lockedByServer = false, className = "", onRevisionUpdate, onAfterUnlock }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [locked, setLocked] = useState(false);
@@ -38,6 +38,9 @@ export function TodaysRevision({ revision, lockedByServer = false, className = "
       await analyticsAPI.unlockToday();
     } catch (_) {}
     setLocked(false);
+    if (onAfterUnlock) {
+      onAfterUnlock();
+    }
     toast.success("Unlocked today.");
   };
 
@@ -105,7 +108,7 @@ export function TodaysRevision({ revision, lockedByServer = false, className = "
       }
     } catch (_) {}
     // Server-side lock
-    analyticsAPI.lockToday().catch(() => {});
+    analyticsAPI.lockToday({ problem_id: revision?.id }).catch(() => {});
     setLocked(true);
     toast.success("Skipped today. Come back tomorrow.");
   };
@@ -137,7 +140,7 @@ export function TodaysRevision({ revision, lockedByServer = false, className = "
         }
       } catch (_) {}
       // Server-side lock
-      analyticsAPI.lockToday().catch(() => {});
+      analyticsAPI.lockToday({ problem_id: revision?.id }).catch(() => {});
       setLocked(true);
       toast.success("Review completed. Come back tomorrow.");
 
@@ -179,7 +182,7 @@ export function TodaysRevision({ revision, lockedByServer = false, className = "
         }
       } catch (_) {}
       // Server-side lock
-      analyticsAPI.lockToday().catch(() => {});
+      analyticsAPI.lockToday({ problem_id: revision?.id }).catch(() => {});
       setLocked(true);
       toast.success("Removed from retry. Come back tomorrow.");
 

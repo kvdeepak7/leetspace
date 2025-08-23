@@ -93,20 +93,36 @@ export default function Dashboard() {
         }));
       }
 
-      // No additional backend update needed here since the TodaysRevision component 
-      // already handles the database updates directly via problemsAPI.updateProblem
-      
-      // If the problem was removed from retry queue, clear the today's revision
-      if (updatedProblem.retry_later === "No") {
-        // After a short delay, refresh the dashboard to get the next problem in queue
-        setTimeout(() => {
-          fetchDashboardData(true);
-        }, 2000);
+      // Update the problem in the backend
+      if (!isDemo) {
+        // Extract only the spaced repetition data to send to backend
+        const updateData = {
+          spaced_repetition: updatedProblem.spaced_repetition
+        };
+        
+        // Debug logging
+        console.log('🔍 Sending update data to backend:', updateData);
+        console.log('🔍 Updated problem:', updatedProblem);
+        
+        await problemsAPI.updateProblem(updatedProblem.id, updateData);
+        console.log('✅ Spaced repetition data updated in backend');
+      } else {
+        // Demo mode: just log the update
+        console.log('Demo mode: revision updated locally', updatedProblem);
       }
-      
     } catch (error) {
-      console.error('❌ Failed to handle revision update:', error);
-      toast.error('Failed to update revision. Please try again.');
+      console.error('❌ Failed to update spaced repetition data:', error);
+      
+      // Show error toast
+      toast.error('Failed to save revision progress. Please try again.');
+      
+      // Revert local state change on error
+      if (data && data.todays_revision && data.todays_revision.id === updatedProblem.id) {
+        setData(prevData => ({
+          ...prevData,
+          todays_revision: data.todays_revision // Revert to original
+        }));
+      }
     }
   };
 
@@ -149,7 +165,7 @@ export default function Dashboard() {
     );
   }
 
-  const { basic_stats, weaknesses, todays_revision, todays_revision_locked, activity_heatmap, recent_activity } = data;
+  const { basic_stats, weaknesses, todays_revision, todays_revision_locked = false, activity_heatmap, recent_activity } = data;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 text-gray-900 dark:text-white p-6">
@@ -213,7 +229,12 @@ export default function Dashboard() {
           {/* Left Column */}
           <div className="space-y-6">
             <WeaknessCard weaknesses={weaknesses} onTagClick={handleViewProblemsByWeakness} />
-            <TodaysRevision revision={todays_revision} lockedByServer={todays_revision_locked} onRevisionUpdate={handleRevisionUpdate} />
+            <TodaysRevision
+              revision={todays_revision}
+              lockedByServer={todays_revision_locked}
+              onRevisionUpdate={handleRevisionUpdate}
+              onAfterUnlock={() => fetchDashboardData(true)}
+            />
           </div>
 
           {/* Right Column */}

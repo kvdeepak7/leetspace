@@ -162,11 +162,11 @@ export const analyticsAPI = {
   },
 
   // Lock today's revision on the server (no-op in demo)
-  lockToday: () => {
+  lockToday: (body) => {
     if (isDemoMode()) {
       return Promise.resolve({ data: { locked: true, date: new Date().toISOString().slice(0, 10) } });
     }
-    return api.post('/api/analytics/lock-today');
+    return api.post('/api/analytics/lock-today', body || {});
   },
 
   // Unlock today's revision on the server (no-op in demo)
