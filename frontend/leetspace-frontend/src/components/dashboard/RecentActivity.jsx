@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, ExternalLink, RotateCcw } from "lucide-react";
+import { Clock, ExternalLink, RotateCcw, Activity } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export function RecentActivity({ activities = [], className = "" }) {
@@ -8,7 +8,7 @@ export function RecentActivity({ activities = [], className = "" }) {
 
   if (activities.length === 0) {
     return (
-      <Card className={`bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-700 ${className}`}>
+      <Card className={`bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 ${className}`}>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2 text-gray-900 dark:text-white">
             <Clock className="h-5 w-5 text-gray-600 dark:text-gray-400" />
@@ -16,11 +16,11 @@ export function RecentActivity({ activities = [], className = "" }) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-4">
-            <p className="text-sm text-gray-600 dark:text-gray-300">
+          <div className="text-center py-6">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
               No recent activity
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               Start solving problems to see your activity here
             </p>
           </div>
@@ -40,9 +40,9 @@ export function RecentActivity({ activities = [], className = "" }) {
   };
 
   return (
-    <Card className={`bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-700 ${className}`}>
+    <Card className={`bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 ${className}`}>
       <CardHeader>
-      <CardTitle className="text-lg flex items-center gap-2 text-gray-900 dark:text-white">
+        <CardTitle className="text-lg flex items-center gap-2 text-gray-900 dark:text-white">
           <Clock className="h-5 w-5 text-gray-600 dark:text-gray-400" />
           Recent Activity
         </CardTitle>
@@ -52,12 +52,14 @@ export function RecentActivity({ activities = [], className = "" }) {
           {activities.map((activity) => (
             <div 
               key={activity.id}
-              className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-zinc-600 bg-gray-50 dark:bg-zinc-800 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer"
+              className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-zinc-600 bg-gray-50 dark:bg-zinc-800 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors cursor-pointer"
               onClick={() => handleProblemClick(activity.id)}
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <h4 className="font-medium text-sm truncate text-gray-900 dark:text-white">{activity.title}</h4>
+                  <h4 className="font-medium text-sm truncate text-gray-900 dark:text-white">
+                    {activity.title}
+                  </h4>
                   {activity.retry_later && (
                     <RotateCcw className="h-3 w-3 text-gray-500 dark:text-gray-400 flex-shrink-0" title="Marked for retry" />
                   )}
@@ -69,7 +71,9 @@ export function RecentActivity({ activities = [], className = "" }) {
                   >
                     {activity.difficulty}
                   </Badge>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">{activity.time_ago}</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    {activity.time_ago}
+                  </span>
                 </div>
 
                 {/* Tags */}
@@ -92,12 +96,15 @@ export function RecentActivity({ activities = [], className = "" }) {
           ))}
 
           {/* View All Link */}
-          <div className="pt-2 border-t border-gray-200 dark:border-zinc-700">
+          <div className="pt-3 border-t border-gray-200 dark:border-zinc-700">
             <button 
               onClick={() => navigate('/problems')}
-              className="w-full cursor-pointer text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              className="w-full cursor-pointer p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 border border-blue-200 dark:border-blue-700 text-sm text-blue-700 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-200 transition-colors font-medium"
             >
-              View all problems →
+              <span className="flex items-center justify-center gap-2">
+                View all problems
+                <ExternalLink className="h-4 w-4" />
+              </span>
             </button>
           </div>
         </div>

@@ -158,13 +158,42 @@ async def get_problem(id: str, current_user: dict = Depends(get_current_active_u
 
 @router.put("/{id}", response_model=ProblemInDB)
 async def update_problem(id: str, update: ProblemUpdate, current_user: dict = Depends(get_current_active_user)):
-    update_data = {k: v for k, v in update.dict().items() if v is not None}
+    # Convert the update model to dict and filter out None values
+    update_dict = update.dict(exclude_unset=True)
+    update_data = {k: v for k, v in update_dict.items() if v is not None}
 
     if "url" in update_data:
         update_data["url"] = str(update_data["url"])
 
     if "date_solved" in update_data:
         update_data["date_solved"] = update_data["date_solved"].isoformat()
+
+    # Handle spaced repetition data - convert to proper format for MongoDB
+    if "spaced_repetition" in update_data:
+        sr_data = update_data["spaced_repetition"]
+        if sr_data:
+            # Convert string dates to ISO format strings for MongoDB storage
+            if sr_data.get("next_review"):
+                if isinstance(sr_data["next_review"], str):
+                    # Frontend sends Date objects as strings, keep as is
+                    pass
+                elif hasattr(sr_data["next_review"], 'isoformat'):
+                    sr_data["next_review"] = sr_data["next_review"].isoformat()
+            if sr_data.get("last_reviewed"):
+                if isinstance(sr_data["last_reviewed"], str):
+                    # Frontend sends Date objects as strings, keep as is
+                    pass
+                elif hasattr(sr_data["last_reviewed"], 'isoformat'):
+                    sr_data["last_reviewed"] = sr_data["last_reviewed"].isoformat()
+            # Ensure review_history is properly formatted
+            if "review_history" in sr_data:
+                for review in sr_data["review_history"]:
+                    if "date" in review:
+                        if isinstance(review["date"], str):
+                            # Frontend sends Date objects as strings, keep as is
+                            pass
+                        elif hasattr(review["date"], 'isoformat'):
+                            review["date"] = review["date"].isoformat()
 
     conflicts = []
 

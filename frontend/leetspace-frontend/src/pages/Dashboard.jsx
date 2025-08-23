@@ -1,48 +1,130 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from "@/context/AuthContext";
 import { useDemo } from "@/context/DemoContext";
-import { analyticsAPI } from '@/lib/api';
+import { analyticsAPI, problemsAPI } from '@/lib/api';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { ActivityHeatmap } from '@/components/dashboard/ActivityHeatmap';
 import { WeaknessCard } from '@/components/dashboard/WeaknessCard';
 import { TodaysRevision } from '@/components/dashboard/TodaysRevision';
 import { RecentActivity } from '@/components/dashboard/RecentActivity';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 import { 
   FileText, 
   RotateCcw, 
+  Target, 
   Tags, 
   TrendingUp,
   Calendar,
   BarChart3,
-  Loader2 
+  Loader2,
+  Plus,
+  RefreshCw
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function Dashboard() {
   const { user } = useAuth();
   const { isDemo } = useDemo();
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchDashboardData = async (isRefresh = false) => {
+    if (!user && !isDemo) return;
+
+    try {
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
+      setError(null);
+      
+      const response = await analyticsAPI.getDashboard();
+      setData(response.data);
+    } catch (err) {
+      console.error('Error fetching dashboard data:', err);
+      setError(err.message || 'Failed to load dashboard data');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      if (!user && !isDemo) return;
-
-      try {
-        setLoading(true);
-        const response = await analyticsAPI.getDashboard();
-        setData(response.data);
-      } catch (err) {
-        console.error('Error fetching dashboard data:', err);
-        setError('Failed to load dashboard data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchDashboardData();
   }, [user, isDemo]);
+
+  const handleRefresh = () => {
+    fetchDashboardData(true);
+  };
+
+  const handleAddProblem = () => {
+    navigate('/add-problem');
+  };
+
+  const handleViewAllProblems = () => {
+    navigate('/problems');
+  };
+
+  const handleViewRetryProblems = () => {
+    navigate('/problems?filter=retry');
+  };
+
+  const handleViewProblemsByTag = (tag) => {
+    navigate(`/problems?tag=${tag}`);
+  };
+
+  const handleViewProblemsByWeakness = (tag) => {
+    navigate(`/problems?tag=${tag}&filter=weakness`);
+  };
+
+  const handleRevisionUpdate = async (updatedProblem) => {
+    try {
+      // Update the problem in the local state immediately for responsive UI
+      if (data && data.todays_revision && data.todays_revision.id === updatedProblem.id) {
+        setData(prevData => ({
+          ...prevData,
+          todays_revision: updatedProblem
+        }));
+      }
+
+      // Update the problem in the backend
+      if (!isDemo) {
+        // Extract only the spaced repetition data to send to backend
+        const updateData = {
+          spaced_repetition: updatedProblem.spaced_repetition
+        };
+        
+        // Debug logging
+        console.log('🔍 Sending update data to backend:', updateData);
+        console.log('🔍 Updated problem:', updatedProblem);
+        
+        await problemsAPI.updateProblem(updatedProblem.id, updateData);
+        console.log('✅ Spaced repetition data updated in backend');
+      } else {
+        // Demo mode: just log the update
+        console.log('Demo mode: revision updated locally', updatedProblem);
+      }
+    } catch (error) {
+      console.error('❌ Failed to update spaced repetition data:', error);
+      
+      // Show error toast
+      toast.error('Failed to save revision progress. Please try again.');
+      
+      // Revert local state change on error
+      if (data && data.todays_revision && data.todays_revision.id === updatedProblem.id) {
+        setData(prevData => ({
+          ...prevData,
+          todays_revision: data.todays_revision // Revert to original
+        }));
+      }
+    }
+  };
 
   if (loading) {
     return (
@@ -83,14 +165,14 @@ export default function Dashboard() {
     );
   }
 
-  const { basic_stats, weaknesses, todays_revision, activity_heatmap, recent_activity } = data;
+  const { basic_stats, weaknesses, todays_revision, todays_revision_locked = false, activity_heatmap, recent_activity } = data;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 text-gray-900 dark:text-white p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="space-y-2">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Hi {user?.displayName?.trim() || (user?.email ? user.email.split('@')[0] : (isDemo ? 'demo explorer' : 'there'))}
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
@@ -105,12 +187,14 @@ export default function Dashboard() {
             value={basic_stats.total_problems}
             subtitle="Problems logged"
             icon={FileText}
+            onClick={handleViewAllProblems}
           />
           <StatCard
             title="Retry Later"
             value={basic_stats.retry_count}
             subtitle="Need review"
             icon={RotateCcw}
+            onClick={handleViewRetryProblems}
           />
           <StatCard
             title="Active Days"
@@ -144,8 +228,13 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Column */}
           <div className="space-y-6">
-            <WeaknessCard weaknesses={weaknesses} />
-            <TodaysRevision revision={todays_revision} />
+            <WeaknessCard weaknesses={weaknesses} onTagClick={handleViewProblemsByWeakness} />
+            <TodaysRevision
+              revision={todays_revision}
+              lockedByServer={todays_revision_locked}
+              onRevisionUpdate={handleRevisionUpdate}
+              onAfterUnlock={() => fetchDashboardData(true)}
+            />
           </div>
 
           {/* Right Column */}

@@ -5,13 +5,16 @@ import { DataTable } from "@/components/data-table/data-table";
 import { columns } from "@/components/data-table/columns";
 import { DeleteProblemDialog } from "@/components/DeleteProblemDialog";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { problemsAPI } from "@/lib/api";
+import { Badge } from "@/components/ui/badge";
+import { X, RotateCcw, AlertTriangle } from "lucide-react";
 
 // import { problems } from "@/components/data-table/types"; // or from Firebase later
 
 export default function Problems() {
   const [problems, setProblems] = useState([]);
+  const [filteredProblems, setFilteredProblems] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth(); 
   const { isDemo } = useDemo();
@@ -22,6 +25,12 @@ export default function Problems() {
     document.documentElement.classList.contains("dark") ? "dark" : "light"
   );
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  
+  // Get filter parameters from URL
+  const tagFilter = searchParams.get('tag');
+  const filterType = searchParams.get('filter');
+
   // const user = "abc123";
   const fetchProblems = async () => {
     try {
@@ -29,7 +38,8 @@ export default function Problems() {
         sort_by: "date_solved",
         order: "desc",
       });
-      setProblems(res.data.problems || res.data); // debug endpoint returns {count, problems}
+      const fetchedProblems = res.data.problems || res.data;
+      setProblems(fetchedProblems);
       console.log(res.data);
     } catch (error) {
       console.error("Error fetching problems:", error);
@@ -38,6 +48,31 @@ export default function Problems() {
       setLoading(false);
     }
   };
+
+  // Apply filters when problems or URL params change
+  useEffect(() => {
+    let filtered = [...problems];
+
+    // Apply tag filter
+    if (tagFilter) {
+      filtered = filtered.filter(problem => 
+        problem.tags && problem.tags.includes(tagFilter)
+      );
+    }
+
+    // Apply filter type
+    if (filterType === 'retry') {
+      filtered = filtered.filter(problem => problem.retry_later === "Yes");
+    } else if (filterType === 'weakness' && tagFilter) {
+      // For weakness, we already have the tag filter, but we can add additional logic
+      // like showing problems with higher retry rates for that tag
+      filtered = filtered.filter(problem => 
+        problem.tags && problem.tags.includes(tagFilter)
+      );
+    }
+
+    setFilteredProblems(filtered);
+  }, [problems, tagFilter, filterType]);
 
   useEffect(() => {
     if (user || isDemo) {
@@ -54,6 +89,30 @@ export default function Problems() {
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
     return () => observer.disconnect();
   }, []);
+
+  const clearFilters = () => {
+    navigate('/problems');
+  };
+
+  const getFilterDescription = () => {
+    if (filterType === 'retry') {
+      return 'Problems marked for retry';
+    } else if (filterType === 'weakness' && tagFilter) {
+      return `Weakness area: ${tagFilter}`;
+    } else if (tagFilter) {
+      return `Tag: ${tagFilter}`;
+    }
+    return null;
+  };
+
+  const getFilterIcon = () => {
+    if (filterType === 'retry') {
+      return <RotateCcw className="h-4 w-4" />;
+    } else if (filterType === 'weakness') {
+      return <AlertTriangle className="h-4 w-4" />;
+    }
+    return null;
+  };
   const handleEdit = (problem) => {
     if (isDemo) {
       toast.info("Demo mode: editing disabled.");
@@ -117,26 +176,56 @@ export default function Problems() {
       </div>
     );
   }
+
+  const filterDescription = getFilterDescription();
+  const filterIcon = getFilterIcon();
+
   return (
     <div className="p-6 bg-white dark:bg-zinc-900 text-gray-900 dark:text-white rounded-lg shadow-sm">
-    {/* <h2 className="text-2xl font-semibold text-center mb-6">
-      🧠 All Problems
-    </h2> */}
-    {/* <DataTable data={problems} columns={columns} />
-     */}
-    <DataTable 
-      data={problems} 
-      columns={columns(handleEdit, handleDelete)} 
-      onDataChange={setProblems}
-    />
+      {/* Filter Header */}
+      {filterDescription && (
+        <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {filterIcon && (
+                <div className="p-2 bg-blue-100 dark:bg-blue-800/30 rounded-lg">
+                  {filterIcon}
+                </div>
+              )}
+              <div>
+                <h2 className="text-lg font-semibold text-blue-900 dark:text-blue-100">
+                  {filterDescription}
+                </h2>
+                <p className="text-sm text-blue-700 dark:text-blue-300">
+                  Showing {filteredProblems.length} of {problems.length} problems
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={clearFilters}
+              className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-800/30 rounded-lg transition-colors"
+              title="Clear filters"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
-    <DeleteProblemDialog
-      problem={selectedProblem}
-      open={deleteDialogOpen}
-      onOpenChange={setDeleteDialogOpen}
-      onConfirm={confirmDelete}
-    />
-  </div>
+      {/* Problems Table */}
+      <DataTable 
+        data={filteredProblems} 
+        columns={columns(handleEdit, handleDelete)} 
+        onDataChange={setProblems}
+      />
+
+      <DeleteProblemDialog
+        problem={selectedProblem}
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={confirmDelete}
+      />
+    </div>
   );
 }
   
