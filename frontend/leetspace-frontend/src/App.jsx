@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Home from './pages/Home';
 import Auth from './pages/Auth';
 import Problems from './pages/Problems';
@@ -14,6 +15,10 @@ import Sample from './pages/Sample';
 import SampleProblem from './pages/SampleProblem';
 import Oops from './pages/Oops';
 import ResetPassword from './pages/ResetPassword';
+import Privacy from './pages/Privacy';
+import Cookies from './pages/Cookies';
+import Terms from './pages/Terms';
+import NotFound from './pages/NotFound';
 import BackToTop from '@/components/BackToTop';
 
 import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
@@ -61,72 +66,61 @@ function App() {
   const location = useLocation();
 
   const shouldShowNavbar = location.pathname !== "/auth";
+  const isLanding = location.pathname === "/";
 
   
+  if (isLanding) {
+    return (
+      <>
+        {shouldShowNavbar && <Navbar />}
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/sample" element={<Sample />} />
+          <Route path="/sample/problem" element={<SampleProblem />} />
+          <Route path="/oops" element={<Oops />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/cookies" element={<Cookies />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/problems" element={<ProtectedRoute><Problems /></ProtectedRoute>} />
+          <Route path="/add-problem" element={<ProtectedRoute><AddProblem /></ProtectedRoute>} />
+          <Route path="/problems/:id" element={<ProtectedRoute><ProblemDetail /></ProtectedRoute>} />
+          <Route path="/edit-problem/:id" element={<ProtectedRoute><EditProblem /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute ><Profile /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute ><Dashboard /></ProtectedRoute>} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        {shouldShowNavbar && <Footer />}
+      </>
+    );
+  }
+
   return (
-    <>
+    <div className="flex min-h-screen flex-col">
       {shouldShowNavbar && <Navbar />}
-      <Routes>
-        <Route 
-          path="/" 
-          element={<Landing />} 
-        />
-        <Route path="/auth" element={<Auth />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/sample" element={<Sample />} />
-        <Route path="/sample/problem" element={<SampleProblem />} />
-        <Route path="/oops" element={<Oops />} />
-        {/* Protected Routes - require authentication and email verification */}
-        <Route 
-          path="/problems" 
-          element={
-            <ProtectedRoute>
-              <Problems />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/add-problem" 
-          element={
-            <ProtectedRoute>
-              <AddProblem />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/problems/:id" 
-          element={
-            <ProtectedRoute>
-              <ProblemDetail />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/edit-problem/:id" 
-          element={
-            <ProtectedRoute>
-              <EditProblem />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/profile" 
-          element={
-            <ProtectedRoute >
-              <Profile />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/dashboard" 
-          element={
-            <ProtectedRoute >
-              <Dashboard />
-            </ProtectedRoute>
-          } 
-        />
-      </Routes>
-    </>
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/sample" element={<Sample />} />
+          <Route path="/sample/problem" element={<SampleProblem />} />
+          <Route path="/oops" element={<Oops />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/cookies" element={<Cookies />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/problems" element={<ProtectedRoute><Problems /></ProtectedRoute>} />
+          <Route path="/add-problem" element={<ProtectedRoute><AddProblem /></ProtectedRoute>} />
+          <Route path="/problems/:id" element={<ProtectedRoute><ProblemDetail /></ProtectedRoute>} />
+          <Route path="/edit-problem/:id" element={<ProtectedRoute><EditProblem /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute ><Profile /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute ><Dashboard /></ProtectedRoute>} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
+      {shouldShowNavbar && <Footer />}
+    </div>
   );
 }
 

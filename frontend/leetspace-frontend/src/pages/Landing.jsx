@@ -382,6 +382,8 @@ export default function Landing() {
         </div>
       </section>
 
+      
+
       {/* Sticky mobile CTA */}
       <div className="fixed bottom-4 inset-x-0 px-4 md:hidden z-40">
         <div className="mx-auto max-w-md rounded-full bg-white/90 dark:bg-zinc-900/90 border border-gray-200 dark:border-zinc-700 p-2 shadow-lg">

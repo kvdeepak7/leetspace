@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { problemsAPI } from "@/lib/api";
 import { Filter, X, Search, Tag, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { useDemo } from "@/context/DemoContext";
 
 import {
   useReactTable,
@@ -57,6 +58,7 @@ import {
 
 export function DataTable({ data, columns, onDataChange }) {
   const navigate = useNavigate();
+  const { isDemo } = useDemo();
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({
@@ -181,6 +183,10 @@ export function DataTable({ data, columns, onDataChange }) {
 
   const handleMassDelete = async () => {
     if (selectedCount === 0) return;
+    if (isDemo) {
+      toast.info("demo mode: delete disabeld");
+      return;
+    }
     try {
       await Promise.all(selectedIds.map((id) => problemsAPI.deleteProblem(id)));
       setRowSelection({});
