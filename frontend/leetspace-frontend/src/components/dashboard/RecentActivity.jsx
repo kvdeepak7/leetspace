@@ -49,9 +49,9 @@ export function RecentActivity({ activities = [], className = "" }) {
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {activities.map((activity) => (
+          {activities.map((activity, index) => (
             <div 
-              key={activity.id}
+              key={`${activity.id}-${index}-${activity.title}`}
               className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-zinc-600 bg-gray-50 dark:bg-zinc-800 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors cursor-pointer"
               onClick={() => handleProblemClick(activity.id)}
             >
@@ -92,9 +92,9 @@ export function RecentActivity({ activities = [], className = "" }) {
                 {/* Tags */}
                 {activity.tags && activity.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1">
-                    {activity.tags.map(tag => (
+                    {activity.tags.map((tag, tagIndex) => (
                       <span 
-                        key={tag}
+                        key={`${tag}-${tagIndex}-${activity.id}`}
                         className="px-1.5 py-0.5 text-xs bg-gray-100 dark:bg-zinc-700 rounded text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-zinc-600"
                       >
                         {tag}

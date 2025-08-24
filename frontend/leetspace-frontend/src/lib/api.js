@@ -23,7 +23,6 @@ const isDemoMode = () => {
 // Function to get Firebase ID token
 export const getIdToken = async () => {
   const user = auth.currentUser;
-  console.log('🔍 Checking current user:', user ? `${user.email} (${user.uid})` : 'null');
   
   if (!user) {
     throw new Error('User not authenticated');
@@ -31,7 +30,6 @@ export const getIdToken = async () => {
   
   try {
     const idToken = await user.getIdToken();
-    console.log('✅ Got ID token:', idToken);
     return idToken;
   } catch (error) {
     console.error('❌ Error getting ID token:', error);
@@ -49,7 +47,6 @@ api.interceptors.request.use(
     try {
       const idToken = await getIdToken();
       config.headers.Authorization = `Bearer ${idToken}`;
-      console.log('✅ Added auth token to request:', config.url);
     } catch (error) {
       console.error('❌ Failed to add auth token:', error);
       // Throw error to prevent request from proceeding without auth

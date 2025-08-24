@@ -57,6 +57,10 @@ export const AUTH_ERROR_MESSAGES = {
   'auth/popup-blocked': 'Sign-in popup was blocked by your browser.',
   'auth/cancelled-popup-request': 'Only one popup request is allowed at a time.',
   'auth/account-exists-with-different-credential': 'An account already exists with the same email but different sign-in credentials.',
+  // Password reset specific errors
+  'auth/invalid-action-code': 'Invalid or expired reset link. Please request a new password reset email.',
+  'auth/expired-action-code': 'This reset link has expired. Please request a new password reset email.',
+  'auth/missing-password': 'New password is required.',
   // Continue URL / action code errors
   'auth/invalid-continue-uri': 'The return URL is invalid. Please contact support.',
   'auth/unauthorized-continue-uri': 'The return URL is not allowed. Please contact support.',

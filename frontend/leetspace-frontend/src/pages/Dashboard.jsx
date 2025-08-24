@@ -101,14 +101,9 @@ export default function Dashboard() {
         };
         
         // Debug logging
-        console.log('🔍 Sending update data to backend:', updateData);
-        console.log('🔍 Updated problem:', updatedProblem);
-        
         await problemsAPI.updateProblem(updatedProblem.id, updateData);
-        console.log('✅ Spaced repetition data updated in backend');
       } else {
         // Demo mode: just log the update
-        console.log('Demo mode: revision updated locally', updatedProblem);
       }
     } catch (error) {
       console.error('❌ Failed to update spaced repetition data:', error);

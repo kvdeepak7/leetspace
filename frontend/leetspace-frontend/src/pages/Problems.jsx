@@ -40,7 +40,6 @@ export default function Problems() {
       });
       const fetchedProblems = res.data.problems || res.data;
       setProblems(fetchedProblems);
-      console.log(res.data);
     } catch (error) {
       console.error("Error fetching problems:", error);
       toast.error("Failed to load problems. Please try again.");

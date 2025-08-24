@@ -81,7 +81,6 @@ export default function ProblemDetail() {
       toast.info("Demo mode: delete disabled.");
       return;
     }
-    console.log("Deleting problem:", problem.title);
     setSelectedProblem(problem);
     setDeleteDialogOpen(true);
   };

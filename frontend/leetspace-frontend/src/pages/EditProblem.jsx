@@ -197,7 +197,6 @@ export default function EditProblem() {
 
     try {
       const res = await problemsAPI.updateProblem(id, problemData);
-      console.log("✅ Problem updated:", res.data);
       sessionStorage.removeItem(`editProblemDraft-${id}`); // Clear draft on success
       navigate(`/problems/${id}`);
     } catch (err) {
