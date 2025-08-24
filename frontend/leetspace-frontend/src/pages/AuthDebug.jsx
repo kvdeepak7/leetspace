@@ -62,7 +62,6 @@ export default function AuthDebug() {
       });
       
       const data = await response.json();
-      console.log('Backend response:', data);
       
       if (response.ok) {
         alert('Backend authentication successful!');
@@ -92,7 +91,6 @@ export default function AuthDebug() {
       });
       
       const data = await response.json();
-      console.log('Problems API response:', data);
       
       if (response.ok) {
         alert(`Problems API successful! Found ${data.length} problems`);

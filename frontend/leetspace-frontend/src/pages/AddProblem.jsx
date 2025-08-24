@@ -184,7 +184,6 @@ export default function AddProblem() {
         return;
       }
       const res = await problemsAPI.createProblem(problemData);
-      console.log("✅ Problem saved:", res.data);
       sessionStorage.removeItem("addProblemDraft");
       navigate(`/problems/${res.data.id}`);
     } catch (err) {
