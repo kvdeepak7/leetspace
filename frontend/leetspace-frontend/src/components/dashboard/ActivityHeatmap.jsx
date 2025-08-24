@@ -108,7 +108,7 @@ export function ActivityHeatmap({ data = [], className = "" }) {
                         key={day.date}
                         className={`w-3 h-3 rounded-sm ${getIntensityClass(day.level)} cursor-pointer hover:ring-1 hover:ring-gray-400 transition-all shadow-sm flex-shrink-0`}
                         onClick={() => handleDayClick(day)}
-                        title={day.count > 0 ? `${day.count} problem${day.count !== 1 ? 's' : ''} solved on ${day.date}` : `No activity on ${day.date}`}
+                        title={day.count > 0 ? `${day.count} problem${day.count !== 1 ? 's' : ''} logged on ${day.date}` : `No activity on ${day.date}`}
                       />
                     ))}
                   </div>
@@ -123,7 +123,7 @@ export function ActivityHeatmap({ data = [], className = "" }) {
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="font-medium text-green-800 dark:text-green-200">
-                    {selectedDay.count} problem{selectedDay.count !== 1 ? 's' : ''} solved on {selectedDay.date}
+                    {selectedDay.count} problem{selectedDay.count !== 1 ? 's' : ''} logged on {selectedDay.date}
                   </h4>
                   <p className="text-sm text-green-700 dark:text-green-300">
                     Great progress on this day!

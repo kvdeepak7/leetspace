@@ -180,6 +180,17 @@ export default function Problems() {
   const filterDescription = getFilterDescription();
   const filterIcon = getFilterIcon();
 
+  if (!filteredProblems.length) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center bg-white dark:bg-zinc-900 rounded-lg">
+        <div className="text-center">
+          <div className="text-base text-gray-700 dark:text-gray-300">No problems yet</div>
+          <div className="text-sm text-gray-500 dark:text-gray-500 mt-1">Add your first problem to get started.</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 bg-white dark:bg-zinc-900 text-gray-900 dark:text-white rounded-lg shadow-sm">
       {/* Filter Header */}

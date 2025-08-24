@@ -52,7 +52,15 @@ function LogoMark({ className = "" }) {
 			aria-hidden="true"
 			focusable="false"
 		>
-			<rect x="4" y="4" width="16" height="16" rx="3" ry="3" />
+			{/* Notebook/document with folded corner */}
+			<path d="M8 3h7l4 4v11a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z" />
+			<path d="M15 3v5h5" />
+			{/* Fold fill for subtle accent */}
+			<path d="M15 3l5 5h-5z" fill="currentColor" opacity=".18" />
+			{/* Note lines */}
+			<line x1="9" y1="12" x2="15" y2="12" />
+			<line x1="9" y1="16" x2="17" y2="16" />
+			<line x1="9" y1="8" x2="12.5" y2="8" />
 		</svg>
 	);
 }
@@ -85,7 +93,9 @@ export default function Navbar() {
   return (
     <nav className="relative flex justify-between items-center px-6 py-3 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-black">
       <Link to={showNavLinks ? "/dashboard" : "/"} className="group flex items-center gap-2 font-bold text-xl text-gray-900 dark:text-white cursor-pointer">
-        <LogoMark className="h-5 w-5 text-indigo-600 dark:text-indigo-400 transition-transform duration-200 ease-out group-hover:-translate-y-px group-hover:rotate-1 motion-reduce:transform-none" />
+        <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-indigo-600 dark:bg-indigo-500 text-white font-extrabold text-[14px] leading-none tracking-tight shadow-sm transition-all duration-200 group-hover:shadow group-hover:-translate-y-px">
+          LS
+        </span>
         <span>myLeetSpace</span>
         {isDemo && (
           <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-200 border border-indigo-200/70 dark:border-indigo-700/50">

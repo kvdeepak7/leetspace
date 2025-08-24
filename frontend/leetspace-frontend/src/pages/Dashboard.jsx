@@ -178,7 +178,31 @@ export default function Dashboard() {
           <p className="text-gray-600 dark:text-gray-400">
             Your LeetSpace learning analytics and insights {isDemo && '(demo)'}
           </p>
+          {basic_stats.total_problems > 0 && (
+            <div className="pt-2">
+              <Button
+                onClick={handleAddProblem}
+                variant="outline"
+                size="sm"
+              >
+                <Plus className="h-4 w-4 mr-1" /> Add Problem
+              </Button>
+            </div>
+          )}
         </div>
+
+        {/* Zero-state suggestion */}
+        {basic_stats.total_problems === 0 && (
+          <div className="p-4 rounded-lg border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 flex items-center justify-between">
+            <div>
+              <div className="text-sm font-medium text-gray-900 dark:text-white">No problems yet</div>
+              <div className="text-xs text-gray-600 dark:text-gray-400">Log your first problem to start your journal.</div>
+            </div>
+            <Button onClick={handleAddProblem} size="sm" variant="outline">
+              <Plus className="h-4 w-4 mr-1" /> Add Problem
+            </Button>
+          </div>
+        )}
 
         {/* Stats Cards Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

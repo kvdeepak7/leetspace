@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, ExternalLink, RotateCcw, Activity } from "lucide-react";
+import { Clock, ExternalLink, RotateCcw, Activity, Pencil, PlusCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export function RecentActivity({ activities = [], className = "" }) {
@@ -71,6 +71,19 @@ export function RecentActivity({ activities = [], className = "" }) {
                   >
                     {activity.difficulty}
                   </Badge>
+                  {activity.action && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border border-gray-200 dark:border-zinc-600 bg-gray-50 dark:bg-zinc-800 text-gray-700 dark:text-gray-300">
+                      {activity.action === 'edit' ? (
+                        <>
+                          <Pencil className="h-3 w-3" /> Edited
+                        </>
+                      ) : (
+                        <>
+                          <PlusCircle className="h-3 w-3" /> Created
+                        </>
+                      )}
+                    </span>
+                  )}
                   <span className="text-xs text-gray-500 dark:text-gray-400">
                     {activity.time_ago}
                   </span>

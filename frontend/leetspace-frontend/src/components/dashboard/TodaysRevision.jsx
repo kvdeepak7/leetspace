@@ -264,16 +264,18 @@ export function TodaysRevision({ revision, lockedByServer = false, className = "
               <Button 
                 onClick={handleCompleteReviewFuture}
                 disabled={loading}
-                className="flex-1 text-sm h-8 bg-green-600 hover:bg-green-700 text-white"
+                variant="outline"
+                className="flex-1 text-sm h-8 border-gray-300 dark:border-zinc-600 text-gray-700 dark:text-gray-300"
                 size="sm"
               >
                 <CheckCircle className="h-3 w-3 mr-1" />
-                Choose to come back in future
+                Complete review, stay in retry list
               </Button>
               <Button 
                 onClick={handleCompleteReviewRemove}
                 disabled={loading}
-                className="flex-1 text-sm h-8 bg-purple-600 hover:bg-purple-700 text-white"
+                variant="outline"
+                className="flex-1 text-sm h-8 border-gray-300 dark:border-zinc-600 text-gray-700 dark:text-gray-300"
                 size="sm"
               >
                 <UserCheck className="h-3 w-3 mr-1" />
