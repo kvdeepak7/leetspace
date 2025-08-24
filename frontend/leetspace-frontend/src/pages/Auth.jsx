@@ -3,22 +3,12 @@ import { Link } from "react-router-dom";
 import { useDemo } from "@/context/DemoContext";
 import { LoginForm } from "@/components/login-form";
 
-function LogoMark({ className = "" }) {
-	return (
-		<svg
-			className={className}
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			aria-hidden="true"
-			focusable="false"
-		>
-			<rect x="4" y="4" width="16" height="16" rx="3" ry="3" />
-		</svg>
-	);
+function BrandBadge({ className = "" }) {
+  return (
+    <span className={`inline-flex items-center justify-center h-8 w-8 rounded-full bg-indigo-600 text-white font-extrabold text-[14px] leading-none tracking-tight ${className}`}>
+      LS
+    </span>
+  );
 }
 
 export default function Auth() {
@@ -47,7 +37,7 @@ export default function Auth() {
       <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div className="flex items-center justify-between mb-6">
           <Link to="/" className="flex items-center gap-2 font-medium text-gray-900 dark:text-white cursor-pointer">
-            <LogoMark className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+            <BrandBadge />
             myLeetSpace
           </Link>
           <Link to="/" className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer">Back to landing</Link>

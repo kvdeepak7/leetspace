@@ -27,3 +27,17 @@
     padding-left: 1.5rem;
     margin-left: 1rem;
   }
+
+  /* Legal content styles */
+  .legal-content h1 { @apply text-2xl md:text-3xl font-semibold; }
+  .legal-content h2 { @apply mt-8 text-xl md:text-2xl font-semibold; }
+  .legal-content h3 { @apply mt-4 text-lg md:text-xl font-semibold; }
+  .legal-content h4 {
+    @apply mt-2 font-semibold;
+  }
+  .legal-content p { @apply mt-3 text-gray-700 dark:text-gray-300 leading-7; }
+  .legal-content ul { @apply list-disc pl-6 mt-2 space-y-2; }
+  .legal-content li {
+    @apply text-gray-700 dark:text-gray-300;
+  }
+  .legal-content a { @apply text-indigo-600 dark:text-indigo-400 underline; }

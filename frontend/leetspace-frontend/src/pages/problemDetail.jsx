@@ -59,11 +59,15 @@ export default function ProblemDetail() {
       } catch (err) {
         console.error("Failed to fetch problem", err);
         if (err.response?.status === 401) {
-          toast.error("Authentication failed. Please sign in again.");
+          toast.error("Authentication failed. Please sign in again.", {
+            className: "mt-2",
+          });
         } else if (err.response?.status === 404) {
-          toast.error("Problem not found.");
+          // No toast for not found; page shows centered empty state
         } else {
-          toast.error("Failed to load problem details.");
+          toast.error("Failed to load problem details.", {
+            className: "mt-2",
+          });
         }
       } finally {
         setLoading(false);
@@ -121,7 +125,14 @@ export default function ProblemDetail() {
   }
 
   if (!problem) {
-    return <div className="text-center text-muted-foreground dark:text-gray-400">Problem not found.</div>;
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-base text-gray-600 dark:text-gray-400">Problem not found.</div>
+          <div className="text-sm text-gray-500 dark:text-gray-500 mt-1">It may have been deleted or the link is incorrect.</div>
+        </div>
+      </div>
+    );
   }
 
   const difficultyColor = {

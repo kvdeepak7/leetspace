@@ -10,6 +10,7 @@ from auth.dependencies import get_current_active_user
 
 router = APIRouter()
 collection = db["problems"]
+events_collection = db["activity_events"]
 locks_collection = db["revision_locks"]
 
 @router.get("/dashboard")
@@ -104,8 +105,8 @@ async def get_dashboard_stats(current_user: dict = Depends(get_current_active_us
             "weaknesses": detect_weaknesses(problems),
             "todays_revision": todays_revision,
             "todays_revision_locked": locked_today,
-            "activity_heatmap": generate_activity_heatmap(problems),
-            "recent_activity": get_recent_activity(problems)
+            "activity_heatmap": await generate_activity_heatmap(current_user["uid"], problems),
+            "recent_activity": await get_recent_activity(current_user["uid"], problems)
         }
 
     except Exception as e:
@@ -286,22 +287,39 @@ def suggest_todays_revision(problems: List[Dict]) -> Dict[str, Any]:
         "days_since_solved": best_suggestion["days_since"]
     }
 
-def generate_activity_heatmap(problems: List[Dict]) -> List[Dict[str, Any]]:
+async def generate_activity_heatmap(user_id: str, problems: List[Dict]) -> List[Dict[str, Any]]:
     """Generate activity heatmap data for the last 365 days"""
     
     today = datetime.now()
     start_date = today - timedelta(days=365)
     
-    # Count problems solved per date
+    # Count problem creates/edits per date from events
     date_counts = defaultdict(int)
-    for problem in problems:
-        try:
-            solved_date = datetime.strptime(str(problem["date_solved"]), "%Y-%m-%d")
-            if solved_date >= start_date:
-                date_str = solved_date.strftime("%Y-%m-%d")
-                date_counts[date_str] += 1
-        except (ValueError, TypeError):
-            continue
+    events_found = False
+    try:
+        async for ev in events_collection.find({
+            "user_id": user_id,
+            "date": {"$gte": start_date.date().isoformat()}
+        }):
+            if ev.get("type") in ("create", "edit"):
+                d = ev.get("date")
+                if isinstance(d, str):
+                    date_counts[d] += 1
+                    events_found = True
+    except Exception:
+        # Fallback to solved dates if events missing
+        events_found = False
+
+    # If no events were found, fall back to counting by solved dates
+    if not events_found:
+        for problem in problems:
+            try:
+                solved_date = datetime.strptime(str(problem["date_solved"]), "%Y-%m-%d")
+                if solved_date >= start_date:
+                    date_str = solved_date.strftime("%Y-%m-%d")
+                    date_counts[date_str] += 1
+            except (ValueError, TypeError):
+                continue
     
     # Generate heatmap data
     heatmap_data = []
@@ -321,48 +339,80 @@ def generate_activity_heatmap(problems: List[Dict]) -> List[Dict[str, Any]]:
     
     return heatmap_data
 
-def get_recent_activity(problems: List[Dict]) -> List[Dict[str, Any]]:
-    """Get the 5 most recently solved problems"""
-    
-    # Sort by date_solved (most recent first)
+async def get_recent_activity(user_id: str, problems: List[Dict]) -> List[Dict[str, Any]]:
+    """Get the 5 most recent activity events (create/edit) mapped to problem details"""
     try:
-        sorted_problems = sorted(
-            problems,
-            key=lambda x: datetime.strptime(str(x["date_solved"]), "%Y-%m-%d"),
-            reverse=True
-        )
-    except (ValueError, TypeError):
-        # If date parsing fails, return empty
-        return []
-    
-    recent = sorted_problems[:5]
-    
-    # Format for frontend
-    formatted_recent = []
-    for problem in recent:
+        events = []
+        async for ev in events_collection.find({
+            "user_id": user_id,
+            "type": {"$in": ["create", "edit"]}
+        }).sort("at", -1).limit(5):
+            events.append(ev)
+    except Exception:
+        events = []
+
+    # Index problems by id for quick lookup
+    by_id = {p.get("id"): p for p in problems}
+    formatted = []
+    for ev in events:
+        p = by_id.get(ev.get("problem_id"))
+        if not p:
+            continue
         try:
-            solved_date = datetime.strptime(str(problem["date_solved"]), "%Y-%m-%d")
-            days_ago = (datetime.now() - solved_date).days
-            
+            # Compute time ago from ev["date"]
+            ev_date = datetime.strptime(str(ev.get("date")), "%Y-%m-%d")
+            days_ago = (datetime.now() - ev_date).days
             if days_ago == 0:
                 time_ago = "Today"
             elif days_ago == 1:
                 time_ago = "1 day ago"
             else:
                 time_ago = f"{days_ago} days ago"
-            
-            formatted_recent.append({
-                "id": problem["id"],
-                "title": problem["title"],
-                "difficulty": problem["difficulty"],
-                "tags": problem.get("tags", [])[:3],  # Limit to 3 tags
-                "time_ago": time_ago,
-                "retry_later": problem.get("retry_later") == "Yes"
-            })
+        except Exception:
+            time_ago = ""
+        formatted.append({
+            "id": p.get("id"),
+            "title": p.get("title"),
+            "difficulty": p.get("difficulty"),
+            "tags": p.get("tags", [])[:3],
+            "time_ago": time_ago,
+            "retry_later": p.get("retry_later") in ("Yes", True),
+            "action": ev.get("type", "edit")
+        })
+
+    # Fallback to problem-solved ordering if no events
+    if not formatted:
+        try:
+            sorted_problems = sorted(
+                problems,
+                key=lambda x: datetime.strptime(str(x["date_solved"]), "%Y-%m-%d"),
+                reverse=True
+            )
         except (ValueError, TypeError):
-            continue
-    
-    return formatted_recent
+            return []
+        for problem in sorted_problems[:5]:
+            try:
+                solved_date = datetime.strptime(str(problem["date_solved"]), "%Y-%m-%d")
+                days_ago = (datetime.now() - solved_date).days
+                if days_ago == 0:
+                    time_ago = "Today"
+                elif days_ago == 1:
+                    time_ago = "1 day ago"
+                else:
+                    time_ago = f"{days_ago} days ago"
+                formatted.append({
+                    "id": problem["id"],
+                    "title": problem["title"],
+                    "difficulty": problem["difficulty"],
+                    "tags": problem.get("tags", [])[:3],
+                    "time_ago": time_ago,
+                    "retry_later": problem.get("retry_later") in ("Yes", True),
+                    "action": "create"
+                })
+            except Exception:
+                continue
+
+    return formatted
 
 @router.get("/spaced-repetition")
 async def get_spaced_repetition_stats(current_user: dict = Depends(get_current_active_user)):

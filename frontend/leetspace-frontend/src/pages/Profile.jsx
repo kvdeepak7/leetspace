@@ -549,16 +549,18 @@ export default function Profile() {
                       <Label htmlFor="confirmText" className="text-gray-700 dark:text-gray-300">
                         Type DELETE to confirm
                       </Label>
-                      <Input
-                        id="confirmText"
-                        type="text"
-                        value={deleteForm.confirmText}
-                        onChange={(e) => setDeleteForm(prev => ({ 
-                          ...prev, 
-                          confirmText: e.target.value 
-                        }))}
-                        className="bg-white text-black dark:bg-zinc-900 dark:text-white dark:placeholder:text-zinc-400"
-                      />
+                      <div className="mt-1">
+                        <Input
+                          id="confirmText"
+                          type="text"
+                          value={deleteForm.confirmText}
+                          onChange={(e) => setDeleteForm(prev => ({ 
+                            ...prev, 
+                            confirmText: e.target.value 
+                          }))}
+                          className="bg-white text-black dark:bg-zinc-900 dark:text-white dark:placeholder:text-zinc-400"
+                        />
+                      </div>
                     </div>
 
                     <Button 

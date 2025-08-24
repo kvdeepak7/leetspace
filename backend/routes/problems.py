@@ -15,6 +15,7 @@ from fastapi.responses import JSONResponse
 router = APIRouter()
 
 collection = db["problems"]
+events_collection = db["activity_events"]
 
 # POST a problem for a user
 
@@ -54,6 +55,18 @@ async def add_problem(
         )
 
     result = await collection.insert_one(problem_dict)
+    # Log create activity event (non-blocking semantics)
+    try:
+        await events_collection.insert_one({
+            "user_id": current_user["uid"],
+            "problem_id": str(result.inserted_id),
+            "type": "create",
+            "at": datetime.utcnow().isoformat(),
+            "date": datetime.utcnow().date().isoformat(),
+        })
+    except Exception:
+        # Do not block creation on activity log failures
+        pass
     return ProblemInDB(id=str(result.inserted_id), **problem_dict)
 
 # GET Problems of a user
@@ -235,11 +248,34 @@ async def update_problem(id: str, update: ProblemUpdate, current_user: dict = De
 
     result["id"] = str(result["_id"])
     del result["_id"]
+    # Log edit activity event (non-blocking semantics)
+    try:
+        await events_collection.insert_one({
+            "user_id": current_user["uid"],
+            "problem_id": id,
+            "type": "edit",
+            "at": datetime.utcnow().isoformat(),
+            "date": datetime.utcnow().date().isoformat(),
+        })
+    except Exception:
+        pass
     return ProblemInDB(**result)
 
 # Delete a problem
 @router.delete("/{id}")
 async def delete_problem(id: str, current_user: dict = Depends(get_current_active_user)):
+    # Optionally log delete event (non-blocking)
+    try:
+        await events_collection.insert_one({
+            "user_id": current_user["uid"],
+            "problem_id": id,
+            "type": "delete",
+            "at": datetime.utcnow().isoformat(),
+            "date": datetime.utcnow().date().isoformat(),
+        })
+    except Exception:
+        pass
+
     result = await collection.delete_one({
         "_id": ObjectId(id), 
         "user_id": current_user["uid"]
