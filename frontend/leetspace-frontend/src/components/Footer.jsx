@@ -10,7 +10,7 @@ export default function Footer() {
           <a href="mailto:contact@myleetspace.com" className="inline-flex items-center gap-2 hover:text-indigo-600 dark:hover:text-indigo-400">
             <Mail className="size-4" /> contact@myleetspace.com
           </a>
-          <a href="https://www.linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn" className="inline-flex items-center justify-center size-8 rounded-md hover:bg-gray-100 dark:hover:bg-zinc-800">
+          <a href="https://www.linkedin.com/company/myleetspace/about/" target="_blank" rel="noopener" aria-label="LinkedIn" className="inline-flex items-center justify-center size-8 rounded-md hover:bg-gray-100 dark:hover:bg-zinc-800">
             <Linkedin className="size-4" />
           </a>
           <Link to="/privacy" className="hover:text-indigo-600 dark:hover:text-indigo-400 cursor-pointer">Privacy</Link>

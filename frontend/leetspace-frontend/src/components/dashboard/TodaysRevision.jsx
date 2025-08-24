@@ -269,7 +269,7 @@ export function TodaysRevision({ revision, lockedByServer = false, className = "
                 size="sm"
               >
                 <CheckCircle className="h-3 w-3 mr-1" />
-                Complete review, stay in retry list
+                Mark reviewed: keep in retry
               </Button>
               <Button 
                 onClick={handleCompleteReviewRemove}
@@ -279,7 +279,7 @@ export function TodaysRevision({ revision, lockedByServer = false, className = "
                 size="sm"
               >
                 <UserCheck className="h-3 w-3 mr-1" />
-                Have confidence, remove from retry
+                Confident: clear from retry
               </Button>
             </div>
           </div>
@@ -311,8 +311,8 @@ export function TodaysRevision({ revision, lockedByServer = false, className = "
           {/* Info Box */}
           <div className="p-2 rounded-lg bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700">
             <p className="text-xs text-gray-600 dark:text-gray-400">
-              <strong>Queue Updates:</strong> Choose "come back in future" to increment review count and keep in queue. 
-              Choose "remove from retry" to permanently remove from queue.
+              <strong>Queue Updates:</strong> Choose "Mark reviewed" to increment review count and keep in queue. 
+              Choose "Confident" to permanently remove from queue.
             </p>
           </div>
         </div>

@@ -89,16 +89,24 @@ export function LoginForm({ className, ...props }) {
     const nextErrors = {};
     switch (code) {
       case 'auth/user-not-found':
+        nextErrors.email = 'No account found with this email address.';
+        break;
       case 'auth/invalid-email':
-        nextErrors.email = message;
+        nextErrors.email = 'Please enter a valid email address.';
         break;
       case 'auth/wrong-password':
+        nextErrors.password = 'Incorrect password. Please try again.';
+        break;
       case 'auth/weak-password':
+        nextErrors.password = 'Password should be at least 6 characters long.';
+        break;
       case 'auth/invalid-credential':
-        nextErrors.password = message;
+        // This could be either wrong email or wrong password, but since we know the email exists
+        // (we're in the sign-in flow), it's likely a wrong password
+        nextErrors.password = 'Incorrect password. Please try again.';
         break;
       case 'auth/email-already-in-use':
-        nextErrors.email = message;
+        nextErrors.email = 'An account with this email already exists.';
         break;
       case 'auth/too-many-requests':
       case 'auth/network-request-failed':

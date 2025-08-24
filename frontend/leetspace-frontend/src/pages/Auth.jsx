@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDemo } from "@/context/DemoContext";
 import { LoginForm } from "@/components/login-form";
+import Footer from "@/components/Footer";
 
 function BrandBadge({ className = "" }) {
   return (
@@ -33,17 +34,20 @@ export default function Auth() {
   }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6">
-      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <div className="flex items-center justify-between mb-6">
-          <Link to="/" className="flex items-center gap-2 font-medium text-gray-900 dark:text-white cursor-pointer">
-            <BrandBadge />
-            myLeetSpace
-          </Link>
-          <Link to="/" className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer">Back to landing</Link>
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+      <div className="flex-1 flex items-center justify-center p-6">
+        <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <Link to="/" className="flex items-center gap-2 font-medium text-gray-900 dark:text-white cursor-pointer">
+              <BrandBadge />
+              myLeetSpace
+            </Link>
+            <Link to="/" className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer">Back to landing</Link>
+          </div>
+          <LoginForm />
         </div>
-        <LoginForm />
       </div>
+      <Footer />
     </div>
   );
 }
